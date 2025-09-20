@@ -1,9 +1,10 @@
 import { Module } from '@nestjs/common';
-import { DocumentModule } from './document/document.module';
+import { SignUpUseCase } from './user/sign-up.usecase';
+import { RepositoryModule } from '../../infra/persistence/repositories/repository.module';
 
 @Module({
-  imports: [DocumentModule],
-  providers: [],
-  exports: [],
+  imports: [RepositoryModule],
+  providers: [SignUpUseCase],
+  exports: [SignUpUseCase],
 })
 export class UseCasesModule {}

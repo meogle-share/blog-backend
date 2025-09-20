@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
-import { ApplicationModule } from './application/application.module';
-import { DatabaseModule } from './infra/database/database.module';
 import { ConfigModule } from '@nestjs/config';
 import { validate } from './infra/environment/validator';
+import { PersistenceModule } from './infra/persistence/persistence.module';
+import { ApplicationModule } from './application/application.module';
 
 @Module({
   imports: [
@@ -11,9 +11,8 @@ import { validate } from './infra/environment/validator';
       isGlobal: true,
       envFilePath: '.env',
     }),
-    DatabaseModule,
     ApplicationModule,
+    PersistenceModule,
   ],
-  providers: [],
 })
 export class AppModule {}

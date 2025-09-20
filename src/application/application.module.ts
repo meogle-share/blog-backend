@@ -3,7 +3,6 @@ import { UseCasesModule } from './use-cases/use-cases.module';
 
 @Module({
   imports: [UseCasesModule],
-  providers: [],
-  exports: [],
+  exports: [UseCasesModule],
 })
 export class ApplicationModule {}
