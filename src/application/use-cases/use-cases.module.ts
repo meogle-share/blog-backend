@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { SignUpUseCase } from './user/sign-up.usecase';
+import { SignUpUseCase } from './user/sign-up.use-case';
 import { RepositoryModule } from '../../infra/persistence/repositories/repository.module';
 
 @Module({
