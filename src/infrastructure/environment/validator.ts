@@ -1,13 +1,5 @@
-import {
-  IsEnum,
-  IsNotEmpty,
-  IsString,
-  Max,
-  Min,
-  validateSync,
-} from 'class-validator';
+import { IsEnum, IsNotEmpty, IsString, Max, Min, validateSync } from 'class-validator';
 import { plainToInstance } from 'class-transformer';
-
 enum NodeEnvironment {
   PRODUCTION = 'prod',
   DEVELOPMENT = 'dev',
