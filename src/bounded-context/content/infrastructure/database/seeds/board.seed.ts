@@ -5,16 +5,18 @@ import { Repository } from 'typeorm';
 import { BOARD_SEEDS } from '../../../domain/board/board.constant';
 
 @Injectable()
-export class BoardSeeder {
+export class BoardSeedManager {
   constructor(
     @InjectRepository(Board)
     private readonly boardRepo: Repository<Board>,
   ) {}
 
   async seed() {
-    await this.boardRepo.upsert(BOARD_SEEDS, {
-      conflictPaths: ['name'],
-      skipUpdateIfNoValuesChanged: true,
-    });
+    for (const seed of BOARD_SEEDS) {
+      const exists = await this.boardRepo.exists({ where: { slug: seed.slug } });
+      if (!exists) {
+        await this.boardRepo.insert(seed);
+      }
+    }
   }
 }
