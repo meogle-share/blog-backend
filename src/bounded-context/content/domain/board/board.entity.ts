@@ -1,10 +1,12 @@
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
-import { Auditable } from './base/auditable';
 
-@Entity()
-export class BoardEntity extends Auditable {
+@Entity('boards')
+export class Board {
   @PrimaryGeneratedColumn()
   id: number;
+
+  @Column({ unique: true })
+  slug: string;
 
   @Column()
   name: string;
