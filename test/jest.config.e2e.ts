@@ -4,8 +4,9 @@ import baseConfig from './jest.config.base';
 const config: Config = {
   ...baseConfig,
   displayName: 'e2e',
-  rootDir: '../src',
-  testRegex: '.*\\.e2e-spec\\.ts$',
+  rootDir: '..',
+  testMatch: ['**/test/**/*.e2e.spec.ts'],
+  testTimeout: 30000,
 };
 
 export default config;

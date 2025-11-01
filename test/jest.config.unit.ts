@@ -5,8 +5,7 @@ const config: Config = {
   ...baseConfig,
   displayName: 'unit',
   rootDir: '../src',
-  testRegex: '.*\\.spec\\.ts$',
-  testPathIgnorePatterns: ['.*\\.int-spec\\.ts$', '.*\\.e2e-spec\\.ts$'],
+  testMatch: ['**/*.spec.ts', '!**/*.integration.spec.ts', '!**/*.e2e.spec.ts'],
 };
 
 export default config;

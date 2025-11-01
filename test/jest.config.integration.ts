@@ -5,7 +5,7 @@ const config: Config = {
   ...baseConfig,
   displayName: 'integration',
   rootDir: '../src',
-  testRegex: '.*\\.int-spec\\.ts$',
+  testMatch: ['**/*.integration.spec.ts'],
   testTimeout: 30000,
 };
 
