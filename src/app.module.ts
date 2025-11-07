@@ -1,8 +1,10 @@
 import { Module } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
-import { validate } from './infrastructure/environment/validator';
-import { PersistenceModule } from './infrastructure/persistence/persistence.module';
-import { BoundedContextModule } from './bounded-context/bounded-context.module';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { validate } from '@configs/env.validator';
+import { ContentModule } from '@modules/content/content.module';
+import { IamModule } from '@modules/iam/iam.module';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { getDatabaseConfig } from '@configs/database.config';
 
 @Module({
   imports: [
@@ -11,8 +13,15 @@ import { BoundedContextModule } from './bounded-context/bounded-context.module';
       isGlobal: true,
       envFilePath: '.env',
     }),
-    BoundedContextModule,
-    PersistenceModule,
+    TypeOrmModule.forRootAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: getDatabaseConfig,
+    }),
+
+    // Modules
+    ContentModule,
+    IamModule,
   ],
 })
 export class AppModule {}
