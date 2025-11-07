@@ -25,7 +25,8 @@
       "@libs/*": ["src/libs/*"],
       "@configs/*": ["src/configs/*"],
       "@common/*": ["src/common/*"],
-      "@modules/*": ["src/modules/*"]
+      "@modules/*": ["src/modules/*"],
+      "@test/*": ["test/*"]
     }
   }
 }
