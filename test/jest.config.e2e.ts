@@ -4,9 +4,11 @@ import baseConfig from './jest.config.base';
 const config: Config = {
   ...baseConfig,
   displayName: 'e2e',
-  rootDir: '..',
-  testMatch: ['**/test/**/*.e2e.spec.ts'],
+  testMatch: ['**/*.e2e.spec.ts'],
   testTimeout: 30000,
+  setupFiles: ['<rootDir>/test/setup/setup-env.ts'],
+  globalSetup: '<rootDir>/test/setup/global-setup.ts',
+  globalTeardown: '<rootDir>/test/setup/global-teardown.ts',
 };
 
 export default config;

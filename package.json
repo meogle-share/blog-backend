@@ -19,7 +19,17 @@
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:unit": "jest --config test/jest.config.unit.ts",
     "test:int": "jest --config test/jest.config.integration.ts",
-    "test:e2e": "jest --config test/jest.config.e2e.ts"
+    "test:e2e": "jest --config test/jest.config.e2e.ts",
+    "typeorm": "typeorm-ts-node-commonjs",
+    "migration:create": "npm run typeorm -- migration:create ./src/database/migrations/migration",
+    "migration:create:custom": "npm run typeorm -- migration:create",
+    "migration:generate": "npm run typeorm -- migration:generate -d src/configs/database.config.ts -p src/database/migrations/migration",
+    "migration:generate:custom": "npm run typeorm -- migration:generate -d src/config/database/database.ts -p",
+    "migration:show": "npm run typeorm -- migration:show -d src/configs/database.config.ts",
+    "migration:run": "npm run typeorm -- migration:run -d src/configs/database.config.ts -t all",
+    "migration:run:fake": "npm run typeorm -- migration:run -d src/configs/database.config.ts -t all --fake",
+    "migration:revert": "npm run typeorm -- migration:revert -d src/configs/database.config.ts -t all",
+    "migration:revert:fake": "npm run typeorm -- migration:revert -d src/configs/database.config.ts -t all --fake"
   },
   "dependencies": {
     "@nestjs/common": "^11.0.1",
