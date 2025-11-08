@@ -2,7 +2,7 @@ import { Post } from './post.aggregate';
 import { PostId } from './value-objects/post-id';
 import { PostTitle } from './value-objects/post-title';
 import { PostContent } from './value-objects/post-content';
-import { UserId } from '../../../iam/user/domain/user/user-id';
+import { UserId } from '../../../iam/user/domain/value-objects/user-id';
 
 describe('Post Aggregate', () => {
   describe('create', () => {

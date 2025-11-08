@@ -4,7 +4,7 @@ import { Post } from '../domain/post.aggregate';
 import { PostId } from '../domain/value-objects/post-id';
 import { PostTitle } from '../domain/value-objects/post-title';
 import { PostContent } from '../domain/value-objects/post-content';
-import { UserId } from '../../../iam/user/domain/user/user-id';
+import { UserId } from '../../../iam/user/domain/value-objects/user-id';
 
 describe('PostMapper', () => {
   let mapper: PostMapper;
