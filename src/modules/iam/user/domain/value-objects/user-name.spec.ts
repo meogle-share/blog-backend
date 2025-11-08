@@ -32,9 +32,7 @@ describe('UserName', () => {
     });
 
     it('공백만 있으면 에러를 던져야 한다', () => {
-      expect(() => UserName.from('   ')).toThrow(
-        '값의 길이를 확인할 수 없습니다. 값이 비어있습니다',
-      );
+      expect(() => UserName.from('   ')).toThrow('이메일은 필수입니다');
     });
 
     it('최소 길이보다 짧으면 에러를 던져야 한다', () => {
@@ -66,7 +64,7 @@ describe('UserName', () => {
 
       const userName = UserName.from(emailWithSpaces);
 
-      expect(userName.value).toBe(emailWithSpaces); // 원본 값 유지
+      expect(userName.value).toBe('user@example.com'); // trim된 값 저장
     });
   });
 });
