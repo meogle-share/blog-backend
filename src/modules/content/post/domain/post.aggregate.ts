@@ -1,4 +1,4 @@
-import { UserId } from '../../../iam/user/domain/user/user-id';
+import { UserId } from '../../../iam/user/domain/value-objects/user-id';
 import { PostContent } from './value-objects/post-content';
 import { PostTitle } from './value-objects/post-title';
 import { PostId } from './value-objects/post-id';

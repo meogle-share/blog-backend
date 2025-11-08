@@ -1,6 +1,6 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { CreatePostCommand } from './create-post.command';
-import { UserId } from '@modules/iam/user/domain/user/user-id';
+import { UserId } from '@modules/iam/user/domain/value-objects/user-id';
 import { PostTitle } from '../../domain/value-objects/post-title';
 import { PostContent } from '../../domain/value-objects/post-content';
 import { Post } from '../../domain/post.aggregate';
