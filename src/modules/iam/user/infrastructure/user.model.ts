@@ -19,4 +19,8 @@ export class UserModel {
 
   @Column()
   updatedAt: Date;
+
+  static from(data: { [K in keyof UserModel]: UserModel[K] }): UserModel {
+    return Object.assign(new UserModel(), data);
+  }
 }

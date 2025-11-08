@@ -27,16 +27,7 @@ export class PostModel {
   @Column()
   updatedAt: Date;
 
-  static from(data: {
-    id: string;
-    authorId: string;
-    title: string;
-    content: string;
-    createdAt: Date;
-    updatedAt: Date;
-  }): PostModel {
-    const model = new PostModel();
-    Object.assign(model, data);
-    return model;
+  static from(data: { [K in keyof PostModel]: PostModel[K] }): PostModel {
+    return Object.assign(new PostModel(), data);
   }
 }
