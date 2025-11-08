@@ -1,14 +1,15 @@
 import { AggregateRoot } from '@libs/ddd';
 import { UserId } from '@modules/iam/user/domain/value-objects/user-id';
+import { UserName } from '@modules/iam/user/domain/value-objects/user-name';
 
 interface CreateUserParams {
-  username: string;
+  username: UserName;
   password: string;
   nickname: string;
 }
 
 interface UserProps {
-  username: string;
+  username: UserName;
   password: string;
   nickname: string;
 }
