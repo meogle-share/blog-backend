@@ -23,11 +23,7 @@ export class Guard {
         return true;
       }
     }
-    if (value === '') {
-      return true;
-    }
-
-    return false;
+    return value === '';
   }
 
   /**
@@ -42,9 +38,6 @@ export class Guard {
       throw new Error('Cannot check length of a value. Provided value is empty');
     }
     const valueLength = typeof value === 'number' ? Number(value).toString().length : value.length;
-    if (valueLength >= min && valueLength <= max) {
-      return true;
-    }
-    return false;
+    return valueLength >= min && valueLength <= max;
   }
 }
