@@ -29,7 +29,11 @@ import { v7 as uuidv7 } from 'uuid';
  * newId.equals(existingId); // false
  */
 export abstract class Identifier {
+  private static readonly UUID_V7_REGEX =
+    /^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+
   protected constructor(private readonly _id: string) {
+    this.validate(_id);
     Object.freeze(this);
   }
 
@@ -40,6 +44,16 @@ export abstract class Identifier {
   equals(other?: Identifier): boolean {
     if (!other) return false;
     return this.value === other.value;
+  }
+
+  private validate(value: string): void {
+    if (!value) {
+      throw new Error('Identifier value cannot be empty');
+    }
+
+    if (!Identifier.UUID_V7_REGEX.test(value)) {
+      throw new Error(`Invalid UUID v7 format: ${value}`);
+    }
   }
 
   protected static generateUuid(): string {
