@@ -17,22 +17,37 @@
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "test:unit": "jest --config ./test/jest-unit.json",
-    "test:int": "jest --config ./test/jest-integration.json",
-    "test:e2e": "jest --config ./test/jest-e2e.json"
+    "test:unit": "jest --config test/jest.config.unit.ts",
+    "test:int": "jest --config test/jest.config.integration.ts",
+    "test:e2e": "jest --config test/jest.config.e2e.ts",
+    "typeorm": "typeorm-ts-node-commonjs",
+    "migration:create": "npm run typeorm -- migration:create ./src/database/migrations/migration",
+    "migration:create:custom": "npm run typeorm -- migration:create",
+    "migration:generate": "npm run typeorm -- migration:generate -d src/configs/database.config.ts -p src/database/migrations/migration",
+    "migration:generate:custom": "npm run typeorm -- migration:generate -d src/config/database/database.ts -p",
+    "migration:show": "npm run typeorm -- migration:show -d src/configs/database.config.ts",
+    "migration:run": "npm run typeorm -- migration:run -d src/configs/database.config.ts -t all",
+    "migration:run:fake": "npm run typeorm -- migration:run -d src/configs/database.config.ts -t all --fake",
+    "migration:revert": "npm run typeorm -- migration:revert -d src/configs/database.config.ts -t all",
+    "migration:revert:fake": "npm run typeorm -- migration:revert -d src/configs/database.config.ts -t all --fake"
   },
   "dependencies": {
     "@nestjs/common": "^11.0.1",
     "@nestjs/config": "^4.0.2",
     "@nestjs/core": "^11.0.1",
+    "@nestjs/cqrs": "^11.0.3",
+    "@nestjs/event-emitter": "^3.0.1",
     "@nestjs/platform-express": "^11.0.1",
+    "@nestjs/swagger": "^11.2.1",
     "@nestjs/typeorm": "^11.0.0",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.2",
     "pg": "^8.16.3",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.1",
-    "typeorm": "^0.3.27"
+    "swagger-ui-express": "^5.0.1",
+    "typeorm": "^0.3.27",
+    "uuid": "^13.0.0"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.2.0",
@@ -44,6 +59,7 @@
     "@types/jest": "^30.0.0",
     "@types/node": "^22.10.7",
     "@types/supertest": "^6.0.2",
+    "@types/uuid": "^10.0.0",
     "eslint": "^9.18.0",
     "eslint-config-prettier": "^10.0.1",
     "eslint-plugin-prettier": "^5.2.2",
@@ -58,22 +74,5 @@
     "tsconfig-paths": "^4.2.0",
     "typescript": "^5.7.3",
     "typescript-eslint": "^8.20.0"
-  },
-  "jest": {
-    "moduleFileExtensions": [
-      "js",
-      "json",
-      "ts"
-    ],
-    "rootDir": "src",
-    "testRegex": ".*\\.spec\\.ts$",
-    "transform": {
-      "^.+\\.(t|j)s$": "ts-jest"
-    },
-    "collectCoverageFrom": [
-      "**/*.(t|j)s"
-    ],
-    "coverageDirectory": "../coverage",
-    "testEnvironment": "node"
   }
 }

@@ -1,0 +1,19 @@
+services:
+  db:
+    image: postgres:18
+    container_name: test.db
+    environment:
+      POSTGRES_DB: ${DB_DATABASE}
+      POSTGRES_USER: ${DB_USERNAME}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      PGDATA: /var/lib/postgresql/data
+    ports:
+      - "${DB_PORT}:5432"
+    restart: unless-stopped
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U ${DB_USERNAME} -d ${DB_DATABASE}" ]
+      start_period: 10s
+      start_interval: 1s
+      interval: 2s
+      timeout: 5s
+      retries: 5
