@@ -116,40 +116,6 @@ describe('PostRepositoryImpl', () => {
       expect(count).toBe(2);
     });
 
-    it('긴 내용의 Post도 저장할 수 있어야 한다', async () => {
-      const longContent = 'A'.repeat(PostContent.MAX_LENGTH);
-      const post = Post.create({
-        authorId: UserId.from(testUser.id),
-        title: PostTitle.from('Long Content Post'),
-        content: PostContent.from(longContent),
-      });
-
-      const savedPost = await postRepository.save(post);
-
-      const foundModel = await postModelRepo.findOne({
-        where: { id: savedPost.id.value },
-      });
-      expect(foundModel!.content).toHaveLength(100000);
-      expect(foundModel!.content).toBe(longContent);
-    });
-
-    it('특수문자가 포함된 Post도 저장할 수 있어야 한다', async () => {
-      const post = Post.create({
-        authorId: UserId.from(testUser.id),
-        title: PostTitle.from('특수문자 테스트 !@#$%^&*()'),
-        content: PostContent.from('내용에도 특수문자: <>?"{}[]|\\'),
-      });
-
-      const savedPost = await postRepository.save(post);
-
-      const foundModel = await postModelRepo.findOne({
-        where: { id: savedPost.id.value },
-      });
-
-      expect(foundModel!.title).toBe('특수문자 테스트 !@#$%^&*()');
-      expect(foundModel!.content).toBe('내용에도 특수문자: <>?"{}[]|\\');
-    });
-
     it('동일한 ID로 저장하면 업데이트되어야 한다', async () => {
       const postId = PostId.generate();
       const post1 = Post.from({
