@@ -1,17 +1,19 @@
 import { AggregateRoot } from '@libs/ddd';
 import { UserId } from '@modules/iam/user/domain/value-objects/user-id';
 import { UserName } from '@modules/iam/user/domain/value-objects/user-name';
+import { UserNickName } from '@modules/iam/user/domain/value-objects/user-nickname';
+import { UserPassword } from '@modules/iam/user/domain/value-objects/user-password';
 
 interface CreateUserParams {
   username: UserName;
-  password: string;
-  nickname: string;
+  password: UserPassword;
+  nickname: UserNickName;
 }
 
 interface UserProps {
   username: UserName;
-  password: string;
-  nickname: string;
+  password: UserPassword;
+  nickname: UserNickName;
 }
 
 export class User extends AggregateRoot<UserProps> {
