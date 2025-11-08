@@ -76,7 +76,7 @@ export abstract class DomainEvent {
 
   constructor(props: DomainEventProps<unknown>) {
     if (Guard.isEmpty(props)) {
-      throw new Error('DomainEvent props should not be empty');
+      throw new Error('도메인 이벤트 속성은 비어있을 수 없습니다');
     }
     this.id = uuidv7();
     this.aggregateId = props.aggregateId;

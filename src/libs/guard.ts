@@ -35,7 +35,7 @@ export class Guard {
     max: number,
   ): boolean {
     if (Guard.isEmpty(value)) {
-      throw new Error('Cannot check length of a value. Provided value is empty');
+      throw new Error('값의 길이를 확인할 수 없습니다. 값이 비어있습니다');
     }
     const valueLength = typeof value === 'number' ? Number(value).toString().length : value.length;
     return valueLength >= min && valueLength <= max;

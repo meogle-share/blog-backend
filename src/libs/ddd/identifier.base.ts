@@ -48,11 +48,11 @@ export abstract class Identifier {
 
   private validate(value: string): void {
     if (!value) {
-      throw new Error('Identifier value cannot be empty');
+      throw new Error('식별자 값은 비어있을 수 없습니다');
     }
 
     if (!Identifier.UUID_V7_REGEX.test(value)) {
-      throw new Error(`Invalid UUID v7 format: ${value}`);
+      throw new Error(`올바르지 않은 UUID v7 형식입니다: ${value}`);
     }
   }
 

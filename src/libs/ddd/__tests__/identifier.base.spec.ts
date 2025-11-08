@@ -25,27 +25,27 @@ describe('Identifier', () => {
     });
 
     it('빈 문자열로 생성 시 에러를 던져야 한다', () => {
-      expect(() => TestIdentifier.from('')).toThrow('Identifier value cannot be empty');
+      expect(() => TestIdentifier.from('')).toThrow('식별자 값은 비어있을 수 없습니다');
     });
 
     it('잘못된 UUID 형식으로 생성 시 에러를 던져야 한다', () => {
-      expect(() => TestIdentifier.from('invalid-uuid')).toThrow('Invalid UUID v7 format');
+      expect(() => TestIdentifier.from('invalid-uuid')).toThrow('올바르지 않은 UUID v7 형식입니다');
     });
 
     it('UUID v4 형식으로 생성 시 에러를 던져야 한다', () => {
       const uuidV4 = '550e8400-e29b-41d4-a716-446655440000'; // version 4
 
-      expect(() => TestIdentifier.from(uuidV4)).toThrow('Invalid UUID v7 format');
+      expect(() => TestIdentifier.from(uuidV4)).toThrow('올바르지 않은 UUID v7 형식입니다');
     });
 
     it('일반 문자열로 생성 시 에러를 던져야 한다', () => {
-      expect(() => TestIdentifier.from('test-id-123')).toThrow('Invalid UUID v7 format');
+      expect(() => TestIdentifier.from('test-id-123')).toThrow('올바르지 않은 UUID v7 형식입니다');
     });
 
     it('하이픈이 없는 UUID로 생성 시 에러를 던져야 한다', () => {
       const noHyphenUuid = '01930c8e7d8a78908b5e3d9c8f6a5b4c';
 
-      expect(() => TestIdentifier.from(noHyphenUuid)).toThrow('Invalid UUID v7 format');
+      expect(() => TestIdentifier.from(noHyphenUuid)).toThrow('올바르지 않은 UUID v7 형식입니다');
     });
   });
 

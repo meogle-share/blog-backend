@@ -90,7 +90,7 @@ describe('Entity', () => {
           id: testId,
           props: {} as TestProps,
         });
-      }).toThrow('Entity props should not be empty');
+      }).toThrow('엔티티 속성은 비어있을 수 없습니다');
     });
 
     it('props가 객체가 아닌 경우 에러를 발생시켜야 한다', () => {
@@ -100,7 +100,7 @@ describe('Entity', () => {
           // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
           props: 'not an object' as any,
         });
-      }).toThrow('Entity props should be an object');
+      }).toThrow('엔티티 속성은 객체여야 합니다');
     });
 
     it('props가 50개를 초과하면 에러를 발생시켜야 한다', () => {
@@ -116,7 +116,7 @@ describe('Entity', () => {
           // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
           props: tooManyProps,
         });
-      }).toThrow('Entity props should not have more than 50 properties');
+      }).toThrow('엔티티 속성은 50개를 초과할 수 없습니다');
     });
 
     it('정상적인 props로 Entity를 생성할 수 있어야 한다', () => {

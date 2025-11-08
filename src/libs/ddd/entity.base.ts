@@ -103,13 +103,13 @@ export abstract class Entity<EntityProps> {
     const MAX_PROPS = 50;
 
     if (Guard.isEmpty(props)) {
-      throw new Error('Entity props should not be empty');
+      throw new Error('엔티티 속성은 비어있을 수 없습니다');
     }
     if (typeof props !== 'object') {
-      throw new Error('Entity props should be an object');
+      throw new Error('엔티티 속성은 객체여야 합니다');
     }
     if (Object.keys(props as any).length > MAX_PROPS) {
-      throw new Error(`Entity props should not have more than ${MAX_PROPS} properties`);
+      throw new Error(`엔티티 속성은 ${MAX_PROPS}개를 초과할 수 없습니다`);
     }
   }
 }
