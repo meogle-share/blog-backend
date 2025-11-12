@@ -11,7 +11,6 @@ import { UserId } from '../domain/value-objects/user-id';
 import { UserName } from '../domain/value-objects/user-name';
 import { UserPassword } from '../domain/value-objects/user-password';
 import { UserNickName } from '../domain/value-objects/user-nickname';
-import { validate } from '@configs/env.validator';
 import { getDatabaseConfig } from '@configs/database.config';
 import { truncate } from '@test/support/database.helper';
 
@@ -23,9 +22,11 @@ describe('UserRepositoryImpl', () => {
   beforeAll(async () => {
     module = await Test.createTestingModule({
       imports: [
-        ConfigModule.forRoot({ validate }),
+        ConfigModule.forRoot({
+          isGlobal: true,
+          ignoreEnvFile: true,
+        }),
         TypeOrmModule.forRootAsync({
-          imports: [ConfigModule],
           inject: [ConfigService],
           useFactory: (configService: ConfigService) => getDatabaseConfig(configService),
         }),

@@ -5,8 +5,7 @@ import { exec } from 'child_process';
 import { promisify } from 'util';
 import * as path from 'path';
 
-config({ path: '.env.test' });
-
+config({ path: path.resolve(__dirname, '../../.env.test'), override: true });
 module.exports = async (): Promise<void> => {
   console.log('🚀 Setting up test database...');
   await executeTestDBContainer();
@@ -33,10 +32,12 @@ const executeTestDBContainer = async () => {
   try {
     await execPromise(`docker compose -f ${composeFilePath} down -v`, {
       cwd: projectRoot,
+      env: process.env,
     }).catch(() => {});
 
-    await execPromise(`docker compose -f ${composeFilePath} --env-file .env.test up -d`, {
+    await execPromise(`docker compose -f ${composeFilePath} up -d`, {
       cwd: projectRoot,
+      env: process.env,
     });
 
     await waitForHealthcheck(containerName);

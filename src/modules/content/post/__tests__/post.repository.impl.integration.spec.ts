@@ -11,7 +11,6 @@ import { PostId } from '../domain/value-objects/post-id';
 import { PostTitle } from '../domain/value-objects/post-title';
 import { PostContent } from '../domain/value-objects/post-content';
 import { UserId } from '../../../iam/user/domain/value-objects/user-id';
-import { validate } from '@configs/env.validator';
 import { getDatabaseConfig } from '@configs/database.config';
 import { UserModel } from '@modules/iam/user/infrastructure/user.model';
 import { truncate } from '@test/support/database.helper';
@@ -28,11 +27,10 @@ describe('PostRepositoryImpl', () => {
     module = await Test.createTestingModule({
       imports: [
         ConfigModule.forRoot({
-          validate,
           isGlobal: true,
+          ignoreEnvFile: true,
         }),
         TypeOrmModule.forRootAsync({
-          imports: [ConfigModule],
           inject: [ConfigService],
           useFactory: (configService: ConfigService) => getDatabaseConfig(configService),
         }),
