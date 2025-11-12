@@ -5,7 +5,7 @@ export class UserModel {
   @PrimaryColumn('uuid')
   id: string;
 
-  @Column()
+  @Column({ unique: true })
   username: string;
 
   @Column()
