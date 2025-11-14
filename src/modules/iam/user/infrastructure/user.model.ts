@@ -1,4 +1,5 @@
-import { Column, Entity, PrimaryColumn } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn, type Relation } from 'typeorm';
+import { AccountModel } from '@modules/iam/auth/infrastructure/account.model';
 
 @Entity('users')
 export class UserModel {
@@ -6,13 +7,14 @@ export class UserModel {
   id: string;
 
   @Column({ unique: true })
-  username: string;
-
-  @Column()
-  password: string;
-
-  @Column()
   nickname: string;
+
+  @Column('uuid')
+  accountId: string;
+
+  @ManyToOne(() => AccountModel)
+  @JoinColumn({ name: 'accountId' })
+  account?: Relation<AccountModel>;
 
   @Column()
   createdAt: Date;

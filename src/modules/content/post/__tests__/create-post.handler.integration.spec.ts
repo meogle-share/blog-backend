@@ -18,11 +18,14 @@ import { getDatabaseConfig } from '@configs/database.config';
 import { UserModel } from '@modules/iam/user/infrastructure/user.model';
 import { truncate } from '@test/support/database.helper';
 import { UserModelFactory } from '@test/factories/user.model.factory';
+import { AccountModel } from '@modules/iam/auth/infrastructure/account.model';
+import { AccountModelFactory } from '@test/factories/account.model.factory';
 
 describe('CreatePostHandler', () => {
   let handler: CreatePostHandler;
   let postModelRepo: Repository<PostModel>;
   let userModelRepo: Repository<UserModel>;
+  let accountModelRepo: Repository<AccountModel>;
   let module: TestingModule;
   let testUser: UserModel;
 
@@ -37,7 +40,7 @@ describe('CreatePostHandler', () => {
           inject: [ConfigService],
           useFactory: (configService: ConfigService) => getDatabaseConfig(configService),
         }),
-        TypeOrmModule.forFeature([PostModel, UserModel]),
+        TypeOrmModule.forFeature([AccountModel, PostModel, UserModel]),
         CqrsModule,
       ],
       providers: [
@@ -53,16 +56,19 @@ describe('CreatePostHandler', () => {
     handler = module.get<CreatePostHandler>(CreatePostHandler);
     postModelRepo = module.get<Repository<PostModel>>(getRepositoryToken(PostModel));
     userModelRepo = module.get<Repository<UserModel>>(getRepositoryToken(UserModel));
+    accountModelRepo = module.get<Repository<AccountModel>>(getRepositoryToken(AccountModel));
   });
 
   beforeEach(async () => {
-    await truncate([postModelRepo, userModelRepo]);
-    testUser = UserModelFactory.create();
+    await truncate([postModelRepo, userModelRepo, accountModelRepo]);
+    const testAccount = AccountModelFactory.create();
+    await accountModelRepo.save(testAccount);
+    testUser = UserModelFactory.create({ accountId: testAccount.id });
     await userModelRepo.save(testUser);
   });
 
   afterAll(async () => {
-    await truncate([postModelRepo, userModelRepo]);
+    await truncate([postModelRepo, userModelRepo, accountModelRepo]);
     await module.close();
   });
 

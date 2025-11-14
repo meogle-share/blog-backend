@@ -3,9 +3,8 @@ import { User } from '@modules/iam/user/domain/user.aggregate';
 import { UserModel } from '@modules/iam/user/infrastructure/user.model';
 import { Injectable } from '@nestjs/common';
 import { UserId } from '@modules/iam/user/domain/value-objects/user-id';
-import { UserName } from '@modules/iam/user/domain/value-objects/user-name';
-import { UserPassword } from '@modules/iam/user/domain/value-objects/user-password';
 import { UserNickName } from '@modules/iam/user/domain/value-objects/user-nickname';
+import { AccountId } from '@modules/iam/auth/domain/value-objects/account-id';
 
 @Injectable()
 export class UserMapper implements Mapper<User, UserModel> {
@@ -13,8 +12,7 @@ export class UserMapper implements Mapper<User, UserModel> {
     return User.from({
       id: UserId.from(model.id),
       props: {
-        username: UserName.from(model.username),
-        password: UserPassword.from(model.password),
+        accountId: AccountId.from(model.accountId),
         nickname: UserNickName.from(model.nickname),
       },
     });
@@ -24,8 +22,7 @@ export class UserMapper implements Mapper<User, UserModel> {
     const props = user.getProps();
     return UserModel.from({
       id: props.id.value,
-      username: props.username.value,
-      password: props.password.value,
+      accountId: props.accountId.value,
       nickname: props.nickname.value,
       createdAt: props.createdAt,
       updatedAt: props.updatedAt,

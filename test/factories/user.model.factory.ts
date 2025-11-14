@@ -8,11 +8,11 @@ export class UserModelFactory {
   static create(override?: Partial<UserModel>): UserModel {
     this.sequence++;
 
+    const accountId = uuidv7();
     const user = new UserModel();
     Object.assign(user, {
       id: uuidv7(),
-      username: `tester${this.sequence}`,
-      password: 'hashed_password_123',
+      accountId: accountId,
       nickname: `테스트유저${this.sequence}`,
       createdAt: this.BASE_DATE,
       updatedAt: this.BASE_DATE,

@@ -97,7 +97,7 @@ describe('Entity', () => {
       expect(() => {
         new TestEntity({
           id: testId,
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+
           props: 'not an object' as any,
         });
       }).toThrow('엔티티 속성은 객체여야 합니다');
@@ -106,14 +106,13 @@ describe('Entity', () => {
     it('props가 50개를 초과하면 에러를 발생시켜야 한다', () => {
       const tooManyProps: any = {};
       for (let i = 0; i < 51; i++) {
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
         tooManyProps[`prop${i}`] = i;
       }
 
       expect(() => {
         new TestEntity({
           id: testId,
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+
           props: tooManyProps,
         });
       }).toThrow('엔티티 속성은 50개를 초과할 수 없습니다');
