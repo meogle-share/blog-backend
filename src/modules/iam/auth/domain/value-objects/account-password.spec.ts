@@ -1,12 +1,12 @@
-import { UserPassword } from './user-password';
+import { AccountPassword } from './account-password';
 
-describe('UserPassword', () => {
+describe('AccountPassword', () => {
   describe('from', () => {
     it('유효한 비밀번호로 UserPassword를 생성해야 한다', () => {
       const password = 'password123!';
-      const userPassword = UserPassword.from(password);
+      const userPassword = AccountPassword.from(password);
 
-      expect(userPassword).toBeInstanceOf(UserPassword);
+      expect(userPassword).toBeInstanceOf(AccountPassword);
       expect(userPassword.value).toBe(password);
     });
 
@@ -23,39 +23,39 @@ describe('UserPassword', () => {
       ];
 
       validPasswords.forEach((password) => {
-        const userPassword = UserPassword.from(password);
+        const userPassword = AccountPassword.from(password);
         expect(userPassword.value).toBe(password);
       });
     });
 
     it('빈 문자열이면 에러를 던져야 한다', () => {
-      expect(() => UserPassword.from('')).toThrow('비밀번호는 필수입니다');
+      expect(() => AccountPassword.from('')).toThrow('비밀번호는 필수입니다');
     });
 
     it('공백만 있으면 에러를 던져야 한다', () => {
-      expect(() => UserPassword.from('   ')).toThrow('비밀번호는 공백만으로 구성될 수 없습니다');
+      expect(() => AccountPassword.from('   ')).toThrow('비밀번호는 공백만으로 구성될 수 없습니다');
     });
 
     it('최소 길이보다 짧으면 에러를 던져야 한다', () => {
       const shortPassword = 'short12'; // 7자
 
-      expect(() => UserPassword.from(shortPassword)).toThrow(
-        `비밀번호는 ${UserPassword.MIN_LENGTH}자 이상 ${UserPassword.MAX_LENGTH}자 이하여야 합니다`,
+      expect(() => AccountPassword.from(shortPassword)).toThrow(
+        `비밀번호는 ${AccountPassword.MIN_LENGTH}자 이상 ${AccountPassword.MAX_LENGTH}자 이하여야 합니다`,
       );
     });
 
     it('최대 길이보다 길면 에러를 던져야 한다', () => {
       const longPassword = 'a'.repeat(65); // 65자
 
-      expect(() => UserPassword.from(longPassword)).toThrow(
-        `비밀번호는 ${UserPassword.MIN_LENGTH}자 이상 ${UserPassword.MAX_LENGTH}자 이하여야 합니다`,
+      expect(() => AccountPassword.from(longPassword)).toThrow(
+        `비밀번호는 ${AccountPassword.MIN_LENGTH}자 이상 ${AccountPassword.MAX_LENGTH}자 이하여야 합니다`,
       );
     });
 
     it('앞뒤 공백을 포함한 비밀번호를 그대로 저장해야 한다', () => {
       const passwordWithSpaces = '  password123  ';
 
-      const userPassword = UserPassword.from(passwordWithSpaces);
+      const userPassword = AccountPassword.from(passwordWithSpaces);
 
       expect(userPassword.value).toBe('  password123  ');
     });
@@ -63,7 +63,7 @@ describe('UserPassword', () => {
     it('중간에 공백이 포함된 비밀번호를 허용해야 한다', () => {
       const passwordWithMiddleSpaces = 'my pass word';
 
-      const userPassword = UserPassword.from(passwordWithMiddleSpaces);
+      const userPassword = AccountPassword.from(passwordWithMiddleSpaces);
 
       expect(userPassword.value).toBe('my pass word');
     });
@@ -77,7 +77,7 @@ describe('UserPassword', () => {
       ];
 
       validPasswords.forEach((password) => {
-        const userPassword = UserPassword.from(password);
+        const userPassword = AccountPassword.from(password);
         expect(userPassword.value).toBe(password);
       });
     });

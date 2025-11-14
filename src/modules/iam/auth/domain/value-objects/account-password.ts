@@ -1,7 +1,7 @@
 import { DomainPrimitive, ValueObject } from '@libs/ddd';
 import { Guard } from '@libs/guard';
 
-export class UserPassword extends ValueObject<string> {
+export class AccountPassword extends ValueObject<string> {
   /**
    * NIST SP 800-63B 권고사항
    */
@@ -13,8 +13,8 @@ export class UserPassword extends ValueObject<string> {
     super({ value: content });
   }
 
-  static from(value: string): UserPassword {
-    return new UserPassword(value);
+  static from(value: string): AccountPassword {
+    return new AccountPassword(value);
   }
 
   protected validate(props: DomainPrimitive<string>) {
@@ -22,13 +22,15 @@ export class UserPassword extends ValueObject<string> {
       throw new Error('비밀번호는 필수입니다');
     }
 
-    if (UserPassword.ONLY_WHITESPACE.test(props.value)) {
+    if (AccountPassword.ONLY_WHITESPACE.test(props.value)) {
       throw new Error('비밀번호는 공백만으로 구성될 수 없습니다');
     }
 
-    if (!Guard.lengthIsBetween(props.value, UserPassword.MIN_LENGTH, UserPassword.MAX_LENGTH)) {
+    if (
+      !Guard.lengthIsBetween(props.value, AccountPassword.MIN_LENGTH, AccountPassword.MAX_LENGTH)
+    ) {
       throw new Error(
-        `비밀번호는 ${UserPassword.MIN_LENGTH}자 이상 ${UserPassword.MAX_LENGTH}자 이하여야 합니다`,
+        `비밀번호는 ${AccountPassword.MIN_LENGTH}자 이상 ${AccountPassword.MAX_LENGTH}자 이하여야 합니다`,
       );
     }
   }
