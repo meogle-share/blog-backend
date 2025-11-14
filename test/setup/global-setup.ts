@@ -1,3 +1,4 @@
+import 'tsconfig-paths/register';
 import { DataSource } from 'typeorm';
 import { createDataSourceOptions } from '../../src/configs/database.config';
 import { config } from 'dotenv';
