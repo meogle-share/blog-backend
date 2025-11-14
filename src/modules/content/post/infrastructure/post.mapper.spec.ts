@@ -47,8 +47,7 @@ describe('PostMapper', () => {
         updatedAt: new Date('2024-01-02'),
         author: {
           id: '01912345-6789-7abc-9111-123456789def',
-          username: 'test@example.com',
-          password: 'hashed',
+          accountId: '01912345-6789-7abc-a111-123456789ghi',
           nickname: 'test-nickname',
           createdAt: new Date(),
           updatedAt: new Date(),
