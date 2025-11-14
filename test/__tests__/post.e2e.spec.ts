@@ -4,8 +4,10 @@ import request from 'supertest';
 import { AppModule } from '../../src/app.module';
 import { DataSource, Repository } from 'typeorm';
 import { UserModel } from '@modules/iam/user/infrastructure/user.model';
+import { AccountModel } from '@modules/iam/auth/infrastructure/account.model';
 import { PostModel } from '@modules/content/post/infrastructure/post.model';
 import { UserModelFactory } from '../factories/user.model.factory';
+import { AccountModelFactory } from '../factories/account.model.factory';
 import { truncate } from '../support/database.helper';
 import { Application } from 'express';
 import { setupApp } from '../../src/app.setup';
@@ -14,8 +16,10 @@ import { CreatePostRequestDto } from '@modules/content/post/presentation/dto/cre
 describe('Post', () => {
   let app: INestApplication<Application>;
   let dataSource: DataSource;
+  let accountRepository: Repository<AccountModel>;
   let userRepository: Repository<UserModel>;
   let postRepository: Repository<PostModel>;
+  let testAccount: AccountModel;
   let testUser: UserModel;
 
   beforeAll(async () => {
@@ -28,14 +32,18 @@ describe('Post', () => {
     await app.init();
 
     dataSource = moduleFixture.get<DataSource>(DataSource);
+    accountRepository = dataSource.getRepository(AccountModel);
     userRepository = dataSource.getRepository(UserModel);
     postRepository = dataSource.getRepository(PostModel);
   });
 
   beforeEach(async () => {
-    await truncate([postRepository, userRepository]);
+    await truncate([postRepository, userRepository, accountRepository]);
+    AccountModelFactory.reset();
     UserModelFactory.reset();
-    testUser = UserModelFactory.create();
+    testAccount = AccountModelFactory.create();
+    await accountRepository.save(testAccount);
+    testUser = UserModelFactory.create({ accountId: testAccount.id });
     await userRepository.save(testUser);
   });
 
