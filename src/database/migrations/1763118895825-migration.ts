@@ -1,18 +1,28 @@
 import { MigrationInterface, QueryRunner } from "typeorm";
 
-export class Migration1762946732412 implements MigrationInterface {
-    name = 'Migration1762946732412'
+export class Migration1763118895825 implements MigrationInterface {
+    name = 'Migration1763118895825'
 
     public async up(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.query(`
-            CREATE TABLE "users" (
+            CREATE TABLE "accounts" (
                 "id" uuid NOT NULL,
                 "username" character varying NOT NULL,
                 "password" character varying NOT NULL,
-                "nickname" character varying NOT NULL,
                 "createdAt" TIMESTAMP NOT NULL,
                 "updatedAt" TIMESTAMP NOT NULL,
-                CONSTRAINT "UQ_fe0bb3f6520ee0469504521e710" UNIQUE ("username"),
+                CONSTRAINT "UQ_477e3187cedfb5a3ac121e899c9" UNIQUE ("username"),
+                CONSTRAINT "PK_5a7a02c20412299d198e097a8fe" PRIMARY KEY ("id")
+            )
+        `);
+        await queryRunner.query(`
+            CREATE TABLE "users" (
+                "id" uuid NOT NULL,
+                "nickname" character varying NOT NULL,
+                "accountId" uuid NOT NULL,
+                "createdAt" TIMESTAMP NOT NULL,
+                "updatedAt" TIMESTAMP NOT NULL,
+                CONSTRAINT "UQ_ad02a1be8707004cb805a4b5023" UNIQUE ("nickname"),
                 CONSTRAINT "PK_a3ffb1c0c8416b9fc6f907b7433" PRIMARY KEY ("id")
             )
         `);
@@ -28,6 +38,10 @@ export class Migration1762946732412 implements MigrationInterface {
             )
         `);
         await queryRunner.query(`
+            ALTER TABLE "users"
+            ADD CONSTRAINT "FK_42bba679e348de51a699fb0a803" FOREIGN KEY ("accountId") REFERENCES "accounts"("id") ON DELETE NO ACTION ON UPDATE NO ACTION
+        `);
+        await queryRunner.query(`
             ALTER TABLE "posts"
             ADD CONSTRAINT "FK_c5a322ad12a7bf95460c958e80e" FOREIGN KEY ("authorId") REFERENCES "users"("id") ON DELETE NO ACTION ON UPDATE NO ACTION
         `);
@@ -38,10 +52,16 @@ export class Migration1762946732412 implements MigrationInterface {
             ALTER TABLE "posts" DROP CONSTRAINT "FK_c5a322ad12a7bf95460c958e80e"
         `);
         await queryRunner.query(`
+            ALTER TABLE "users" DROP CONSTRAINT "FK_42bba679e348de51a699fb0a803"
+        `);
+        await queryRunner.query(`
             DROP TABLE "posts"
         `);
         await queryRunner.query(`
             DROP TABLE "users"
+        `);
+        await queryRunner.query(`
+            DROP TABLE "accounts"
         `);
     }
 

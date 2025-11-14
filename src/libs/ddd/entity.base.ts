@@ -37,7 +37,7 @@ export interface CreateEntityParams<T> {
  * // 1. 도메인 속성 정의 (비즈니스 개념)
  * interface UserProps {
  *   email: Email;
- *   name: UserName;
+ *   name: AccountUsername;
  * }
  *
  * // 2. Entity 생성
