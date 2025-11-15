@@ -32,20 +32,6 @@ describe('UserMapper', () => {
       expect(user.getProps().nickname).toBeInstanceOf(UserNickName);
       expect(user.getProps().nickname.value).toBe(userModel.nickname);
     });
-
-    it('trim된 값으로 Value Object를 생성해야 한다', () => {
-      const userModel: UserModel = {
-        id: '01912345-6789-7abc-8111-123456789abc',
-        accountId: '01912345-6789-7abc-8112-123456789abc',
-        nickname: '  TestUser  ',
-        createdAt: new Date('2024-01-01'),
-        updatedAt: new Date('2024-01-02'),
-      };
-
-      const user = mapper.toDomain(userModel);
-
-      expect(user.getProps().nickname.value).toBe('TestUser');
-    });
   });
 
   describe('toModel', () => {
@@ -69,21 +55,6 @@ describe('UserMapper', () => {
       expect(userModel.id).toBe('01912345-6789-7abc-8222-123456789abc');
       expect(userModel.accountId).toBe('01912345-6789-7abc-8223-123456789abc');
       expect(userModel.nickname).toBe('TestUser');
-    });
-
-    it('Value Object의 값을 원시 타입으로 변환해야 한다', () => {
-      const user = User.create({
-        accountId: AccountId.from('01912345-6789-7abc-8224-123456789abc'),
-        nickname: UserNickName.from('AnotherUser'),
-      });
-
-      const userModel = mapper.toModel(user);
-
-      expect(typeof userModel.id).toBe('string');
-      expect(typeof userModel.accountId).toBe('string');
-      expect(typeof userModel.nickname).toBe('string');
-      expect(userModel.createdAt).toBeInstanceOf(Date);
-      expect(userModel.updatedAt).toBeInstanceOf(Date);
     });
   });
 

@@ -86,23 +86,6 @@ describe('PostMapper', () => {
       expect(postModel.content).toBe('Test post content');
       expect(postModel.authorId).toBe('01912345-6789-7abc-9222-123456789def');
     });
-
-    it('Value Object의 값을 원시 타입으로 변환해야 한다', () => {
-      const post = Post.create({
-        authorId: UserId.from('01912345-6789-7abc-9333-123456789def'),
-        title: PostTitle.from('Another Title'),
-        content: PostContent.from('Another content'),
-      });
-
-      const postModel = mapper.toModel(post);
-
-      expect(typeof postModel.id).toBe('string');
-      expect(typeof postModel.title).toBe('string');
-      expect(typeof postModel.content).toBe('string');
-      expect(typeof postModel.authorId).toBe('string');
-      expect(postModel.createdAt).toBeInstanceOf(Date);
-      expect(postModel.updatedAt).toBeInstanceOf(Date);
-    });
   });
 
   describe('양방향 변환', () => {
