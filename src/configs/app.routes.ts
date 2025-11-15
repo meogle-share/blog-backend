@@ -5,6 +5,7 @@ export const routesV1 = {
   version: v1,
   user: {
     root: postsRoot,
-    delete: `/${postsRoot}/:id`,
+    byId: `${postsRoot}/:id`,
+    delete: `${postsRoot}/:id`,
   },
 };
