@@ -1,7 +1,11 @@
-import { INestApplication, ValidationPipe } from '@nestjs/common';
+import { INestApplication, ValidationPipe, VersioningType } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 export function setupApp(app: INestApplication) {
+  app.enableVersioning({
+    type: VersioningType.URI,
+  });
+
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,

@@ -2,13 +2,12 @@ import { Body, Controller, Get, HttpStatus, Param, ParseUUIDPipe, Post } from '@
 import { CreatePostRequestDto } from './dto/create-post.request.dto';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { CreatePostCommand } from '../application/commands/create-post.command';
-import { routesV1 } from '@configs/app.routes';
 import { IdResponse } from '@libs/api/id.response.dto';
 import { ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { GetPostQuery } from '../application/queries/get-post.query';
 import { PostResponseDto } from './dto/post.response.dto';
 
-@Controller(routesV1.version)
+@Controller({ path: 'posts', version: '1' })
 export class PostHttpController {
   constructor(
     private readonly commandBus: CommandBus,
@@ -20,7 +19,7 @@ export class PostHttpController {
     status: HttpStatus.CREATED,
     type: IdResponse,
   })
-  @Post(routesV1.user.root)
+  @Post()
   async createPost(@Body() dto: CreatePostRequestDto): Promise<IdResponse> {
     const command = new CreatePostCommand(dto.authorId, dto.title, dto.content);
     const post = await this.commandBus.execute(command);
@@ -32,7 +31,7 @@ export class PostHttpController {
     status: HttpStatus.OK,
     type: PostResponseDto,
   })
-  @Get(routesV1.user.byId)
+  @Get(':id')
   async getPost(
     @Param('id', new ParseUUIDPipe({ version: '7' })) id: string,
   ): Promise<PostResponseDto> {
