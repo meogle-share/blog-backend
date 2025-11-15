@@ -8,6 +8,7 @@ import { PostRepositoryImpl } from './infrastructure/post.repository.impl';
 import { PostMapper } from './infrastructure/post.mapper';
 import { UserModel } from '../../iam/user/infrastructure/user.model';
 import { PostHttpController } from './presentation/post.http.controller';
+import { GetPostHandler } from './application/queries/get-post.handler';
 
 @Module({
   imports: [TypeOrmModule.forFeature([PostModel, UserModel]), CqrsModule],
@@ -18,6 +19,7 @@ import { PostHttpController } from './presentation/post.http.controller';
       useClass: PostRepositoryImpl,
     },
     CreatePostHandler,
+    GetPostHandler,
     PostMapper,
   ],
   exports: [POST_REPOSITORY],
