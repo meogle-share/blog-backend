@@ -1,4 +1,4 @@
-import { Body, Controller, Get, HttpStatus, Param, Post } from '@nestjs/common';
+import { Body, Controller, Get, HttpStatus, Param, ParseUUIDPipe, Post } from '@nestjs/common';
 import { CreatePostRequestDto } from './dto/create-post.request.dto';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { CreatePostCommand } from '../application/commands/create-post.command';
@@ -33,7 +33,9 @@ export class PostHttpController {
     type: PostResponseDto,
   })
   @Get(routesV1.user.byId)
-  async getPost(@Param('id') id: string): Promise<PostResponseDto> {
+  async getPost(
+    @Param('id', new ParseUUIDPipe({ version: '7' })) id: string,
+  ): Promise<PostResponseDto> {
     const query = new GetPostQuery(id);
     return await this.queryBus.execute(query);
   }
