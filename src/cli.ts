@@ -1,3 +1,4 @@
+import 'tsconfig-paths/register';
 import 'src/init';
 import { CommandFactory } from 'nest-commander';
 import { CommandsModule } from './commands/commands.module';
