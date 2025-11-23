@@ -66,7 +66,7 @@ docker run -p 5555:5432 --name meogle.pg \
   -e POSTGRES_DB=meogle \
   -e PGDATA=/var/lib/postgresql/data \
   --tmpfs /var/lib/postgresql/data \
-  -d postgres
+  -d postgres:18
 ```
 
 ! 볼륨 매핑 없이 메모리에 저장하므로 재실행 시 데이터 초기화 주의
