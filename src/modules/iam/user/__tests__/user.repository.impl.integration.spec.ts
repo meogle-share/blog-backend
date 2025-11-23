@@ -11,7 +11,7 @@ import { UserNickName } from '../domain/value-objects/user-nickname';
 import { getDataSourceOptionsForNest } from '@configs/database.config';
 import { truncate } from '@test/support/database.helper';
 import { AccountModel } from '@modules/iam/auth/infrastructure/account.model';
-import { AccountModelFactory } from '@test/factories/account.model.factory';
+import { UserModelFactory } from '@test/factories/user.model.factory';
 import { AccountId } from '@modules/iam/auth/domain/value-objects/account-id';
 
 describe('UserRepositoryImpl', () => {
@@ -52,8 +52,9 @@ describe('UserRepositoryImpl', () => {
 
   describe('save', () => {
     it('새로운 User를 DB에 저장해야 한다', async () => {
-      const account = AccountModelFactory.create();
-      await accountModelRepo.save(account);
+      const { accounts } = UserModelFactory.createWithAccount(1);
+      await accountModelRepo.save(accounts);
+      const account = accounts[0];
 
       const user = User.create({
         accountId: AccountId.from(account.id),
@@ -72,8 +73,9 @@ describe('UserRepositoryImpl', () => {
     });
 
     it('저장된 User는 createdAt과 updatedAt이 설정되어야 한다', async () => {
-      const account = AccountModelFactory.create();
-      await accountModelRepo.save(account);
+      const { accounts } = UserModelFactory.createWithAccount(1);
+      await accountModelRepo.save(accounts);
+      const account = accounts[0];
 
       const user = User.create({
         accountId: AccountId.from(account.id),
@@ -92,10 +94,9 @@ describe('UserRepositoryImpl', () => {
     });
 
     it('여러 개의 User를 저장할 수 있어야 한다', async () => {
-      const account1 = AccountModelFactory.create();
-      const account2 = AccountModelFactory.create();
-      await accountModelRepo.save(account1);
-      await accountModelRepo.save(account2);
+      const { accounts } = UserModelFactory.createWithAccount(2);
+      await accountModelRepo.save(accounts);
+      const [account1, account2] = accounts;
 
       const user1 = User.create({
         accountId: AccountId.from(account1.id),
@@ -115,8 +116,9 @@ describe('UserRepositoryImpl', () => {
     });
 
     it('동일한 ID로 저장하면 업데이트되어야 한다', async () => {
-      const account = AccountModelFactory.create();
-      await accountModelRepo.save(account);
+      const { accounts } = UserModelFactory.createWithAccount(1);
+      await accountModelRepo.save(accounts);
+      const account = accounts[0];
 
       const userId = UserId.generate();
       const user1 = User.from({
