@@ -27,7 +27,9 @@
     "migration:run": "NODE_ENV=migration npm run typeorm -- migration:run -d src/database/migration.main.ts -t all",
     "migration:run:fake": "NODE_ENV=migration npm run typeorm -- migration:run -d src/database/migration.main.ts -t all --fake",
     "migration:revert": "NODE_ENV=migration npm run typeorm -- migration:revert -d src/database/migration.main.ts -t all",
-    "migration:revert:fake": "NODE_ENV=migration npm run typeorm -- migration:revert -d src/database/migration.main.ts -t all --fake"
+    "migration:revert:fake": "NODE_ENV=migration npm run typeorm -- migration:revert -d src/database/migration.main.ts -t all --fake",
+    "cli": "ts-node src/cli.ts",
+    "seed:load-test": "NODE_ENV=load-test npm run cli -- seed:load-test"
   },
   "dependencies": {
     "@nestjs/common": "^11.0.1",
@@ -63,6 +65,7 @@
     "eslint-plugin-prettier": "^5.2.2",
     "globals": "^16.0.0",
     "jest": "^30.0.0",
+    "nest-commander": "^3.20.1",
     "prettier": "^3.4.2",
     "source-map-support": "^0.5.21",
     "supertest": "^7.0.0",

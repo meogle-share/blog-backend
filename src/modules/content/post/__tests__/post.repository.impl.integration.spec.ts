@@ -50,9 +50,9 @@ describe('PostRepositoryImpl', () => {
 
   beforeEach(async () => {
     await truncate([postModelRepo, userModelRepo, accountModelRepo]);
-    const testAccount = AccountModelFactory.create();
+    const testAccount = AccountModelFactory.create(1)[0];
     await accountModelRepo.save(testAccount);
-    testUser = UserModelFactory.create({ accountId: testAccount.id });
+    testUser = UserModelFactory.create(1, { accountId: testAccount.id })[0];
     await userModelRepo.save(testUser);
   });
 

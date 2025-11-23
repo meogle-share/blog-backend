@@ -42,9 +42,9 @@ describe('PostHttpController', () => {
     await truncate([postRepository, userRepository, accountRepository]);
     AccountModelFactory.reset();
     UserModelFactory.reset();
-    testAccount = AccountModelFactory.create();
+    testAccount = AccountModelFactory.create(1)[0];
     await accountRepository.save(testAccount);
-    testUser = UserModelFactory.create({ accountId: testAccount.id });
+    testUser = UserModelFactory.create(1, { accountId: testAccount.id })[0];
     await userRepository.save(testUser);
   });
 
@@ -288,9 +288,9 @@ describe('PostHttpController', () => {
     });
 
     it('다른 사용자의 게시글도 조회할 수 있다', async () => {
-      const anotherAccount = AccountModelFactory.create();
+      const anotherAccount = AccountModelFactory.create(1)[0];
       await accountRepository.save(anotherAccount);
-      const anotherUser = UserModelFactory.create({ accountId: anotherAccount.id });
+      const anotherUser = UserModelFactory.create(1, { accountId: anotherAccount.id })[0];
       await userRepository.save(anotherUser);
 
       const anotherPost = PostModel.from({
