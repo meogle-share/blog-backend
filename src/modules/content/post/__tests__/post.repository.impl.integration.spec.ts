@@ -11,7 +11,7 @@ import { PostId } from '../domain/value-objects/post-id';
 import { PostTitle } from '../domain/value-objects/post-title';
 import { PostContent } from '../domain/value-objects/post-content';
 import { UserId } from '../../../iam/user/domain/value-objects/user-id';
-import { getDatabaseConfig } from '@configs/database.config';
+import { getDataSourceOptionsForNest } from '@configs/database.config';
 import { UserModel } from '@modules/iam/user/infrastructure/user.model';
 import { truncate } from '@test/support/database.helper';
 import { UserModelFactory } from '@test/factories/user.model.factory';
@@ -35,7 +35,7 @@ describe('PostRepositoryImpl', () => {
         }),
         TypeOrmModule.forRootAsync({
           inject: [ConfigService],
-          useFactory: (configService: ConfigService) => getDatabaseConfig(configService),
+          useFactory: (configService: ConfigService) => getDataSourceOptionsForNest(configService),
         }),
         TypeOrmModule.forFeature([AccountModel, PostModel, UserModel]),
       ],

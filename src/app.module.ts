@@ -4,19 +4,20 @@ import { validate } from '@configs/env.validator';
 import { ContentModule } from '@modules/content/content.module';
 import { IamModule } from '@modules/iam/iam.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { getDatabaseConfig } from '@configs/database.config';
+import { getDataSourceOptionsForNest } from '@configs/database.config';
+import { appEnv } from '@configs/env';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       validate,
       isGlobal: true,
-      envFilePath: '.env',
+      envFilePath: `.env.${appEnv.NODE_ENV}`,
     }),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
-      useFactory: getDatabaseConfig,
+      useFactory: getDataSourceOptionsForNest,
     }),
 
     // Modules

@@ -1,16 +1,13 @@
 import 'tsconfig-paths/register';
-import { DataSource } from 'typeorm';
-import { createDataSourceOptions } from '../../src/configs/database.config';
-import { config } from 'dotenv';
+import '../test.main';
 import { exec } from 'child_process';
 import { promisify } from 'util';
 import * as path from 'path';
+import { dataSource } from '@test/test.main';
 
-config({ path: path.resolve(__dirname, '../../.env.test'), override: true });
 module.exports = async (): Promise<void> => {
   console.log('🚀 Setting up test database...');
   await executeTestDBContainer();
-  const dataSource = createTestDataSource();
 
   try {
     await dataSource.initialize();
@@ -79,8 +76,4 @@ const waitForHealthcheck = async (containerName: string, maxAttempts = 10): Prom
   }
 
   throw new Error('Container health check timeout');
-};
-
-const createTestDataSource = (): DataSource => {
-  return new DataSource(createDataSourceOptions());
 };

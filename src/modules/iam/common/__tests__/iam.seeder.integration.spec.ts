@@ -6,7 +6,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { IamSeeder } from '../iam.seeder';
 import { AccountModel } from '@modules/iam/auth/infrastructure/account.model';
 import { UserModel } from '@modules/iam/user/infrastructure/user.model';
-import { getDatabaseConfig } from '@configs/database.config';
+import { getDataSourceOptionsForNest } from '@configs/database.config';
 import { truncate } from '@test/support/database.helper';
 
 describe('IamSeeder', () => {
@@ -24,7 +24,7 @@ describe('IamSeeder', () => {
         }),
         TypeOrmModule.forRootAsync({
           inject: [ConfigService],
-          useFactory: (configService: ConfigService) => getDatabaseConfig(configService),
+          useFactory: (configService: ConfigService) => getDataSourceOptionsForNest(configService),
         }),
         TypeOrmModule.forFeature([AccountModel, UserModel]),
       ],

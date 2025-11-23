@@ -8,7 +8,7 @@ import { UserMapper } from '../infrastructure/user.mapper';
 import { User } from '../domain/user.aggregate';
 import { UserId } from '../domain/value-objects/user-id';
 import { UserNickName } from '../domain/value-objects/user-nickname';
-import { getDatabaseConfig } from '@configs/database.config';
+import { getDataSourceOptionsForNest } from '@configs/database.config';
 import { truncate } from '@test/support/database.helper';
 import { AccountModel } from '@modules/iam/auth/infrastructure/account.model';
 import { AccountModelFactory } from '@test/factories/account.model.factory';
@@ -29,7 +29,7 @@ describe('UserRepositoryImpl', () => {
         }),
         TypeOrmModule.forRootAsync({
           inject: [ConfigService],
-          useFactory: (configService: ConfigService) => getDatabaseConfig(configService),
+          useFactory: (configService: ConfigService) => getDataSourceOptionsForNest(configService),
         }),
         TypeOrmModule.forFeature([AccountModel, UserModel]),
       ],
