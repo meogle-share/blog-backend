@@ -6,6 +6,8 @@ import { UserModel } from '@modules/iam/user/infrastructure/user.model';
 import { PostModel } from '@modules/content/post/infrastructure/post.model';
 import { UserModelFactory } from '@test/factories/user.model.factory';
 import { v7 as uuidv7 } from 'uuid';
+import { appEnv } from '@configs/env';
+import { NodeEnvironment } from '@configs/env.validator';
 
 export interface SeedOptions {
   users: number;
@@ -27,6 +29,13 @@ export class SeedLoadTestService {
   ) {}
 
   async seed(options: SeedOptions): Promise<void> {
+    if (appEnv.NODE_ENV !== NodeEnvironment.LOAD_TEST) {
+      this.logger.error(
+        `해당 명령어는 "${NodeEnvironment.LOAD_TEST}" (부하 테스트) 환경에서만 실행할 수 있습니다. (현재: "${appEnv.NODE_ENV}")`,
+      );
+      return;
+    }
+
     try {
       this.logger.log('부하테스트용 시드 데이터 생성 시작...');
 
