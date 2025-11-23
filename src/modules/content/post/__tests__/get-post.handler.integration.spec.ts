@@ -8,7 +8,7 @@ import { GetPostHandler } from '../application/queries/get-post.handler';
 import { GetPostQuery } from '../application/queries/get-post.query';
 import { PostModel } from '../infrastructure/post.model';
 import { PostResponseDto } from '../presentation/dto/post.response.dto';
-import { getDatabaseConfig } from '@configs/database.config';
+import { getDataSourceOptionsForNest } from '@configs/database.config';
 import { UserModel } from '@modules/iam/user/infrastructure/user.model';
 import { AccountModel } from '@modules/iam/auth/infrastructure/account.model';
 import { truncate } from '@test/support/database.helper';
@@ -33,7 +33,7 @@ describe('GetPostHandler', () => {
         }),
         TypeOrmModule.forRootAsync({
           inject: [ConfigService],
-          useFactory: (configService: ConfigService) => getDatabaseConfig(configService),
+          useFactory: (configService: ConfigService) => getDataSourceOptionsForNest(configService),
         }),
         TypeOrmModule.forFeature([AccountModel, PostModel, UserModel]),
       ],

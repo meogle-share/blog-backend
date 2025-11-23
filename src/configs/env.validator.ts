@@ -1,12 +1,14 @@
-import { IsEnum, IsNotEmpty, IsString, Max, Min, validateSync } from 'class-validator';
+import { IsEnum, IsNotEmpty, IsNumber, IsString, Max, Min, validateSync } from 'class-validator';
 import { plainToInstance } from 'class-transformer';
 export enum NodeEnvironment {
   PRODUCTION = 'prod',
   DEVELOPMENT = 'dev',
   TEST = 'test',
+  LOAD_TEST = 'load-test',
+  MIGRATION = 'migration',
 }
 
-class EnvironmentVariables {
+export class EnvironmentVariables {
   @IsNotEmpty()
   @IsEnum(NodeEnvironment)
   NODE_ENV: NodeEnvironment;
@@ -16,6 +18,7 @@ class EnvironmentVariables {
   DB_HOST: string;
 
   @IsNotEmpty()
+  @IsNumber()
   @Min(1)
   @Max(65535)
   DB_PORT: number;
