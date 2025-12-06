@@ -8,9 +8,29 @@ import { LocalStrategy } from '@modules/iam/auth/infrastructure/strategies/local
 import { AccountRepositoryImpl } from '@modules/iam/auth/infrastructure/account.repository.impl';
 import { AccountMapper } from '@modules/iam/auth/infrastructure/account.mapper';
 import { ACCOUNT_REPOSITORY } from '@modules/iam/auth/domain/account.repository.interface';
+import { TOKEN_SERVICE } from '@modules/iam/auth/domain/token.service.interface';
+import { JsonWebTokenService } from '@modules/iam/auth/infrastructure/json-web-token.service';
+import { JwtModule } from '@nestjs/jwt';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([AccountModel]), PassportModule],
+  imports: [
+    JwtModule.registerAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (config: ConfigService) => {
+        const issuer = `meogle-${config.get<string>('NODE_ENV')}`;
+
+        return {
+          secret: config.get<string>('JWT_SECRET'),
+          signOptions: { expiresIn: 300, issuer },
+          verifyOptions: { issuer },
+        };
+      },
+    }),
+    TypeOrmModule.forFeature([AccountModel]),
+    PassportModule,
+  ],
   controllers: [AuthHttpController],
   providers: [
     LoginUseCase,
@@ -19,6 +39,10 @@ import { ACCOUNT_REPOSITORY } from '@modules/iam/auth/domain/account.repository.
     {
       provide: ACCOUNT_REPOSITORY,
       useClass: AccountRepositoryImpl,
+    },
+    {
+      provide: TOKEN_SERVICE,
+      useClass: JsonWebTokenService,
     },
   ],
 })

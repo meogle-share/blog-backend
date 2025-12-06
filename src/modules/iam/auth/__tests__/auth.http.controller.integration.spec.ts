@@ -8,6 +8,8 @@ import { AccountModelFactory } from '@test/factories/account.model.factory';
 import { truncate } from '@test/support/database.helper';
 import { Application } from 'express';
 import { setupApp } from '../../../../app.setup';
+import { decode } from 'jsonwebtoken';
+import { JwtAccessTokenPayload } from '../infrastructure/json-web-token.interface';
 
 describe('AuthHttpController', () => {
   let app: INestApplication<Application>;
@@ -57,6 +59,57 @@ describe('AuthHttpController', () => {
       expect(response.body).toHaveProperty('account');
       expect(response.body.account).toHaveProperty('id', testAccount.id);
       expect(response.body.account).toHaveProperty('username', 'test@example.com');
+    });
+
+    it('발급된 토큰에 올바른 페이로드가 포함되어 있다', async () => {
+      const password = 'validPassword123';
+      const testAccount = AccountModelFactory.create(1, {
+        username: 'token-test@example.com',
+        password: password,
+      })[0];
+      await accountRepository.save(testAccount);
+
+      const response = await request(app.getHttpServer())
+        .post('/v1/auth/login')
+        .send({
+          username: 'token-test@example.com',
+          password: password,
+        })
+        .expect(200);
+
+      const accessToken = response.body.accessToken;
+      const decoded = decode(accessToken) as JwtAccessTokenPayload;
+
+      expect(decoded).not.toBeNull();
+      expect(decoded.sub).toBe(testAccount.id);
+      expect(decoded.username).toBe('token-test@example.com');
+      expect(decoded.iss).toBe('meogle-test');
+      expect(decoded.iat).toBeDefined();
+      expect(decoded.exp).toBeDefined();
+      expect(decoded.exp).toBeGreaterThan(decoded.iat);
+    });
+
+    it('발급된 accessToken의 유효시간이 5분(300초)이다', async () => {
+      const password = 'validPassword123';
+      const testAccount = AccountModelFactory.create(1, {
+        username: 'expiry-test@example.com',
+        password: password,
+      })[0];
+      await accountRepository.save(testAccount);
+
+      const response = await request(app.getHttpServer())
+        .post('/v1/auth/login')
+        .send({
+          username: 'expiry-test@example.com',
+          password: password,
+        })
+        .expect(200);
+
+      const accessToken = response.body.accessToken;
+      const decoded = decode(accessToken) as JwtAccessTokenPayload;
+
+      const expiresInSeconds = decoded.exp - decoded.iat;
+      expect(expiresInSeconds).toBe(300);
     });
 
     describe('인증 실패', () => {
