@@ -2,9 +2,10 @@ import { JoinColumn } from 'typeorm';
 import { Column, Entity, ManyToOne, PrimaryColumn } from 'typeorm';
 import { UserModel } from '../../../iam/user/infrastructure/user.model';
 import type { Relation } from 'typeorm';
+import { BaseModel } from '@libs/typeorm';
 
 @Entity('posts')
-export class PostModel {
+export class PostModel extends BaseModel {
   @PrimaryColumn('uuid')
   id: string;
 
@@ -20,14 +21,4 @@ export class PostModel {
   @ManyToOne(() => UserModel)
   @JoinColumn({ name: 'authorId' })
   author?: Relation<UserModel>;
-
-  @Column()
-  createdAt: Date;
-
-  @Column()
-  updatedAt: Date;
-
-  static from(data: { [K in keyof PostModel]: PostModel[K] }): PostModel {
-    return Object.assign(new PostModel(), data);
-  }
 }

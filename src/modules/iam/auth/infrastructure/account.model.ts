@@ -1,7 +1,8 @@
 import { Column, Entity, PrimaryColumn } from 'typeorm';
+import { BaseModel } from '@libs/typeorm';
 
 @Entity('accounts')
-export class AccountModel {
+export class AccountModel extends BaseModel {
   @PrimaryColumn('uuid')
   id: string;
 
@@ -10,10 +11,4 @@ export class AccountModel {
 
   @Column()
   password: string;
-
-  @Column()
-  createdAt: Date;
-
-  @Column()
-  updatedAt: Date;
 }
