@@ -28,4 +28,8 @@ export class Account extends AggregateRoot<AccountProps> {
       props: data.props,
     });
   }
+
+  verifyPassword(plainPassword: string): boolean {
+    return this.props.password.matches(plainPassword);
+  }
 }

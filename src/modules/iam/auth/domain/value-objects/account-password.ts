@@ -34,4 +34,8 @@ export class AccountPassword extends ValueObject<string> {
       );
     }
   }
+
+  matches(password: string): boolean {
+    return this.props.value === password;
+  }
 }
