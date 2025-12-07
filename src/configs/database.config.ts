@@ -18,7 +18,7 @@ export const getDataSourceOptionsForNest = (configService: ConfigService): TypeO
     synchronize: false,
     logging: false,
     autoLoadEntities: true,
-    migrations: [path.resolve(__dirname, '../database/migrations/**/*.{ts,js}')],
+    migrations: [path.resolve(__dirname, '../common/database/migrations/**/*.{ts,js}')],
   };
 };
 
@@ -34,7 +34,7 @@ export const getDataSourceOptions = (): DataSourceOptions => {
     password: appEnv.DB_PASSWORD,
     database: appEnv.DB_DATABASE,
     entities: [path.resolve(__dirname, '../modules/**/*.model.{ts,js}')],
-    migrations: [path.resolve(__dirname, '../database/migrations/**/*.{ts,js}')],
+    migrations: [path.resolve(__dirname, '../common/database/migrations/**/*.{ts,js}')],
     synchronize: false,
     logging: false,
   };
