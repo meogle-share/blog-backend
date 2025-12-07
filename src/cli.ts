@@ -1,7 +1,7 @@
 import 'tsconfig-paths/register';
 import 'src/init';
 import { CommandFactory } from 'nest-commander';
-import { CommandsModule } from './commands/commands.module';
+import { CommandsModule } from '@common/commands/commands.module';
 import { appEnv } from '@configs/env';
 
 console.debug(`[ENV] Starting Test in "${appEnv.NODE_ENV}" mode`);
