@@ -17,9 +17,9 @@ import { UserId } from '../../../iam/user/domain/value-objects/user-id';
 import { getDataSourceOptionsForNest } from '@configs/database.config';
 import { UserModel } from '@modules/iam/user/infrastructure/user.model';
 import { truncate } from '@test/support/database.helper';
-import { UserModelFactory } from '@test/factories/user.model.factory';
+import { UserModelFactory } from '@libs/typeorm/factories/user.model.factory';
 import { AccountModel } from '@modules/iam/auth/infrastructure/account.model';
-import { AccountModelFactory } from '@test/factories/account.model.factory';
+import { AccountModelFactory } from '@libs/typeorm/factories/account.model.factory';
 
 describe('CreatePostHandler', () => {
   let handler: CreatePostHandler;
