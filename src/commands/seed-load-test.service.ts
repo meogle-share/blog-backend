@@ -4,7 +4,7 @@ import { Repository } from 'typeorm';
 import { AccountModel } from '@modules/iam/auth/infrastructure/account.model';
 import { UserModel } from '@modules/iam/user/infrastructure/user.model';
 import { PostModel } from '@modules/content/post/infrastructure/post.model';
-import { UserModelFactory } from '@test/factories/user.model.factory';
+import { UserModelFactory } from '@libs/typeorm/factories/user.model.factory';
 import { v7 as uuidv7 } from 'uuid';
 import { appEnv } from '@configs/env';
 import { NodeEnvironment } from '@configs/env.validator';

@@ -1,7 +1,7 @@
 import { UserModel } from '@modules/iam/user/infrastructure/user.model';
 import { v7 as uuidv7 } from 'uuid';
 import { AccountModel } from '@modules/iam/auth/infrastructure/account.model';
-import { AccountModelFactory } from '@test/factories/account.model.factory';
+import { AccountModelFactory } from '@libs/typeorm/factories/account.model.factory';
 
 export class UserModelFactory {
   private static sequence = 0;

@@ -12,8 +12,8 @@ import { getDataSourceOptionsForNest } from '@configs/database.config';
 import { UserModel } from '@modules/iam/user/infrastructure/user.model';
 import { AccountModel } from '@modules/iam/auth/infrastructure/account.model';
 import { truncate } from '@test/support/database.helper';
-import { UserModelFactory } from '@test/factories/user.model.factory';
-import { AccountModelFactory } from '@test/factories/account.model.factory';
+import { UserModelFactory } from '@libs/typeorm/factories/user.model.factory';
+import { AccountModelFactory } from '@libs/typeorm/factories/account.model.factory';
 import { v7 as uuidv7 } from 'uuid';
 
 describe('GetPostHandler', () => {

@@ -8,7 +8,7 @@ import { AccountMapper } from '../infrastructure/account.mapper';
 import { Account } from '../domain/account.aggregate';
 import { getDataSourceOptionsForNest } from '@configs/database.config';
 import { truncate } from '@test/support/database.helper';
-import { AccountModelFactory } from '@test/factories/account.model.factory';
+import { AccountModelFactory } from '@libs/typeorm/factories/account.model.factory';
 
 describe('AccountRepositoryImpl', () => {
   let accountRepository: AccountRepositoryImpl;

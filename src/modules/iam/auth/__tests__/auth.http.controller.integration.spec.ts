@@ -4,12 +4,12 @@ import request from 'supertest';
 import { AppModule } from '@modules/../app.module';
 import { DataSource, Repository } from 'typeorm';
 import { AccountModel } from '../infrastructure/account.model';
-import { AccountModelFactory } from '@test/factories/account.model.factory';
 import { truncate } from '@test/support/database.helper';
 import { Application } from 'express';
 import { setupApp } from '../../../../app.setup';
 import { decode } from 'jsonwebtoken';
 import { JwtAccessTokenPayload } from '../infrastructure/json-web-token.interface';
+import { AccountModelFactory } from '@libs/typeorm/factories/account.model.factory';
 
 describe('AuthHttpController', () => {
   let app: INestApplication<Application>;

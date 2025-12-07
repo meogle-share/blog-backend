@@ -11,7 +11,7 @@ import { UserNickName } from '../domain/value-objects/user-nickname';
 import { getDataSourceOptionsForNest } from '@configs/database.config';
 import { truncate } from '@test/support/database.helper';
 import { AccountModel } from '@modules/iam/auth/infrastructure/account.model';
-import { UserModelFactory } from '@test/factories/user.model.factory';
+import { UserModelFactory } from '@libs/typeorm/factories/user.model.factory';
 import { AccountId } from '@modules/iam/auth/domain/value-objects/account-id';
 
 describe('UserRepositoryImpl', () => {
