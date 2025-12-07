@@ -1,4 +1,4 @@
-import { Account } from '../modules/iam/auth/domain/account.aggregate';
+import { Account } from '@modules/iam/auth/domain/account.aggregate';
 
 declare global {
   namespace Express {

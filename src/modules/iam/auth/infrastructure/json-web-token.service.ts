@@ -6,7 +6,7 @@ import {
   JwtAccessTokenInput,
   JwtAccessTokenPayload,
 } from '@modules/iam/auth/infrastructure/json-web-token.interface';
-import { TokenInfo } from '../../../../types/token.interface';
+import { TokenInfo } from '@common/types/token.interface';
 
 @Injectable()
 export class JsonWebTokenService implements ITokenService {
