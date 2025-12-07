@@ -33,12 +33,9 @@ coverage
 *.md
 LICENSE
 
-# Config files (not needed in container)
+# Config files (not needed in final container, but needed for build)
 .prettierrc
 eslint.config.mjs
-tsconfig.json
-tsconfig.build.json
-nest-cli.json
 
 # Docker (prevent recursive copy)
 Dockerfile.prod
