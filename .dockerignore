@@ -1,0 +1,50 @@
+# Dependencies
+node_modules
+
+# Build output
+dist
+
+# Git
+.git
+.gitignore
+
+# IDE
+.idea
+.vscode
+*.swp
+*.swo
+
+# Claude
+.claude
+
+# GitHub
+.github
+
+# Environment files
+.env*
+!.env.example
+
+# Test
+test
+coverage
+*.spec.ts
+
+# Documentation
+*.md
+LICENSE
+
+# Config files (not needed in container)
+.prettierrc
+eslint.config.mjs
+tsconfig.json
+tsconfig.build.json
+nest-cli.json
+
+# Docker (prevent recursive copy)
+Dockerfile.prod
+docker-compose*.yml
+.dockerignore
+
+# Logs
+*.log
+npm-debug.log*
