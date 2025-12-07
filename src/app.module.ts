@@ -6,6 +6,7 @@ import { IamModule } from '@modules/iam/iam.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { getDataSourceOptionsForNest } from '@configs/database.config';
 import { appEnv } from '@configs/env';
+import { HealthModule } from '@common/health/health.module';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { appEnv } from '@configs/env';
     }),
 
     // Modules
+    HealthModule,
     ContentModule,
     IamModule,
   ],
