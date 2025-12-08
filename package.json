@@ -28,6 +28,8 @@
     "migration:run:fake": "NODE_ENV=migration npm run typeorm -- migration:run -d src/common/database/migration.main.ts -t all --fake",
     "migration:revert": "NODE_ENV=migration npm run typeorm -- migration:revert -d src/common/database/migration.main.ts -t all",
     "migration:revert:fake": "NODE_ENV=migration npm run typeorm -- migration:revert -d src/common/database/migration.main.ts -t all --fake",
+    "migration:run:prod": "typeorm migration:run -d dist/common/database/migration.main.js -t all",
+    "migration:revert:prod": "typeorm migration:revert -d dist/common/database/migration.main.js -t all",
     "cli": "ts-node src/cli.ts",
     "seed:load-test": "NODE_ENV=load-test npm run cli -- seed:load-test"
   },
