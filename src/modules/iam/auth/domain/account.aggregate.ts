@@ -1,17 +1,17 @@
 import { AggregateRoot } from '@libs/ddd';
 import { AccountUsername } from '@modules/iam/auth/domain/value-objects/account-username';
-import { AccountPassword } from '@modules/iam/auth/domain/value-objects/account-password';
 import { UserId } from '@modules/iam/user/domain/value-objects/user-id';
 import { AccountId } from '@modules/iam/auth/domain/value-objects/account-id';
+import { AccountHashedPassword } from '@modules/iam/auth/domain/value-objects/account-hashed-password.vo';
 
 interface CreateAccountParams {
   username: AccountUsername;
-  password: AccountPassword;
+  password: AccountHashedPassword;
 }
 
 interface AccountProps {
   username: AccountUsername;
-  password: AccountPassword;
+  password: AccountHashedPassword;
 }
 
 export class Account extends AggregateRoot<AccountProps> {
@@ -27,9 +27,5 @@ export class Account extends AggregateRoot<AccountProps> {
       id: data.id,
       props: data.props,
     });
-  }
-
-  verifyPassword(plainPassword: string): boolean {
-    return this.props.password.matches(plainPassword);
   }
 }

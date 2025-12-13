@@ -3,7 +3,7 @@ import { Account } from '@modules/iam/auth/domain/account.aggregate';
 import { AccountModel } from '@modules/iam/auth/infrastructure/account.model';
 import { AccountId } from '@modules/iam/auth/domain/value-objects/account-id';
 import { AccountUsername } from '@modules/iam/auth/domain/value-objects/account-username';
-import { AccountPassword } from '@modules/iam/auth/domain/value-objects/account-password';
+import { AccountHashedPassword } from '@modules/iam/auth/domain/value-objects/account-hashed-password.vo';
 
 describe('AccountMapper', () => {
   let mapper: AccountMapper;
@@ -37,7 +37,7 @@ describe('AccountMapper', () => {
     it('Account 도메인 객체를 AccountModel로 변환한다', () => {
       const id = AccountId.from(TEST_UUID_V7);
       const username = AccountUsername.from('test@example.com');
-      const password = AccountPassword.from('password123');
+      const password = AccountHashedPassword.from('password123');
 
       const domain = Account.from({
         id,
