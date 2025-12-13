@@ -1,4 +1,4 @@
-import { UserNickName } from './user-nickname';
+import { UserNickName } from './user-nickname.vo';
 
 describe('UserNickName', () => {
   describe('from', () => {

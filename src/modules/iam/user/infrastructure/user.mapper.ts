@@ -2,9 +2,9 @@ import { Mapper } from '@libs/ddd';
 import { User } from '@modules/iam/user/domain/user.aggregate';
 import { UserModel } from '@modules/iam/user/infrastructure/user.model';
 import { Injectable } from '@nestjs/common';
-import { UserId } from '@modules/iam/user/domain/value-objects/user-id';
-import { UserNickName } from '@modules/iam/user/domain/value-objects/user-nickname';
-import { AccountId } from '@modules/iam/auth/domain/value-objects/account-id';
+import { UserId } from '@modules/iam/user/domain/value-objects/user-id.vo';
+import { UserNickName } from '@modules/iam/user/domain/value-objects/user-nickname.vo';
+import { AccountId } from '@modules/iam/auth/domain/value-objects/account-id.vo';
 
 @Injectable()
 export class UserMapper implements Mapper<User, UserModel> {

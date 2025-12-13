@@ -3,7 +3,7 @@ import { CreatePostHandler } from './create-post.handler';
 import { CreatePostCommand } from './create-post.command';
 import { IPostRepository, POST_REPOSITORY } from '../../domain/post.repository.interface';
 import { Post } from '../../domain/post.aggregate';
-import { UserId } from '@modules/iam/user/domain/value-objects/user-id';
+import { UserId } from '@modules/iam/user/domain/value-objects/user-id.vo';
 
 describe('CreatePostHandler', () => {
   let handler: CreatePostHandler;

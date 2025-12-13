@@ -6,13 +6,13 @@ import { UserRepositoryImpl } from '../infrastructure/user.repository.impl';
 import { UserModel } from '../infrastructure/user.model';
 import { UserMapper } from '../infrastructure/user.mapper';
 import { User } from '../domain/user.aggregate';
-import { UserId } from '../domain/value-objects/user-id';
-import { UserNickName } from '../domain/value-objects/user-nickname';
+import { UserId } from '../domain/value-objects/user-id.vo';
+import { UserNickName } from '../domain/value-objects/user-nickname.vo';
 import { getDataSourceOptionsForNest } from '@configs/database.config';
 import { truncate } from '@test/support/database.helper';
 import { AccountModel } from '@modules/iam/auth/infrastructure/account.model';
 import { UserModelFactory } from '@libs/typeorm/factories/user.model.factory';
-import { AccountId } from '@modules/iam/auth/domain/value-objects/account-id';
+import { AccountId } from '@modules/iam/auth/domain/value-objects/account-id.vo';
 
 describe('UserRepositoryImpl', () => {
   let userRepository: UserRepositoryImpl;

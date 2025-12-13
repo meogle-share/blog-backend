@@ -1,4 +1,4 @@
-import { PostId } from './post-id';
+import { PostId } from './post-id.vo';
 
 describe('PostId', () => {
   describe('generate', () => {

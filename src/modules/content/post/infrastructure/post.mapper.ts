@@ -1,9 +1,9 @@
 import { PostModel } from './post.model';
 import { Post } from '../domain/post.aggregate';
-import { UserId } from '../../../iam/user/domain/value-objects/user-id';
-import { PostTitle } from '../domain/value-objects/post-title';
-import { PostContent } from '../domain/value-objects/post-content';
-import { PostId } from '../domain/value-objects/post-id';
+import { UserId } from '../../../iam/user/domain/value-objects/user-id.vo';
+import { PostTitle } from '../domain/value-objects/post-title.vo';
+import { PostContent } from '../domain/value-objects/post-content.vo';
+import { PostId } from '../domain/value-objects/post-id.vo';
 import { Injectable } from '@nestjs/common';
 import { Mapper } from '@libs/ddd/mapper.interface';
 
