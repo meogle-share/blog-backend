@@ -1,4 +1,4 @@
-import { PostTitle } from './post-title';
+import { PostTitle } from './post-title.vo';
 
 describe('PostTitle', () => {
   describe('생성 및 검증', () => {

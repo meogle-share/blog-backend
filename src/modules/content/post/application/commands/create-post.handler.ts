@@ -1,8 +1,8 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { CreatePostCommand } from './create-post.command';
 import { UserId } from '@modules/iam/user/domain/value-objects/user-id.vo';
-import { PostTitle } from '../../domain/value-objects/post-title';
-import { PostContent } from '../../domain/value-objects/post-content';
+import { PostTitle } from '../../domain/value-objects/post-title.vo';
+import { PostContent } from '../../domain/value-objects/post-content.vo';
 import { Post } from '../../domain/post.aggregate';
 import type { IPostRepository } from '../../domain/post.repository.interface';
 import { POST_REPOSITORY } from '../../domain/post.repository.interface';

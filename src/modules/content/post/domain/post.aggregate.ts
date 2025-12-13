@@ -1,7 +1,7 @@
 import { UserId } from '../../../iam/user/domain/value-objects/user-id.vo';
-import { PostContent } from './value-objects/post-content';
-import { PostTitle } from './value-objects/post-title';
-import { PostId } from './value-objects/post-id';
+import { PostContent } from './value-objects/post-content.vo';
+import { PostTitle } from './value-objects/post-title.vo';
+import { PostId } from './value-objects/post-id.vo';
 import { AggregateRoot } from '@libs/ddd';
 
 interface CreatePostParams {

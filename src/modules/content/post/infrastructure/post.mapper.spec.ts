@@ -1,9 +1,9 @@
 import { PostMapper } from './post.mapper';
 import { PostModel } from './post.model';
 import { Post } from '../domain/post.aggregate';
-import { PostId } from '../domain/value-objects/post-id';
-import { PostTitle } from '../domain/value-objects/post-title';
-import { PostContent } from '../domain/value-objects/post-content';
+import { PostId } from '../domain/value-objects/post-id.vo';
+import { PostTitle } from '../domain/value-objects/post-title.vo';
+import { PostContent } from '../domain/value-objects/post-content.vo';
 import { UserId } from '../../../iam/user/domain/value-objects/user-id.vo';
 
 describe('PostMapper', () => {

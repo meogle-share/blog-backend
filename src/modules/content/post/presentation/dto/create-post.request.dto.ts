@@ -1,7 +1,7 @@
 import { IsNotEmpty, IsString, IsUUID, Length } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
-import { PostTitle } from '../../domain/value-objects/post-title';
-import { PostContent } from '../../domain/value-objects/post-content';
+import { PostTitle } from '../../domain/value-objects/post-title.vo';
+import { PostContent } from '../../domain/value-objects/post-content.vo';
 
 export class CreatePostRequestDto {
   @ApiProperty({

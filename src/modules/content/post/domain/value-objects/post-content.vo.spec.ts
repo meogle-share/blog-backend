@@ -1,4 +1,4 @@
-import { PostContent } from './post-content';
+import { PostContent } from './post-content.vo';
 
 describe('PostContent', () => {
   describe('생성 및 검증', () => {

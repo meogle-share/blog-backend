@@ -1,7 +1,7 @@
 import { Post } from './post.aggregate';
-import { PostId } from './value-objects/post-id';
-import { PostTitle } from './value-objects/post-title';
-import { PostContent } from './value-objects/post-content';
+import { PostId } from './value-objects/post-id.vo';
+import { PostTitle } from './value-objects/post-title.vo';
+import { PostContent } from './value-objects/post-content.vo';
 import { UserId } from '../../../iam/user/domain/value-objects/user-id.vo';
 
 describe('Post Aggregate', () => {
