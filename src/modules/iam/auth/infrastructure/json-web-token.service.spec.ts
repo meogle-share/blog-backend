@@ -3,8 +3,8 @@ import { JwtService } from '@nestjs/jwt';
 import { Account } from '@modules/iam/auth/domain/account.aggregate';
 import { AccountId } from '@modules/iam/auth/domain/value-objects/account-id';
 import { AccountUsername } from '@modules/iam/auth/domain/value-objects/account-username';
-import { AccountPassword } from '@modules/iam/auth/domain/value-objects/account-password';
-import { JwtAccessTokenPayload } from '@modules/iam/auth/infrastructure/json-web-token.interface';
+import { JwtAccessTokenPayload } from '@modules/iam/auth/infrastructure/types/json-web-token.interface';
+import { AccountHashedPassword } from '@modules/iam/auth/domain/value-objects/account-hashed-password.vo';
 
 describe('JsonWebTokenService', () => {
   let service: JsonWebTokenService;
@@ -35,7 +35,7 @@ describe('JsonWebTokenService', () => {
         id: AccountId.from(TEST_UUID),
         props: {
           username: AccountUsername.from(TEST_USERNAME),
-          password: AccountPassword.from('password123'),
+          password: AccountHashedPassword.from('password123'),
         },
       });
 
@@ -49,7 +49,7 @@ describe('JsonWebTokenService', () => {
         id: AccountId.from(TEST_UUID),
         props: {
           username: AccountUsername.from(TEST_USERNAME),
-          password: AccountPassword.from('password123'),
+          password: AccountHashedPassword.from('password123'),
         },
       });
 

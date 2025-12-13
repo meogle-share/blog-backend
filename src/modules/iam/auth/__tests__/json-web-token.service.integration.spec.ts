@@ -4,7 +4,7 @@ import { JsonWebTokenService } from '../infrastructure/json-web-token.service';
 import { Account } from '@modules/iam/auth/domain/account.aggregate';
 import { AccountId } from '@modules/iam/auth/domain/value-objects/account-id';
 import { AccountUsername } from '@modules/iam/auth/domain/value-objects/account-username';
-import { AccountPassword } from '@modules/iam/auth/domain/value-objects/account-password';
+import { AccountHashedPassword } from '@modules/iam/auth/domain/value-objects/account-hashed-password.vo';
 
 describe('JsonWebTokenService Integration', () => {
   let service: JsonWebTokenService;
@@ -18,7 +18,7 @@ describe('JsonWebTokenService Integration', () => {
       id: AccountId.from(TEST_UUID),
       props: {
         username: AccountUsername.from(TEST_USERNAME),
-        password: AccountPassword.from('ValidPassword123!'),
+        password: AccountHashedPassword.from('ValidPassword123!'),
       },
     });
   };

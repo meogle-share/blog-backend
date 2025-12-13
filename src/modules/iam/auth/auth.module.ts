@@ -12,6 +12,9 @@ import { TOKEN_SERVICE } from '@modules/iam/auth/domain/token.service.interface'
 import { JsonWebTokenService } from '@modules/iam/auth/infrastructure/json-web-token.service';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { PasswordService } from '@modules/iam/auth/domain/services/password.service';
+import { PASSWORD_HASH_SERVICE } from '@modules/iam/auth/domain/password-hash.service.interface';
+import { BcryptPasswordHashService } from '@modules/iam/auth/infrastructure/bcrypt-password-hash.service';
 
 @Module({
   imports: [
@@ -34,6 +37,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
   controllers: [AuthHttpController],
   providers: [
     LoginUseCase,
+    PasswordService,
     LocalStrategy,
     AccountMapper,
     {
@@ -43,6 +47,10 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
     {
       provide: TOKEN_SERVICE,
       useClass: JsonWebTokenService,
+    },
+    {
+      provide: PASSWORD_HASH_SERVICE,
+      useClass: BcryptPasswordHashService,
     },
   ],
 })

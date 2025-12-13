@@ -8,8 +8,9 @@ import { truncate } from '@test/support/database.helper';
 import { Application } from 'express';
 import { setupApp } from '../../../../app.setup';
 import { decode } from 'jsonwebtoken';
-import { JwtAccessTokenPayload } from '../infrastructure/json-web-token.interface';
+import { JwtAccessTokenPayload } from '../infrastructure/types/json-web-token.interface';
 import { AccountModelFactory } from '@libs/typeorm/factories/account.model.factory';
+import { hashSync } from 'bcrypt';
 
 describe('AuthHttpController', () => {
   let app: INestApplication<Application>;
@@ -43,7 +44,7 @@ describe('AuthHttpController', () => {
       const password = 'validPassword123';
       const testAccount = AccountModelFactory.create(1, {
         username: 'test@example.com',
-        password: password,
+        password: hashSync(password, 12),
       })[0];
       await accountRepository.save(testAccount);
 
@@ -65,7 +66,7 @@ describe('AuthHttpController', () => {
       const password = 'validPassword123';
       const testAccount = AccountModelFactory.create(1, {
         username: 'token-test@example.com',
-        password: password,
+        password: hashSync(password, 12),
       })[0];
       await accountRepository.save(testAccount);
 
@@ -93,7 +94,7 @@ describe('AuthHttpController', () => {
       const password = 'validPassword123';
       const testAccount = AccountModelFactory.create(1, {
         username: 'expiry-test@example.com',
-        password: password,
+        password: hashSync(password, 12),
       })[0];
       await accountRepository.save(testAccount);
 
@@ -126,7 +127,7 @@ describe('AuthHttpController', () => {
       it('잘못된 비밀번호로 로그인하면 401 에러를 반환한다', async () => {
         const testAccount = AccountModelFactory.create(1, {
           username: 'test@example.com',
-          password: 'correctPassword123',
+          password: hashSync('correctPassword123', 12),
         })[0];
         await accountRepository.save(testAccount);
 

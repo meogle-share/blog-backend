@@ -5,7 +5,7 @@ import { JwtService } from '@nestjs/jwt';
 import {
   JwtAccessTokenInput,
   JwtAccessTokenPayload,
-} from '@modules/iam/auth/infrastructure/json-web-token.interface';
+} from '@modules/iam/auth/infrastructure/types/json-web-token.interface';
 import { TokenInfo } from '@common/types/token.interface';
 
 @Injectable()
