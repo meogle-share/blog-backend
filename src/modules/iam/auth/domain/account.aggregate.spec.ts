@@ -1,7 +1,7 @@
 import { Account } from './account.aggregate';
 import { AccountId } from './value-objects/account-id.vo';
 import { AccountUsername } from './value-objects/account-username.vo';
-import { UserId } from '@modules/iam/user/domain/value-objects/user-id';
+import { UserId } from '@modules/iam/user/domain/value-objects/user-id.vo';
 import { AccountHashedPassword } from '@modules/iam/auth/domain/value-objects/account-hashed-password.vo';
 
 describe('Account Aggregate', () => {

@@ -1,6 +1,6 @@
 import { User } from './user.aggregate';
-import { UserId } from './value-objects/user-id';
-import { UserNickName } from './value-objects/user-nickname';
+import { UserId } from './value-objects/user-id.vo';
+import { UserNickName } from './value-objects/user-nickname.vo';
 import { AccountId } from '@modules/iam/auth/domain/value-objects/account-id.vo';
 
 describe('User Aggregate', () => {

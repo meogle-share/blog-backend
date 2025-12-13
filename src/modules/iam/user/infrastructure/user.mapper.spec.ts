@@ -1,9 +1,9 @@
 import { UserMapper } from './user.mapper';
 import { UserModel } from './user.model';
 import { User } from '../domain/user.aggregate';
-import { UserId } from '../domain/value-objects/user-id';
+import { UserId } from '../domain/value-objects/user-id.vo';
 import { AccountId } from '../../auth/domain/value-objects/account-id.vo';
-import { UserNickName } from '../domain/value-objects/user-nickname';
+import { UserNickName } from '../domain/value-objects/user-nickname.vo';
 
 describe('UserMapper', () => {
   let mapper: UserMapper;

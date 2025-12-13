@@ -1,6 +1,6 @@
 import { PostModel } from './post.model';
 import { Post } from '../domain/post.aggregate';
-import { UserId } from '../../../iam/user/domain/value-objects/user-id';
+import { UserId } from '../../../iam/user/domain/value-objects/user-id.vo';
 import { PostTitle } from '../domain/value-objects/post-title';
 import { PostContent } from '../domain/value-objects/post-content';
 import { PostId } from '../domain/value-objects/post-id';

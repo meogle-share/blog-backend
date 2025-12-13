@@ -13,7 +13,7 @@ import { POST_REPOSITORY } from '../domain/post.repository.interface';
 import { Post } from '../domain/post.aggregate';
 import { PostTitle } from '../domain/value-objects/post-title';
 import { PostContent } from '../domain/value-objects/post-content';
-import { UserId } from '../../../iam/user/domain/value-objects/user-id';
+import { UserId } from '../../../iam/user/domain/value-objects/user-id.vo';
 import { getDataSourceOptionsForNest } from '@configs/database.config';
 import { UserModel } from '@modules/iam/user/infrastructure/user.model';
 import { truncate } from '@test/support/database.helper';

@@ -1,6 +1,6 @@
 import { AggregateRoot } from '@libs/ddd';
-import { UserId } from '@modules/iam/user/domain/value-objects/user-id';
-import { UserNickName } from '@modules/iam/user/domain/value-objects/user-nickname';
+import { UserId } from '@modules/iam/user/domain/value-objects/user-id.vo';
+import { UserNickName } from '@modules/iam/user/domain/value-objects/user-nickname.vo';
 import { AccountId } from '@modules/iam/auth/domain/value-objects/account-id.vo';
 
 interface CreateUserParams {
