@@ -10,7 +10,7 @@ interface LoginCommand {
 }
 
 @Injectable()
-export class LoginUseCase {
+export class SignInUseCase {
   constructor(
     @Inject(ACCOUNT_REPOSITORY)
     private readonly accountRepository: IAccountRepository,

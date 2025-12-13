@@ -1,11 +1,11 @@
 import { PassportStrategy } from '@nestjs/passport';
 import { Strategy } from 'passport-local';
 import { Injectable } from '@nestjs/common';
-import { LoginUseCase } from '@modules/iam/auth/application/login.usecase';
+import { SignInUseCase } from '@modules/iam/auth/application/sign-in.use-case';
 
 @Injectable()
 export class LocalStrategy extends PassportStrategy(Strategy, 'local') {
-  constructor(private readonly loginUseCase: LoginUseCase) {
+  constructor(private readonly loginUseCase: SignInUseCase) {
     super({
       usernameField: 'username',
       passwordField: 'password',
