@@ -1,7 +1,7 @@
 import { AggregateRoot } from '@libs/ddd';
-import { AccountUsername } from '@modules/iam/auth/domain/value-objects/account-username';
+import { AccountUsername } from '@modules/iam/auth/domain/value-objects/account-username.vo';
 import { UserId } from '@modules/iam/user/domain/value-objects/user-id';
-import { AccountId } from '@modules/iam/auth/domain/value-objects/account-id';
+import { AccountId } from '@modules/iam/auth/domain/value-objects/account-id.vo';
 import { AccountHashedPassword } from '@modules/iam/auth/domain/value-objects/account-hashed-password.vo';
 
 interface CreateAccountParams {

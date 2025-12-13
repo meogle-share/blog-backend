@@ -2,7 +2,7 @@ import { UserMapper } from './user.mapper';
 import { UserModel } from './user.model';
 import { User } from '../domain/user.aggregate';
 import { UserId } from '../domain/value-objects/user-id';
-import { AccountId } from '../../auth/domain/value-objects/account-id';
+import { AccountId } from '../../auth/domain/value-objects/account-id.vo';
 import { UserNickName } from '../domain/value-objects/user-nickname';
 
 describe('UserMapper', () => {

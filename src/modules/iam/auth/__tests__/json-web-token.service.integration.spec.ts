@@ -2,8 +2,8 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { JwtModule, JwtService } from '@nestjs/jwt';
 import { JsonWebTokenService } from '../infrastructure/json-web-token.service';
 import { Account } from '@modules/iam/auth/domain/account.aggregate';
-import { AccountId } from '@modules/iam/auth/domain/value-objects/account-id';
-import { AccountUsername } from '@modules/iam/auth/domain/value-objects/account-username';
+import { AccountId } from '@modules/iam/auth/domain/value-objects/account-id.vo';
+import { AccountUsername } from '@modules/iam/auth/domain/value-objects/account-username.vo';
 import { AccountHashedPassword } from '@modules/iam/auth/domain/value-objects/account-hashed-password.vo';
 
 describe('JsonWebTokenService Integration', () => {

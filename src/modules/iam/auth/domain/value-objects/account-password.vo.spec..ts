@@ -1,4 +1,4 @@
-import { AccountPassword } from './account-password';
+import { AccountPassword } from './account-password.vo';
 
 describe('AccountPassword', () => {
   describe('from', () => {

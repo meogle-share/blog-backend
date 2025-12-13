@@ -12,7 +12,7 @@ import { getDataSourceOptionsForNest } from '@configs/database.config';
 import { truncate } from '@test/support/database.helper';
 import { AccountModel } from '@modules/iam/auth/infrastructure/account.model';
 import { UserModelFactory } from '@libs/typeorm/factories/user.model.factory';
-import { AccountId } from '@modules/iam/auth/domain/value-objects/account-id';
+import { AccountId } from '@modules/iam/auth/domain/value-objects/account-id.vo';
 
 describe('UserRepositoryImpl', () => {
   let userRepository: UserRepositoryImpl;

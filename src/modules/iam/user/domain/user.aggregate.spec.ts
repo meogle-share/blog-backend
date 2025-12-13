@@ -1,7 +1,7 @@
 import { User } from './user.aggregate';
 import { UserId } from './value-objects/user-id';
 import { UserNickName } from './value-objects/user-nickname';
-import { AccountId } from '@modules/iam/auth/domain/value-objects/account-id';
+import { AccountId } from '@modules/iam/auth/domain/value-objects/account-id.vo';
 
 describe('User Aggregate', () => {
   describe('create', () => {

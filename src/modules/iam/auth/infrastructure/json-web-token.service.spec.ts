@@ -1,8 +1,8 @@
 import { JsonWebTokenService } from './json-web-token.service';
 import { JwtService } from '@nestjs/jwt';
 import { Account } from '@modules/iam/auth/domain/account.aggregate';
-import { AccountId } from '@modules/iam/auth/domain/value-objects/account-id';
-import { AccountUsername } from '@modules/iam/auth/domain/value-objects/account-username';
+import { AccountId } from '@modules/iam/auth/domain/value-objects/account-id.vo';
+import { AccountUsername } from '@modules/iam/auth/domain/value-objects/account-username.vo';
 import { JwtAccessTokenPayload } from '@modules/iam/auth/infrastructure/types/json-web-token.interface';
 import { AccountHashedPassword } from '@modules/iam/auth/domain/value-objects/account-hashed-password.vo';
 

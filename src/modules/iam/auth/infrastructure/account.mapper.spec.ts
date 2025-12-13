@@ -1,8 +1,8 @@
 import { AccountMapper } from './account.mapper';
 import { Account } from '@modules/iam/auth/domain/account.aggregate';
 import { AccountModel } from '@modules/iam/auth/infrastructure/account.model';
-import { AccountId } from '@modules/iam/auth/domain/value-objects/account-id';
-import { AccountUsername } from '@modules/iam/auth/domain/value-objects/account-username';
+import { AccountId } from '@modules/iam/auth/domain/value-objects/account-id.vo';
+import { AccountUsername } from '@modules/iam/auth/domain/value-objects/account-username.vo';
 import { AccountHashedPassword } from '@modules/iam/auth/domain/value-objects/account-hashed-password.vo';
 
 describe('AccountMapper', () => {

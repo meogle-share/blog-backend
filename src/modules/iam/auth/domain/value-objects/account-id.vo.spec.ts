@@ -1,4 +1,4 @@
-import { AccountId } from './account-id';
+import { AccountId } from './account-id.vo';
 
 describe('AccountId', () => {
   describe('generate', () => {

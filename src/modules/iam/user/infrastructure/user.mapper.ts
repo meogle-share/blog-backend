@@ -4,7 +4,7 @@ import { UserModel } from '@modules/iam/user/infrastructure/user.model';
 import { Injectable } from '@nestjs/common';
 import { UserId } from '@modules/iam/user/domain/value-objects/user-id';
 import { UserNickName } from '@modules/iam/user/domain/value-objects/user-nickname';
-import { AccountId } from '@modules/iam/auth/domain/value-objects/account-id';
+import { AccountId } from '@modules/iam/auth/domain/value-objects/account-id.vo';
 
 @Injectable()
 export class UserMapper implements Mapper<User, UserModel> {
