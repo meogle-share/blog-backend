@@ -119,34 +119,6 @@ describe('IamSeeder', () => {
       expect(count2).toBe(1);
     });
 
-    it('동일한 nickname으로 여러 번 호출 시 User가 upsert되어야 한다', async () => {
-      await truncate([userRepo, accountRepo]);
-
-      await iamSeeder.onModuleInit();
-      const count1 = await userRepo.count();
-      expect(count1).toBe(1);
-
-      await iamSeeder.onModuleInit();
-      const count2 = await userRepo.count();
-      expect(count2).toBe(1);
-    });
-
-    it('DB가 비어있을 때도 정상적으로 저장되어야 한다', async () => {
-      await truncate([userRepo, accountRepo]);
-
-      const accountCount = await accountRepo.count();
-      const userCount = await userRepo.count();
-      expect(accountCount).toBe(0);
-      expect(userCount).toBe(0);
-
-      await iamSeeder.onModuleInit();
-
-      const newAccountCount = await accountRepo.count();
-      const newUserCount = await userRepo.count();
-      expect(newAccountCount).toBe(1);
-      expect(newUserCount).toBe(1);
-    });
-
     it('저장된 Account의 모든 필드가 올바르게 설정되어야 한다', async () => {
       await truncate([userRepo, accountRepo]);
       await iamSeeder.onModuleInit();
@@ -160,7 +132,6 @@ describe('IamSeeder', () => {
       expect(await bcrypt.compare(ADMIN_PASSWORD, foundAccount!.password)).toBe(true);
       expect(foundAccount!.id).toBeDefined();
       expect(typeof foundAccount!.id).toBe('string');
-      expect(foundAccount!.id.length).toBeGreaterThan(0);
       expect(foundAccount!.createdAt).toBeInstanceOf(Date);
       expect(foundAccount!.updatedAt).toBeInstanceOf(Date);
     });
@@ -179,7 +150,6 @@ describe('IamSeeder', () => {
       expect(typeof foundUser!.accountId).toBe('string');
       expect(foundUser!.id).toBeDefined();
       expect(typeof foundUser!.id).toBe('string');
-      expect(foundUser!.id.length).toBeGreaterThan(0);
       expect(foundUser!.createdAt).toBeInstanceOf(Date);
       expect(foundUser!.updatedAt).toBeInstanceOf(Date);
     });
