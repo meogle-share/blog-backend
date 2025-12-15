@@ -31,7 +31,7 @@ export class IamSeeder implements OnModuleInit {
     }
 
     const accountId = uuidv7();
-    const hashedPassword = await this.passwordHashService.hash('admin');
+    const hashedPassword = await this.passwordHashService.hash('admin12345');
 
     await this.accountRepo.save({
       id: accountId,
