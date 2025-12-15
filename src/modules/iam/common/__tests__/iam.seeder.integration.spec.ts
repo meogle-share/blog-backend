@@ -8,6 +8,12 @@ import { AccountModel } from '@modules/iam/auth/infrastructure/account.model';
 import { UserModel } from '@modules/iam/user/infrastructure/user.model';
 import { getDataSourceOptionsForNest } from '@configs/database.config';
 import { truncate } from '@test/support/database.helper';
+import { PASSWORD_HASH_SERVICE } from '@modules/iam/auth/domain/password-hash.service.interface';
+import { BcryptPasswordHashService } from '@modules/iam/auth/infrastructure/bcrypt-password-hash.service';
+import * as bcrypt from 'bcrypt';
+
+const ADMIN_USERNAME = 'admin@admin.com';
+const ADMIN_PASSWORD = 'admin';
 
 describe('IamSeeder', () => {
   let iamSeeder: IamSeeder;
@@ -28,7 +34,10 @@ describe('IamSeeder', () => {
         }),
         TypeOrmModule.forFeature([AccountModel, UserModel]),
       ],
-      providers: [IamSeeder],
+      providers: [
+        IamSeeder,
+        { provide: PASSWORD_HASH_SERVICE, useClass: BcryptPasswordHashService },
+      ],
     }).compile();
 
     await module.init();
@@ -46,13 +55,13 @@ describe('IamSeeder', () => {
   describe('onModuleInit', () => {
     it('모듈 초기화 시 admin 계정이 자동으로 생성되어야 한다', async () => {
       const foundAccount = await accountRepo.findOne({
-        where: { username: 'admin' },
+        where: { username: ADMIN_USERNAME },
       });
 
       expect(foundAccount).toBeDefined();
       expect(foundAccount!.id).toBeDefined();
-      expect(foundAccount!.username).toBe('admin');
-      expect(foundAccount!.password).toBe('admin');
+      expect(foundAccount!.username).toBe(ADMIN_USERNAME);
+      expect(await bcrypt.compare(ADMIN_PASSWORD, foundAccount!.password)).toBe(true);
       expect(foundAccount!.createdAt).toBeInstanceOf(Date);
       expect(foundAccount!.updatedAt).toBeInstanceOf(Date);
     });
@@ -72,7 +81,7 @@ describe('IamSeeder', () => {
 
     it('생성된 User의 accountId가 Account의 id와 일치해야 한다', async () => {
       const foundAccount = await accountRepo.findOne({
-        where: { username: 'admin' },
+        where: { username: ADMIN_USERNAME },
       });
       const foundUser = await userRepo.findOne({
         where: { nickname: 'admin' },
@@ -143,12 +152,12 @@ describe('IamSeeder', () => {
       await iamSeeder.onModuleInit();
 
       const foundAccount = await accountRepo.findOne({
-        where: { username: 'admin' },
+        where: { username: ADMIN_USERNAME },
       });
 
       expect(foundAccount).toBeDefined();
-      expect(foundAccount!.username).toBe('admin');
-      expect(foundAccount!.password).toBe('admin');
+      expect(foundAccount!.username).toBe(ADMIN_USERNAME);
+      expect(await bcrypt.compare(ADMIN_PASSWORD, foundAccount!.password)).toBe(true);
       expect(foundAccount!.id).toBeDefined();
       expect(typeof foundAccount!.id).toBe('string');
       expect(foundAccount!.id.length).toBeGreaterThan(0);
@@ -186,7 +195,7 @@ describe('IamSeeder', () => {
 
       expect(foundUser).toBeDefined();
       expect(foundUser!.account).toBeDefined();
-      expect(foundUser!.account!.username).toBe('admin');
+      expect(foundUser!.account!.username).toBe(ADMIN_USERNAME);
       expect(foundUser!.account!.id).toBe(foundUser!.accountId);
     });
   });
