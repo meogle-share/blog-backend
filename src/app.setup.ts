@@ -23,6 +23,7 @@ export function setupSwagger(app: INestApplication): void {
     .setTitle('Meogle API')
     .setDescription('Meogle API')
     .setVersion('1.0')
+    .addServer('/api')
     // .addBearerAuth()
     .build();
 
