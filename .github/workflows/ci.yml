@@ -1,12 +1,15 @@
-name: be-ci-prod
+name: ci
 on:
+  push:
+    branches:
+      - main
   workflow_dispatch:
 env:
   IMAGE_NAME: meogle-was
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, production]
     steps:
       - uses: actions/checkout@v4
 
@@ -23,12 +26,12 @@ jobs:
           file: ./Dockerfile.prod
           push: true
           tags: |
-            ${{ secrets.DOCKER_HUB_HASH_USERNAME }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
+            willom2c/${{ env.IMAGE_NAME }}:${{ github.sha }}
 
       - name: Clean up old local images (keep last 10)
         if: always()
         run: |
-          IMAGE=${{ secrets.DOCKER_HUB_HASH_USERNAME }}/${{ env.IMAGE_NAME }}
+          IMAGE=willom2c/${{ env.IMAGE_NAME }}
           
           OLD_IMAGES=$(docker images "${IMAGE}" --format "{{.ID}} {{.CreatedAt}}" | sort -k2 | head -n -10 | awk '{print $1}')
           

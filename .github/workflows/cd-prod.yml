@@ -1,9 +1,5 @@
 name: be-cd-prod
 on:
-  workflow_run:
-    workflows: [ "be-ci-prod" ]
-    types:
-      - completed
   workflow_dispatch:
 
 
