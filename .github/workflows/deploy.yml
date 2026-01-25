@@ -20,7 +20,7 @@ jobs:
         uses: actions/checkout@v3
         with:
           repository: meogle-share/blog-infra
-          token: ${{ secrets.ACTION_TOKEN }}
+          token: ${{ secrets.GIT_HUB_HASH_PAT }}
           ref: main
 
       - name: Update image in values.yaml
