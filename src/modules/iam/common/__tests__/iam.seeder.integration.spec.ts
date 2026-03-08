@@ -13,7 +13,7 @@ import { BcryptPasswordHashService } from '@modules/iam/auth/infrastructure/bcry
 import * as bcrypt from 'bcrypt';
 
 const ADMIN_USERNAME = 'admin@admin.com';
-const ADMIN_PASSWORD = 'admin';
+const ADMIN_PASSWORD = 'admin12345';
 
 describe('IamSeeder', () => {
   let iamSeeder: IamSeeder;
