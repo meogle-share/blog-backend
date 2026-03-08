@@ -1,13 +1,13 @@
-import { IUserRepository } from '@modules/iam/user/domain/user.repository.interface';
+import { UserRepositoryPort } from '../domain/ports/user.repository.port';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { UserModel } from '@modules/iam/user/infrastructure/user.model';
+import { UserModel } from './user.model';
 import { Repository } from 'typeorm';
-import { User } from '@modules/iam/user/domain/user.aggregate';
-import { UserMapper } from '@modules/iam/user/infrastructure/user.mapper';
+import { User } from '../domain/models/user.aggregate';
+import { UserMapper } from './user.mapper';
 
 @Injectable()
-export class UserRepositoryImpl implements IUserRepository {
+export class UserRepositoryImpl implements UserRepositoryPort {
   constructor(
     @InjectRepository(UserModel)
     private readonly repository: Repository<UserModel>,

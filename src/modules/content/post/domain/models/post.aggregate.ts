@@ -1,5 +1,5 @@
-import { PostContent } from './value-objects/post-content.vo';
-import { PostTitle } from './value-objects/post-title.vo';
+import { PostContent } from './post-content.vo';
+import { PostTitle } from './post-title.vo';
 import { AggregateRoot, generateId } from '@libs/ddd';
 
 interface CreatePostParams {

@@ -5,7 +5,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AccountRepositoryImpl } from '../infrastructure/account.repository.impl';
 import { AccountModel } from '../infrastructure/account.model';
 import { AccountMapper } from '../infrastructure/account.mapper';
-import { Account } from '../domain/account.aggregate';
+import { UserAccount } from '../domain/models/user-account.aggregate';
 import { getDataSourceOptionsForNest } from '@configs/database.config';
 import { truncate } from '@test/support/database.helper';
 import { AccountModelFactory } from '@libs/typeorm/factories/account.model.factory';
@@ -45,7 +45,7 @@ describe('AccountRepositoryImpl', () => {
   });
 
   describe('findByUsername', () => {
-    it('존재하는 username으로 Account를 찾을 수 있어야 한다', async () => {
+    it('존재하는 username으로 UserAccount를 찾을 수 있어야 한다', async () => {
       const account = AccountModelFactory.create(1, {
         username: 'test@example.com',
         password: 'hashedPassword123',
@@ -54,7 +54,7 @@ describe('AccountRepositoryImpl', () => {
 
       const found = await accountRepository.findOneByUsername('test@example.com');
 
-      expect(found).toBeInstanceOf(Account);
+      expect(found).toBeInstanceOf(UserAccount);
       expect(found!.getProps().username.value).toBe('test@example.com');
       expect(found!.getProps().password.value).toBe('hashedPassword123');
     });
@@ -98,7 +98,7 @@ describe('AccountRepositoryImpl', () => {
 
       const found = await accountRepository.findOneByUsername('mapper@example.com');
 
-      expect(found).toBeInstanceOf(Account);
+      expect(found).toBeInstanceOf(UserAccount);
       expect(found!.id).toBe(account.id);
       expect(found!.getProps().username.value).toBe(account.username);
       expect(found!.getProps().password.value).toBe(account.password);

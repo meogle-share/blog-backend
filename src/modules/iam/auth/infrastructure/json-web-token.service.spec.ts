@@ -1,12 +1,12 @@
-import { JsonWebTokenService } from './json-web-token.service';
+import { TokenProviderJwt } from './token-provider.jwt';
 import { JwtService } from '@nestjs/jwt';
-import { Account } from '@modules/iam/auth/domain/account.aggregate';
-import { AccountUsername } from '@modules/iam/auth/domain/value-objects/account-username.vo';
-import { JwtAccessTokenPayload } from '@modules/iam/auth/infrastructure/types/json-web-token.interface';
-import { AccountHashedPassword } from '@modules/iam/auth/domain/value-objects/account-hashed-password.vo';
+import { UserAccount } from '../domain/models/user-account.aggregate';
+import { AccountUsername } from '../domain/models/account-username.vo';
+import { JwtAccessTokenPayload } from './types/json-web-token.interface';
+import { AccountHashedPassword } from '../domain/models/account-hashed-password.vo';
 
-describe('JsonWebTokenService', () => {
-  let service: JsonWebTokenService;
+describe('TokenProviderJwt', () => {
+  let service: TokenProviderJwt;
   let jwtService: jest.Mocked<JwtService>;
 
   const TEST_UUID = '01912345-6789-7abc-8def-0123456789ab';
@@ -15,6 +15,7 @@ describe('JsonWebTokenService', () => {
   const TEST_PAYLOAD: JwtAccessTokenPayload = {
     sub: TEST_UUID,
     username: TEST_USERNAME,
+    accountType: 'user',
     exp: 1733520000,
     iat: 1733519700,
   };
@@ -25,12 +26,12 @@ describe('JsonWebTokenService', () => {
       verify: jest.fn().mockReturnValue(TEST_PAYLOAD),
     } as unknown as jest.Mocked<JwtService>;
 
-    service = new JsonWebTokenService(jwtService);
+    service = new TokenProviderJwt(jwtService);
   });
 
   describe('generate', () => {
-    it('Account 정보를 기반으로 JWT 토큰을 생성한다', () => {
-      const account = Account.from({
+    it('UserAccount 정보를 기반으로 JWT 토큰을 생성한다', () => {
+      const account = UserAccount.from({
         id: TEST_UUID,
         props: {
           username: AccountUsername.from(TEST_USERNAME),
@@ -44,7 +45,7 @@ describe('JsonWebTokenService', () => {
     });
 
     it('JwtService.sign()에 올바른 payload를 전달한다', () => {
-      const account = Account.from({
+      const account = UserAccount.from({
         id: TEST_UUID,
         props: {
           username: AccountUsername.from(TEST_USERNAME),
@@ -57,6 +58,7 @@ describe('JsonWebTokenService', () => {
       expect(jwtService.sign).toHaveBeenCalledWith({
         sub: TEST_UUID,
         username: TEST_USERNAME,
+        accountType: 'user',
       });
     });
   });
@@ -67,6 +69,7 @@ describe('JsonWebTokenService', () => {
 
       expect(result).toEqual({
         username: TEST_USERNAME,
+        accountType: 'user',
         expiresAt: new Date(TEST_PAYLOAD.exp * 1000),
       });
     });

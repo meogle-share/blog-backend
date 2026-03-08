@@ -1,6 +1,6 @@
 import { Post } from './post.aggregate';
-import { PostTitle } from './value-objects/post-title.vo';
-import { PostContent } from './value-objects/post-content.vo';
+import { PostTitle } from './post-title.vo';
+import { PostContent } from './post-content.vo';
 import { generateId } from '@libs/ddd';
 
 describe('Post Aggregate', () => {

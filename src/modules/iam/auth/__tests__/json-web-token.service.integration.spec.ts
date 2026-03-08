@@ -1,19 +1,19 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { JwtModule, JwtService } from '@nestjs/jwt';
-import { JsonWebTokenService } from '../infrastructure/json-web-token.service';
-import { Account } from '@modules/iam/auth/domain/account.aggregate';
-import { AccountUsername } from '@modules/iam/auth/domain/value-objects/account-username.vo';
-import { AccountHashedPassword } from '@modules/iam/auth/domain/value-objects/account-hashed-password.vo';
+import { TokenProviderJwt } from '../infrastructure/token-provider.jwt';
+import { UserAccount } from '../domain/models/user-account.aggregate';
+import { AccountUsername } from '../domain/models/account-username.vo';
+import { AccountHashedPassword } from '../domain/models/account-hashed-password.vo';
 
-describe('JsonWebTokenService Integration', () => {
-  let service: JsonWebTokenService;
+describe('TokenProviderJwt Integration', () => {
+  let service: TokenProviderJwt;
 
   const TEST_SECRET = 'test-secret-key-for-integration-test';
   const TEST_UUID = '01912345-6789-7abc-8def-0123456789ab';
   const TEST_USERNAME = 'testuser@example.com';
 
-  const createTestAccount = (): Account => {
-    return Account.from({
+  const createTestAccount = (): UserAccount => {
+    return UserAccount.from({
       id: TEST_UUID,
       props: {
         username: AccountUsername.from(TEST_USERNAME),
@@ -34,7 +34,7 @@ describe('JsonWebTokenService Integration', () => {
       }).compile();
 
       const jwtService = module.get<JwtService>(JwtService);
-      service = new JsonWebTokenService(jwtService);
+      service = new TokenProviderJwt(jwtService);
     });
 
     it('생성된 토큰을 검증하면 올바른 TokenInfo를 반환한다', () => {
@@ -45,6 +45,7 @@ describe('JsonWebTokenService Integration', () => {
 
       expect(result).not.toBeNull();
       expect(result!.username).toBe(TEST_USERNAME);
+      expect(result!.accountType).toBe('user');
       expect(result!.expiresAt).toBeInstanceOf(Date);
       expect(result!.expiresAt.getTime()).toBeGreaterThan(Date.now());
     });
@@ -71,7 +72,7 @@ describe('JsonWebTokenService Integration', () => {
       }).compile();
 
       const otherJwtService = otherModule.get<JwtService>(JwtService);
-      const otherService = new JsonWebTokenService(otherJwtService);
+      const otherService = new TokenProviderJwt(otherJwtService);
 
       const result = otherService.verify(token);
 
@@ -91,7 +92,7 @@ describe('JsonWebTokenService Integration', () => {
       }).compile();
 
       const jwtService = module.get<JwtService>(JwtService);
-      service = new JsonWebTokenService(jwtService);
+      service = new TokenProviderJwt(jwtService);
 
       const account = createTestAccount();
       const token = service.generate(account);
@@ -116,7 +117,7 @@ describe('JsonWebTokenService Integration', () => {
       }).compile();
 
       const jwtService = module.get<JwtService>(JwtService);
-      service = new JsonWebTokenService(jwtService);
+      service = new TokenProviderJwt(jwtService);
     });
 
     it('빈 문자열 토큰은 null을 반환한다', () => {

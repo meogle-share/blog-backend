@@ -4,17 +4,15 @@ import { Repository } from 'typeorm';
 import { v7 as uuidv7 } from 'uuid';
 import { AccountModel } from '@modules/iam/auth/infrastructure/account.model';
 import { UserModel } from '@modules/iam/user/infrastructure/user.model';
-import {
-  PASSWORD_HASH_SERVICE,
-  type IPasswordHashService,
-} from '@modules/iam/auth/domain/password-hash.service.interface';
+import { PASSWORD_HASHER } from '@modules/iam/auth/auth.tokens';
+import type { PasswordHasher } from '@modules/iam/auth/domain/ports/password-hasher.port';
 
 @Injectable()
 export class IamSeeder implements OnModuleInit {
   constructor(
     @InjectRepository(AccountModel) private readonly accountRepo: Repository<AccountModel>,
     @InjectRepository(UserModel) private readonly userRepo: Repository<UserModel>,
-    @Inject(PASSWORD_HASH_SERVICE) private readonly passwordHashService: IPasswordHashService,
+    @Inject(PASSWORD_HASHER) private readonly passwordHashService: PasswordHasher,
   ) {}
 
   async onModuleInit() {

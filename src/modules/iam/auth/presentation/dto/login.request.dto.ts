@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsEmail, IsNotEmpty, Length } from 'class-validator';
-import { AccountUsername } from '@modules/iam/auth/domain/value-objects/account-username.vo';
-import { AccountPassword } from '@modules/iam/auth/domain/value-objects/account-password.vo';
+import { AccountUsername } from '../../domain/models/account-username.vo';
+import { AccountPassword } from '../../domain/models/account-password.vo';
 
 export class LoginRequestDto {
   @ApiProperty({

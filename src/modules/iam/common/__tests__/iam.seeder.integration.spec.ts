@@ -8,9 +8,9 @@ import { AccountModel } from '@modules/iam/auth/infrastructure/account.model';
 import { UserModel } from '@modules/iam/user/infrastructure/user.model';
 import { getDataSourceOptionsForNest } from '@configs/database.config';
 import { truncate } from '@test/support/database.helper';
-import { PASSWORD_HASH_SERVICE } from '@modules/iam/auth/domain/password-hash.service.interface';
-import { BcryptPasswordHashService } from '@modules/iam/auth/infrastructure/bcrypt-password-hash.service';
-import * as bcrypt from 'bcrypt';
+import { PASSWORD_HASHER } from '@modules/iam/auth/auth.tokens';
+import { PasswordHasherArgon2 } from '@modules/iam/auth/infrastructure/password-hasher.argon2';
+import * as argon2 from 'argon2';
 
 const ADMIN_USERNAME = 'admin@admin.com';
 const ADMIN_PASSWORD = 'admin12345';
@@ -34,10 +34,7 @@ describe('IamSeeder', () => {
         }),
         TypeOrmModule.forFeature([AccountModel, UserModel]),
       ],
-      providers: [
-        IamSeeder,
-        { provide: PASSWORD_HASH_SERVICE, useClass: BcryptPasswordHashService },
-      ],
+      providers: [IamSeeder, { provide: PASSWORD_HASHER, useClass: PasswordHasherArgon2 }],
     }).compile();
 
     await module.init();
@@ -61,7 +58,7 @@ describe('IamSeeder', () => {
       expect(foundAccount).toBeDefined();
       expect(foundAccount!.id).toBeDefined();
       expect(foundAccount!.username).toBe(ADMIN_USERNAME);
-      expect(await bcrypt.compare(ADMIN_PASSWORD, foundAccount!.password)).toBe(true);
+      expect(await argon2.verify(foundAccount!.password, ADMIN_PASSWORD)).toBe(true);
       expect(foundAccount!.createdAt).toBeInstanceOf(Date);
       expect(foundAccount!.updatedAt).toBeInstanceOf(Date);
     });
@@ -129,7 +126,7 @@ describe('IamSeeder', () => {
 
       expect(foundAccount).toBeDefined();
       expect(foundAccount!.username).toBe(ADMIN_USERNAME);
-      expect(await bcrypt.compare(ADMIN_PASSWORD, foundAccount!.password)).toBe(true);
+      expect(await argon2.verify(foundAccount!.password, ADMIN_PASSWORD)).toBe(true);
       expect(foundAccount!.id).toBeDefined();
       expect(typeof foundAccount!.id).toBe('string');
       expect(foundAccount!.createdAt).toBeInstanceOf(Date);

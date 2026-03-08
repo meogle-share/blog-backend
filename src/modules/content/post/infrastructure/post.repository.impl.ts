@@ -1,13 +1,13 @@
-import { IPostRepository } from '../domain/post.repository.interface';
+import { PostRepositoryPort } from '../domain/ports/post.repository.port';
 import { InjectRepository } from '@nestjs/typeorm';
 import { PostModel } from './post.model';
 import { Repository } from 'typeorm';
-import { Post } from '../domain/post.aggregate';
+import { Post } from '../domain/models/post.aggregate';
 import { PostMapper } from './post.mapper';
 import { Injectable } from '@nestjs/common';
 
 @Injectable()
-export class PostRepositoryImpl implements IPostRepository {
+export class PostRepositoryImpl implements PostRepositoryPort {
   constructor(
     @InjectRepository(PostModel)
     private readonly repository: Repository<PostModel>,

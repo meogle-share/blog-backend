@@ -1,7 +1,7 @@
 import { PostModel } from './post.model';
-import { Post } from '../domain/post.aggregate';
-import { PostTitle } from '../domain/value-objects/post-title.vo';
-import { PostContent } from '../domain/value-objects/post-content.vo';
+import { Post } from '../domain/models/post.aggregate';
+import { PostTitle } from '../domain/models/post-title.vo';
+import { PostContent } from '../domain/models/post-content.vo';
 import { Injectable } from '@nestjs/common';
 import { Mapper } from '@libs/ddd/mapper.interface';
 

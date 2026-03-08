@@ -1,10 +1,10 @@
 import { PasswordService } from './password.service';
-import type { IPasswordHashService } from '@modules/iam/auth/domain/password-hash.service.interface';
-import { AccountHashedPassword } from '@modules/iam/auth/domain/value-objects/account-hashed-password.vo';
+import type { PasswordHasher } from '../ports/password-hasher.port';
+import { AccountHashedPassword } from '../models/account-hashed-password.vo';
 
 describe('PasswordService', () => {
   let passwordService: PasswordService;
-  let mockPasswordHashService: jest.Mocked<IPasswordHashService>;
+  let mockPasswordHashService: jest.Mocked<PasswordHasher>;
 
   beforeEach(() => {
     mockPasswordHashService = {

@@ -1,5 +1,5 @@
 import { AggregateRoot, generateId } from '@libs/ddd';
-import { UserNickName } from '@modules/iam/user/domain/value-objects/user-nickname.vo';
+import { UserNickName } from './user-nickname.vo';
 
 interface CreateUserParams {
   accountId: string;

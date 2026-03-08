@@ -1,5 +1,5 @@
 import { User } from './user.aggregate';
-import { UserNickName } from './value-objects/user-nickname.vo';
+import { UserNickName } from './user-nickname.vo';
 import { generateId } from '@libs/ddd';
 
 describe('User Aggregate', () => {

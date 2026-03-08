@@ -1,17 +1,17 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { CreatePostCommand } from './create-post.command';
-import { PostTitle } from '../../domain/value-objects/post-title.vo';
-import { PostContent } from '../../domain/value-objects/post-content.vo';
-import { Post } from '../../domain/post.aggregate';
-import type { IPostRepository } from '../../domain/post.repository.interface';
-import { POST_REPOSITORY } from '../../domain/post.repository.interface';
+import { PostTitle } from '../../domain/models/post-title.vo';
+import { PostContent } from '../../domain/models/post-content.vo';
+import { Post } from '../../domain/models/post.aggregate';
+import type { PostRepositoryPort } from '../../domain/ports/post.repository.port';
+import { POST_REPOSITORY } from '../../post.tokens';
 import { Inject } from '@nestjs/common';
 
 @CommandHandler(CreatePostCommand)
 export class CreatePostHandler implements ICommandHandler<CreatePostCommand> {
   constructor(
     @Inject(POST_REPOSITORY)
-    private readonly postRepository: IPostRepository,
+    private readonly postRepository: PostRepositoryPort,
   ) {}
 
   async execute(command: CreatePostCommand) {

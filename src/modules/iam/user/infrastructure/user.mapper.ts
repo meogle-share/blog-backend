@@ -1,8 +1,8 @@
 import { Mapper } from '@libs/ddd';
-import { User } from '@modules/iam/user/domain/user.aggregate';
+import { User } from '@modules/iam/user/domain/models/user.aggregate';
 import { UserModel } from '@modules/iam/user/infrastructure/user.model';
 import { Injectable } from '@nestjs/common';
-import { UserNickName } from '@modules/iam/user/domain/value-objects/user-nickname.vo';
+import { UserNickName } from '@modules/iam/user/domain/models/user-nickname.vo';
 
 @Injectable()
 export class UserMapper implements Mapper<User, UserModel> {

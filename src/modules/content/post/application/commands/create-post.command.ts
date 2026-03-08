@@ -1,5 +1,5 @@
 import { Command } from '@nestjs/cqrs';
-import { Post } from '@modules/content/post/domain/post.aggregate';
+import { Post } from '@modules/content/post/domain/models/post.aggregate';
 
 export class CreatePostCommand extends Command<Post> {
   constructor(

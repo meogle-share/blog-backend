@@ -3,11 +3,11 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AccountModel } from '@modules/iam/auth/infrastructure/account.model';
 import { UserModel } from '@modules/iam/user/infrastructure/user.model';
 import { IamSeeder } from '@modules/iam/common/iam.seeder';
-import { PASSWORD_HASH_SERVICE } from '@modules/iam/auth/domain/password-hash.service.interface';
-import { BcryptPasswordHashService } from '@modules/iam/auth/infrastructure/bcrypt-password-hash.service';
+import { PASSWORD_HASHER } from '@modules/iam/auth/auth.tokens';
+import { PasswordHasherArgon2 } from '@modules/iam/auth/infrastructure/password-hasher.argon2';
 
 @Module({
   imports: [TypeOrmModule.forFeature([AccountModel, UserModel])],
-  providers: [IamSeeder, { provide: PASSWORD_HASH_SERVICE, useClass: BcryptPasswordHashService }],
+  providers: [IamSeeder, { provide: PASSWORD_HASHER, useClass: PasswordHasherArgon2 }],
 })
 export class IamSeederModule {}

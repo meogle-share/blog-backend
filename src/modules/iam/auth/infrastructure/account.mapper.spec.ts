@@ -1,8 +1,8 @@
 import { AccountMapper } from './account.mapper';
-import { Account } from '@modules/iam/auth/domain/account.aggregate';
-import { AccountModel } from '@modules/iam/auth/infrastructure/account.model';
-import { AccountUsername } from '@modules/iam/auth/domain/value-objects/account-username.vo';
-import { AccountHashedPassword } from '@modules/iam/auth/domain/value-objects/account-hashed-password.vo';
+import { UserAccount } from '../domain/models/user-account.aggregate';
+import { AccountModel } from './account.model';
+import { AccountUsername } from '../domain/models/account-username.vo';
+import { AccountHashedPassword } from '../domain/models/account-hashed-password.vo';
 
 describe('AccountMapper', () => {
   let mapper: AccountMapper;
@@ -14,7 +14,7 @@ describe('AccountMapper', () => {
   });
 
   describe('toDomain', () => {
-    it('AccountModel을 Account 도메인 객체로 변환한다', () => {
+    it('AccountModel을 UserAccount 도메인 객체로 변환한다', () => {
       const model = AccountModel.from({
         id: TEST_UUID_V7,
         username: 'test@example.com',
@@ -25,7 +25,7 @@ describe('AccountMapper', () => {
 
       const domain = mapper.toDomain(model);
 
-      expect(domain).toBeInstanceOf(Account);
+      expect(domain).toBeInstanceOf(UserAccount);
       expect(domain.id).toBe(model.id);
       expect(domain.getProps().username.value).toBe(model.username);
       expect(domain.getProps().password.value).toBe(model.password);
@@ -33,11 +33,11 @@ describe('AccountMapper', () => {
   });
 
   describe('toModel', () => {
-    it('Account 도메인 객체를 AccountModel로 변환한다', () => {
+    it('UserAccount 도메인 객체를 AccountModel로 변환한다', () => {
       const username = AccountUsername.from('test@example.com');
       const password = AccountHashedPassword.from('password123');
 
-      const domain = Account.from({
+      const domain = UserAccount.from({
         id: TEST_UUID_V7,
         props: { username, password },
       });

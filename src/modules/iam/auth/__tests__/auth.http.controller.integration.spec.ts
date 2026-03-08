@@ -10,7 +10,10 @@ import { setupApp } from '../../../../app.setup';
 import { decode } from 'jsonwebtoken';
 import { JwtAccessTokenPayload } from '../infrastructure/types/json-web-token.interface';
 import { AccountModelFactory } from '@libs/typeorm/factories/account.model.factory';
-import { hashSync } from 'bcrypt';
+import * as argon2 from 'argon2';
+
+const hashPassword = (password: string) =>
+  argon2.hash(password, { type: argon2.argon2id, memoryCost: 65536, timeCost: 3, parallelism: 4 });
 
 describe('AuthHttpController', () => {
   let app: INestApplication<Application>;
@@ -44,7 +47,7 @@ describe('AuthHttpController', () => {
       const password = 'validPassword123';
       const testAccount = AccountModelFactory.create(1, {
         username: 'test@example.com',
-        password: hashSync(password, 12),
+        password: await hashPassword(password),
       })[0];
       await accountRepository.save(testAccount);
 
@@ -66,7 +69,7 @@ describe('AuthHttpController', () => {
       const password = 'validPassword123';
       const testAccount = AccountModelFactory.create(1, {
         username: 'token-test@example.com',
-        password: hashSync(password, 12),
+        password: await hashPassword(password),
       })[0];
       await accountRepository.save(testAccount);
 
@@ -84,6 +87,7 @@ describe('AuthHttpController', () => {
       expect(decoded).not.toBeNull();
       expect(decoded.sub).toBe(testAccount.id);
       expect(decoded.username).toBe('token-test@example.com');
+      expect(decoded.accountType).toBe('user');
       expect(decoded.iss).toBe('meogle-test');
       expect(decoded.iat).toBeDefined();
       expect(decoded.exp).toBeDefined();
@@ -94,7 +98,7 @@ describe('AuthHttpController', () => {
       const password = 'validPassword123';
       const testAccount = AccountModelFactory.create(1, {
         username: 'expiry-test@example.com',
-        password: hashSync(password, 12),
+        password: await hashPassword(password),
       })[0];
       await accountRepository.save(testAccount);
 
@@ -127,7 +131,7 @@ describe('AuthHttpController', () => {
       it('잘못된 비밀번호로 로그인하면 401 에러를 반환한다', async () => {
         const testAccount = AccountModelFactory.create(1, {
           username: 'test@example.com',
-          password: hashSync('correctPassword123', 12),
+          password: await hashPassword('correctPassword123'),
         })[0];
         await accountRepository.save(testAccount);
 

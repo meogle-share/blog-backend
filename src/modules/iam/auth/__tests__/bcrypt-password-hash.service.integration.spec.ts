@@ -1,10 +1,10 @@
-import { BcryptPasswordHashService } from '../infrastructure/bcrypt-password-hash.service';
+import { PasswordHasherArgon2 } from '../infrastructure/password-hasher.argon2';
 
-describe('BcryptPasswordHashService', () => {
-  let service: BcryptPasswordHashService;
+describe('PasswordHasherArgon2', () => {
+  let service: PasswordHasherArgon2;
 
   beforeEach(() => {
-    service = new BcryptPasswordHashService();
+    service = new PasswordHasherArgon2();
   });
 
   describe('hash', () => {
@@ -14,7 +14,7 @@ describe('BcryptPasswordHashService', () => {
       const hashedPassword = await service.hash(plainPassword);
 
       expect(hashedPassword).not.toBe(plainPassword);
-      expect(hashedPassword).toMatch(/^\$2[aby]\$\d{2}\$/); // bcrypt 해시 형식
+      expect(hashedPassword).toMatch(/^\$argon2/); // argon2 해시 형식
     });
 
     it('같은 비밀번호를 해싱해도 매번 다른 해시가 생성된다', async () => {

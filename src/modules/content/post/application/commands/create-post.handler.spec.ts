@@ -1,14 +1,14 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { CreatePostHandler } from './create-post.handler';
 import { CreatePostCommand } from './create-post.command';
-import { IPostRepository, POST_REPOSITORY } from '../../domain/post.repository.interface';
-import { Post } from '../../domain/post.aggregate';
+import { POST_REPOSITORY } from '../../post.tokens';
+import type { PostRepositoryPort } from '../../domain/ports/post.repository.port';
+import { Post } from '../../domain/models/post.aggregate';
 import { generateId } from '@libs/ddd';
 
 describe('CreatePostHandler', () => {
   let handler: CreatePostHandler;
-  let postRepository: jest.Mocked<IPostRepository>;
-  let testAuthorId: string;
+  let postRepository: jest.Mocked<PostRepositoryPort>;
 
   const mockPostRepository = {
     save: jest.fn(),
@@ -30,6 +30,8 @@ describe('CreatePostHandler', () => {
     postRepository = module.get(POST_REPOSITORY);
     testAuthorId = generateId();
   });
+
+  let testAuthorId: string;
 
   afterEach(() => {
     jest.clearAllMocks();

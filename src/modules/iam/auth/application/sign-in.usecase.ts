@@ -1,23 +1,24 @@
 import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
-import type { IAccountRepository } from '@modules/iam/auth/domain/account.repository.interface';
-import { ACCOUNT_REPOSITORY } from '@modules/iam/auth/domain/account.repository.interface';
-import { Account } from '@modules/iam/auth/domain/account.aggregate';
-import { PasswordService } from '@modules/iam/auth/domain/services/password.service';
+import type { AccountRepositoryPort } from '../domain/ports/account.repository.port';
+import { ACCOUNT_REPOSITORY } from '../auth.tokens';
+import { UserAccount } from '../domain/models/user-account.aggregate';
+import { PasswordService } from '../domain/services/password.service';
+import { UseCase } from '@libs/ddd';
 
-interface LoginCommand {
+interface SignInCommand {
   username: string;
   password: string;
 }
 
 @Injectable()
-export class SignInUseCase {
+export class SignInUseCase implements UseCase<SignInCommand, UserAccount> {
   constructor(
     @Inject(ACCOUNT_REPOSITORY)
-    private readonly accountRepository: IAccountRepository,
+    private readonly accountRepository: AccountRepositoryPort,
     private readonly passwordService: PasswordService,
   ) {}
 
-  async execute(command: LoginCommand): Promise<Account> {
+  async execute(command: SignInCommand): Promise<UserAccount> {
     const account = await this.accountRepository.findOneByUsername(command.username);
     if (!account) {
       throw new UnauthorizedException('Invalid credentials');
