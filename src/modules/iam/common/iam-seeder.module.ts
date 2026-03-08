@@ -8,9 +8,6 @@ import { BcryptPasswordHashService } from '@modules/iam/auth/infrastructure/bcry
 
 @Module({
   imports: [TypeOrmModule.forFeature([AccountModel, UserModel])],
-  providers: [
-    IamSeeder,
-    { provide: PASSWORD_HASH_SERVICE, useClass: BcryptPasswordHashService },
-  ],
+  providers: [IamSeeder, { provide: PASSWORD_HASH_SERVICE, useClass: BcryptPasswordHashService }],
 })
 export class IamSeederModule {}

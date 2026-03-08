@@ -1,8 +1,6 @@
 import { UserMapper } from './user.mapper';
 import { UserModel } from './user.model';
 import { User } from '../domain/user.aggregate';
-import { UserId } from '../domain/value-objects/user-id.vo';
-import { AccountId } from '../../auth/domain/value-objects/account-id.vo';
 import { UserNickName } from '../domain/value-objects/user-nickname.vo';
 
 describe('UserMapper', () => {
@@ -25,10 +23,8 @@ describe('UserMapper', () => {
       const user = mapper.toDomain(userModel);
 
       expect(user).toBeInstanceOf(User);
-      expect(user.id).toBeInstanceOf(UserId);
-      expect(user.id.value).toBe(userModel.id);
-      expect(user.getProps().accountId).toBeInstanceOf(AccountId);
-      expect(user.getProps().accountId.value).toBe(userModel.accountId);
+      expect(user.id).toBe(userModel.id);
+      expect(user.getProps().accountId).toBe(userModel.accountId);
       expect(user.getProps().nickname).toBeInstanceOf(UserNickName);
       expect(user.getProps().nickname.value).toBe(userModel.nickname);
     });
@@ -37,9 +33,9 @@ describe('UserMapper', () => {
   describe('toModel', () => {
     it('User 도메인 객체를 UserModel로 변환해야 한다', () => {
       const user = User.from({
-        id: UserId.from('01912345-6789-7abc-8222-123456789abc'),
+        id: '01912345-6789-7abc-8222-123456789abc',
         props: {
-          accountId: AccountId.from('01912345-6789-7abc-8223-123456789abc'),
+          accountId: '01912345-6789-7abc-8223-123456789abc',
           nickname: UserNickName.from('TestUser'),
         },
       });
@@ -61,17 +57,15 @@ describe('UserMapper', () => {
   describe('양방향 변환', () => {
     it('toModel 후 toDomain으로 변환하면 동일한 데이터를 가져야 한다', () => {
       const originalUser = User.create({
-        accountId: AccountId.from('01912345-6789-7abc-8225-123456789abc'),
+        accountId: '01912345-6789-7abc-8225-123456789abc',
         nickname: UserNickName.from('RoundTripUser'),
       });
 
       const userModel = mapper.toModel(originalUser);
       const reconstructedUser = mapper.toDomain(userModel);
 
-      expect(reconstructedUser.id.value).toBe(originalUser.id.value);
-      expect(reconstructedUser.getProps().accountId.value).toBe(
-        originalUser.getProps().accountId.value,
-      );
+      expect(reconstructedUser.id).toBe(originalUser.id);
+      expect(reconstructedUser.getProps().accountId).toBe(originalUser.getProps().accountId);
       expect(reconstructedUser.getProps().nickname.value).toBe(
         originalUser.getProps().nickname.value,
       );

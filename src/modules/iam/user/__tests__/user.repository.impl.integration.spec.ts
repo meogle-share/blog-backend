@@ -6,13 +6,12 @@ import { UserRepositoryImpl } from '../infrastructure/user.repository.impl';
 import { UserModel } from '../infrastructure/user.model';
 import { UserMapper } from '../infrastructure/user.mapper';
 import { User } from '../domain/user.aggregate';
-import { UserId } from '../domain/value-objects/user-id.vo';
 import { UserNickName } from '../domain/value-objects/user-nickname.vo';
 import { getDataSourceOptionsForNest } from '@configs/database.config';
 import { truncate } from '@test/support/database.helper';
 import { AccountModel } from '@modules/iam/auth/infrastructure/account.model';
 import { UserModelFactory } from '@libs/typeorm/factories/user.model.factory';
-import { AccountId } from '@modules/iam/auth/domain/value-objects/account-id.vo';
+import { generateId } from '@libs/ddd';
 
 describe('UserRepositoryImpl', () => {
   let userRepository: UserRepositoryImpl;
@@ -57,7 +56,7 @@ describe('UserRepositoryImpl', () => {
       const account = accounts[0];
 
       const user = User.create({
-        accountId: AccountId.from(account.id),
+        accountId: account.id,
         nickname: UserNickName.from('테스터'),
       });
 
@@ -66,7 +65,7 @@ describe('UserRepositoryImpl', () => {
       expect(savedUser.id).toBeDefined();
 
       const foundModel = await userModelRepo.findOne({
-        where: { id: savedUser.id.value },
+        where: { id: savedUser.id },
       });
 
       expect(foundModel!.nickname).toBe('테스터');
@@ -78,7 +77,7 @@ describe('UserRepositoryImpl', () => {
       const account = accounts[0];
 
       const user = User.create({
-        accountId: AccountId.from(account.id),
+        accountId: account.id,
         nickname: UserNickName.from('유저'),
       });
 
@@ -87,7 +86,7 @@ describe('UserRepositoryImpl', () => {
       expect(savedUser.getProps().updatedAt).toBeInstanceOf(Date);
 
       const foundModel = await userModelRepo.findOne({
-        where: { id: savedUser.id.value },
+        where: { id: savedUser.id },
       });
       expect(foundModel!.createdAt).toBeInstanceOf(Date);
       expect(foundModel!.updatedAt).toBeInstanceOf(Date);
@@ -99,12 +98,12 @@ describe('UserRepositoryImpl', () => {
       const [account1, account2] = accounts;
 
       const user1 = User.create({
-        accountId: AccountId.from(account1.id),
+        accountId: account1.id,
         nickname: UserNickName.from('유저1'),
       });
 
       const user2 = User.create({
-        accountId: AccountId.from(account2.id),
+        accountId: account2.id,
         nickname: UserNickName.from('유저2'),
       });
 
@@ -120,11 +119,11 @@ describe('UserRepositoryImpl', () => {
       await accountModelRepo.save(accounts);
       const account = accounts[0];
 
-      const userId = UserId.generate();
+      const userId = generateId();
       const user1 = User.from({
         id: userId,
         props: {
-          accountId: AccountId.from(account.id),
+          accountId: account.id,
           nickname: UserNickName.from('오리지널'),
         },
       });
@@ -134,7 +133,7 @@ describe('UserRepositoryImpl', () => {
       const user2 = User.from({
         id: userId,
         props: {
-          accountId: AccountId.from(account.id),
+          accountId: account.id,
           nickname: UserNickName.from('업데이트'),
         },
       });
@@ -145,7 +144,7 @@ describe('UserRepositoryImpl', () => {
       expect(count).toBe(1);
 
       const foundModel = await userModelRepo.findOne({
-        where: { id: userId.value },
+        where: { id: userId },
       });
       expect(foundModel!.nickname).toBe('업데이트');
     });

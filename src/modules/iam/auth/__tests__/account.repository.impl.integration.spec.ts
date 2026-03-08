@@ -99,7 +99,7 @@ describe('AccountRepositoryImpl', () => {
       const found = await accountRepository.findOneByUsername('mapper@example.com');
 
       expect(found).toBeInstanceOf(Account);
-      expect(found!.id.value).toBe(account.id);
+      expect(found!.id).toBe(account.id);
       expect(found!.getProps().username.value).toBe(account.username);
       expect(found!.getProps().password.value).toBe(account.password);
     });

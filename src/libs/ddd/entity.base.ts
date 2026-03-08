@@ -1,7 +1,6 @@
 import { Guard } from '../guard';
-import { Identifier } from '@libs/ddd/identifier.base';
 
-export type EntityID = Identifier;
+export type EntityID = string;
 
 /**
  * Entity 기본 속성

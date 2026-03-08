@@ -29,7 +29,7 @@ export class AuthHttpController {
     return {
       accessToken,
       account: {
-        id: user.id.value,
+        id: user.id,
         username: user.getProps().username.value,
       },
     };

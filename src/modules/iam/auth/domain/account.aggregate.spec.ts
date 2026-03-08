@@ -1,7 +1,5 @@
 import { Account } from './account.aggregate';
-import { AccountId } from './value-objects/account-id.vo';
 import { AccountUsername } from './value-objects/account-username.vo';
-import { UserId } from '@modules/iam/user/domain/value-objects/user-id.vo';
 import { AccountHashedPassword } from '@modules/iam/auth/domain/value-objects/account-hashed-password.vo';
 
 describe('Account Aggregate', () => {
@@ -16,7 +14,7 @@ describe('Account Aggregate', () => {
       });
 
       expect(account).toBeInstanceOf(Account);
-      expect(account.id).toBeInstanceOf(AccountId);
+      expect(typeof account.id).toBe('string');
       expect(account.getProps().username).toBe(username);
       expect(account.getProps().password).toBe(password);
     });
@@ -28,18 +26,18 @@ describe('Account Aggregate', () => {
       const account1 = Account.create({ username, password });
       const account2 = Account.create({ username, password });
 
-      expect(account1.id.equals(account2.id)).toBe(false);
+      expect(account1.id).not.toBe(account2.id);
     });
   });
 
   describe('from', () => {
     it('기존 데이터로부터 Account를 재구성해야 한다', () => {
-      const userId = UserId.from('01912345-6789-7abc-8555-123456789abc');
+      const id = '01912345-6789-7abc-8555-123456789abc';
       const username = AccountUsername.from('existing@example.com');
       const password = AccountHashedPassword.from('existingPassword');
 
       const account = Account.from({
-        id: userId,
+        id,
         props: {
           username,
           password,
@@ -47,7 +45,7 @@ describe('Account Aggregate', () => {
       });
 
       expect(account).toBeInstanceOf(Account);
-      expect(account.id).toBe(userId);
+      expect(account.id).toBe(id);
       expect(account.getProps().username).toBe(username);
       expect(account.getProps().password).toBe(password);
     });

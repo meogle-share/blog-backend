@@ -1,10 +1,8 @@
 import { PostMapper } from './post.mapper';
 import { PostModel } from './post.model';
 import { Post } from '../domain/post.aggregate';
-import { PostId } from '../domain/value-objects/post-id.vo';
 import { PostTitle } from '../domain/value-objects/post-title.vo';
 import { PostContent } from '../domain/value-objects/post-content.vo';
-import { UserId } from '../../../iam/user/domain/value-objects/user-id.vo';
 
 describe('PostMapper', () => {
   let mapper: PostMapper;
@@ -27,10 +25,8 @@ describe('PostMapper', () => {
       const post = mapper.toDomain(postModel);
 
       expect(post).toBeInstanceOf(Post);
-      expect(post.id).toBeInstanceOf(PostId);
-      expect(post.id.value).toBe(postModel.id);
-      expect(post.getProps().authorId).toBeInstanceOf(UserId);
-      expect(post.getProps().authorId.value).toBe(postModel.authorId);
+      expect(post.id).toBe(postModel.id);
+      expect(post.getProps().authorId).toBe(postModel.authorId);
       expect(post.getProps().title).toBeInstanceOf(PostTitle);
       expect(post.getProps().title.value).toBe(postModel.title);
       expect(post.getProps().content).toBeInstanceOf(PostContent);
@@ -57,16 +53,16 @@ describe('PostMapper', () => {
       const post = mapper.toDomain(postModel);
 
       expect(post).toBeInstanceOf(Post);
-      expect(post.getProps().authorId.value).toBe('01912345-6789-7abc-9111-123456789def');
+      expect(post.getProps().authorId).toBe('01912345-6789-7abc-9111-123456789def');
     });
   });
 
   describe('toModel', () => {
     it('Post 도메인 객체를 PostModel로 변환해야 한다', () => {
       const post = Post.from({
-        id: PostId.from('01912345-6789-7abc-8222-123456789abc'),
+        id: '01912345-6789-7abc-8222-123456789abc',
         props: {
-          authorId: UserId.from('01912345-6789-7abc-9222-123456789def'),
+          authorId: '01912345-6789-7abc-9222-123456789def',
           title: PostTitle.from('Test Post Title'),
           content: PostContent.from('Test post content'),
         },
@@ -91,7 +87,7 @@ describe('PostMapper', () => {
   describe('양방향 변환', () => {
     it('toPersistence 후 toDomain으로 변환하면 동일한 데이터를 가져야 한다', () => {
       const originalPost = Post.create({
-        authorId: UserId.from('01912345-6789-7abc-9444-123456789def'),
+        authorId: '01912345-6789-7abc-9444-123456789def',
         title: PostTitle.from('Round Trip Test'),
         content: PostContent.from('Testing round trip conversion'),
       });
@@ -99,10 +95,8 @@ describe('PostMapper', () => {
       const postModel = mapper.toModel(originalPost);
       const reconstructedPost = mapper.toDomain(postModel);
 
-      expect(reconstructedPost.id.value).toBe(originalPost.id.value);
-      expect(reconstructedPost.getProps().authorId.value).toBe(
-        originalPost.getProps().authorId.value,
-      );
+      expect(reconstructedPost.id).toBe(originalPost.id);
+      expect(reconstructedPost.getProps().authorId).toBe(originalPost.getProps().authorId);
       expect(reconstructedPost.getProps().title.value).toBe(originalPost.getProps().title.value);
       expect(reconstructedPost.getProps().content.value).toBe(
         originalPost.getProps().content.value,

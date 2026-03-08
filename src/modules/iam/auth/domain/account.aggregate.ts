@@ -1,7 +1,5 @@
-import { AggregateRoot } from '@libs/ddd';
+import { AggregateRoot, generateId } from '@libs/ddd';
 import { AccountUsername } from '@modules/iam/auth/domain/value-objects/account-username.vo';
-import { UserId } from '@modules/iam/user/domain/value-objects/user-id.vo';
-import { AccountId } from '@modules/iam/auth/domain/value-objects/account-id.vo';
 import { AccountHashedPassword } from '@modules/iam/auth/domain/value-objects/account-hashed-password.vo';
 
 interface CreateAccountParams {
@@ -17,12 +15,12 @@ interface AccountProps {
 export class Account extends AggregateRoot<AccountProps> {
   static create(params: CreateAccountParams): Account {
     return new Account({
-      id: AccountId.generate(),
+      id: generateId(),
       props: params,
     });
   }
 
-  static from(data: { id: UserId; props: AccountProps }): Account {
+  static from(data: { id: string; props: AccountProps }): Account {
     return new Account({
       id: data.id,
       props: data.props,

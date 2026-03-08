@@ -1,9 +1,7 @@
 import { PostModel } from './post.model';
 import { Post } from '../domain/post.aggregate';
-import { UserId } from '../../../iam/user/domain/value-objects/user-id.vo';
 import { PostTitle } from '../domain/value-objects/post-title.vo';
 import { PostContent } from '../domain/value-objects/post-content.vo';
-import { PostId } from '../domain/value-objects/post-id.vo';
 import { Injectable } from '@nestjs/common';
 import { Mapper } from '@libs/ddd/mapper.interface';
 
@@ -11,9 +9,9 @@ import { Mapper } from '@libs/ddd/mapper.interface';
 export class PostMapper implements Mapper<Post, PostModel> {
   toDomain(model: PostModel): Post {
     return Post.from({
-      id: PostId.from(model.id),
+      id: model.id,
       props: {
-        authorId: UserId.from(model.authorId),
+        authorId: model.authorId,
         title: PostTitle.from(model.title),
         content: PostContent.from(model.content),
       },
@@ -23,8 +21,8 @@ export class PostMapper implements Mapper<Post, PostModel> {
   toModel(post: Post): PostModel {
     const props = post.getProps();
     return PostModel.from({
-      id: props.id.value,
-      authorId: props.authorId.value,
+      id: props.id,
+      authorId: props.authorId,
       title: props.title.value,
       content: props.content.value,
       createdAt: props.createdAt,

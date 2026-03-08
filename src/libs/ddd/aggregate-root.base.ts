@@ -75,7 +75,7 @@ export abstract class AggregateRoot<EntityProps> extends Entity<EntityProps> {
         logger.debug(
           `[todo: write request id] "${
             event.constructor.name
-          }" event published for aggregate ${this.constructor.name} : ${this.id.value}`,
+          }" event published for aggregate ${this.constructor.name} : ${this.id}`,
         );
         return eventEmitter.emitAsync(event.constructor.name, event);
       }),

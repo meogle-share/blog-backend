@@ -1,19 +1,4 @@
 import { Entity, CreateEntityParams } from '@libs/ddd';
-import { Identifier } from '@libs/ddd';
-
-class TestId extends Identifier {
-  private constructor(value: string) {
-    super(value);
-  }
-
-  static create(): TestId {
-    return new TestId(Identifier.generateUuid());
-  }
-
-  static from(value: string): TestId {
-    return new TestId(value);
-  }
-}
 
 interface TestProps {
   name: string;
@@ -35,7 +20,7 @@ class TestEntity extends Entity<TestProps> {
 }
 
 describe('Entity', () => {
-  const testId = TestId.from('01930c8e-7d8a-7890-8b5e-3d9c8f6a5b4c');
+  const testId = '01930c8e-7d8a-7890-8b5e-3d9c8f6a5b4c';
   const testProps: TestProps = {
     name: 'Test Entity',
     value: 42,
@@ -222,7 +207,7 @@ describe('Entity', () => {
 
   describe('Entity 식별자 기반 비교', () => {
     it('같은 ID를 가진 Entity는 동등해야 한다', () => {
-      const id = TestId.from('01930c8e-7d8a-7890-8b5e-3d9c8f6a5b4c');
+      const id = '01930c8e-7d8a-7890-8b5e-3d9c8f6a5b4c';
 
       const entity1 = new TestEntity({
         id,
@@ -234,12 +219,12 @@ describe('Entity', () => {
         props: { name: 'Entity 2', value: 2 },
       });
 
-      expect(entity1.id.equals(entity2.id)).toBe(true);
+      expect(entity1.id).toBe(entity2.id);
     });
 
     it('다른 ID를 가진 Entity는 다르다', () => {
-      const id1 = TestId.from('01930c8e-7d8a-7890-8b5e-3d9c8f6a5b4c');
-      const id2 = TestId.from('01930c8e-7d8a-7891-8b5e-3d9c8f6a5b4d');
+      const id1 = '01930c8e-7d8a-7890-8b5e-3d9c8f6a5b4c';
+      const id2 = '01930c8e-7d8a-7891-8b5e-3d9c8f6a5b4d';
 
       const entity1 = new TestEntity({
         id: id1,
@@ -251,7 +236,7 @@ describe('Entity', () => {
         props: testProps,
       });
 
-      expect(entity1.id.equals(entity2.id)).toBe(false);
+      expect(entity1.id).not.toBe(entity2.id);
     });
   });
 });

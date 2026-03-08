@@ -13,13 +13,13 @@ import { POST_REPOSITORY } from '../domain/post.repository.interface';
 import { Post } from '../domain/post.aggregate';
 import { PostTitle } from '../domain/value-objects/post-title.vo';
 import { PostContent } from '../domain/value-objects/post-content.vo';
-import { UserId } from '../../../iam/user/domain/value-objects/user-id.vo';
 import { getDataSourceOptionsForNest } from '@configs/database.config';
 import { UserModel } from '@modules/iam/user/infrastructure/user.model';
 import { truncate } from '@test/support/database.helper';
 import { UserModelFactory } from '@libs/typeorm/factories/user.model.factory';
 import { AccountModel } from '@modules/iam/auth/infrastructure/account.model';
 import { AccountModelFactory } from '@libs/typeorm/factories/account.model.factory';
+import { generateId } from '@libs/ddd';
 
 describe('CreatePostHandler', () => {
   let handler: CreatePostHandler;
@@ -85,12 +85,12 @@ describe('CreatePostHandler', () => {
 
         expect(result).toBeInstanceOf(Post);
         expect(result.id).toBeDefined();
-        expect(result.getProps().authorId.value).toBe(testUser.id);
+        expect(result.getProps().authorId).toBe(testUser.id);
         expect(result.getProps().title.value).toBe('Integration Test Post');
         expect(result.getProps().content.value).toBe('This is an integration test content');
 
         const savedModel = await postModelRepo.findOne({
-          where: { id: result.id.value },
+          where: { id: result.id },
         });
 
         expect(savedModel).toBeDefined();
@@ -142,7 +142,7 @@ describe('CreatePostHandler', () => {
       });
 
       it('FK 제약조건 위반 시 트랜잭션이 롤백되어야 한다', async () => {
-        const nonExistentAuthorId = UserId.generate().value;
+        const nonExistentAuthorId = generateId();
         const command = new CreatePostCommand(nonExistentAuthorId, 'Test Title', 'Test Content');
 
         await expect(handler.execute(command)).rejects.toThrow();

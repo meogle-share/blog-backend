@@ -1,7 +1,6 @@
 import { AccountMapper } from './account.mapper';
 import { Account } from '@modules/iam/auth/domain/account.aggregate';
 import { AccountModel } from '@modules/iam/auth/infrastructure/account.model';
-import { AccountId } from '@modules/iam/auth/domain/value-objects/account-id.vo';
 import { AccountUsername } from '@modules/iam/auth/domain/value-objects/account-username.vo';
 import { AccountHashedPassword } from '@modules/iam/auth/domain/value-objects/account-hashed-password.vo';
 
@@ -27,7 +26,7 @@ describe('AccountMapper', () => {
       const domain = mapper.toDomain(model);
 
       expect(domain).toBeInstanceOf(Account);
-      expect(domain.id.value).toBe(model.id);
+      expect(domain.id).toBe(model.id);
       expect(domain.getProps().username.value).toBe(model.username);
       expect(domain.getProps().password.value).toBe(model.password);
     });
@@ -35,19 +34,18 @@ describe('AccountMapper', () => {
 
   describe('toModel', () => {
     it('Account 도메인 객체를 AccountModel로 변환한다', () => {
-      const id = AccountId.from(TEST_UUID_V7);
       const username = AccountUsername.from('test@example.com');
       const password = AccountHashedPassword.from('password123');
 
       const domain = Account.from({
-        id,
+        id: TEST_UUID_V7,
         props: { username, password },
       });
 
       const model = mapper.toModel(domain);
 
       expect(model).toBeInstanceOf(AccountModel);
-      expect(model.id).toBe(id.value);
+      expect(model.id).toBe(TEST_UUID_V7);
       expect(model.username).toBe(username.value);
       expect(model.password).toBe(password.value);
       expect(model.createdAt).toBeInstanceOf(Date);

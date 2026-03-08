@@ -2,7 +2,6 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { JwtModule, JwtService } from '@nestjs/jwt';
 import { JsonWebTokenService } from '../infrastructure/json-web-token.service';
 import { Account } from '@modules/iam/auth/domain/account.aggregate';
-import { AccountId } from '@modules/iam/auth/domain/value-objects/account-id.vo';
 import { AccountUsername } from '@modules/iam/auth/domain/value-objects/account-username.vo';
 import { AccountHashedPassword } from '@modules/iam/auth/domain/value-objects/account-hashed-password.vo';
 
@@ -15,7 +14,7 @@ describe('JsonWebTokenService Integration', () => {
 
   const createTestAccount = (): Account => {
     return Account.from({
-      id: AccountId.from(TEST_UUID),
+      id: TEST_UUID,
       props: {
         username: AccountUsername.from(TEST_USERNAME),
         password: AccountHashedPassword.from('ValidPassword123!'),

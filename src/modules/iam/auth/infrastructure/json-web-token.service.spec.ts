@@ -1,7 +1,6 @@
 import { JsonWebTokenService } from './json-web-token.service';
 import { JwtService } from '@nestjs/jwt';
 import { Account } from '@modules/iam/auth/domain/account.aggregate';
-import { AccountId } from '@modules/iam/auth/domain/value-objects/account-id.vo';
 import { AccountUsername } from '@modules/iam/auth/domain/value-objects/account-username.vo';
 import { JwtAccessTokenPayload } from '@modules/iam/auth/infrastructure/types/json-web-token.interface';
 import { AccountHashedPassword } from '@modules/iam/auth/domain/value-objects/account-hashed-password.vo';
@@ -32,7 +31,7 @@ describe('JsonWebTokenService', () => {
   describe('generate', () => {
     it('Account 정보를 기반으로 JWT 토큰을 생성한다', () => {
       const account = Account.from({
-        id: AccountId.from(TEST_UUID),
+        id: TEST_UUID,
         props: {
           username: AccountUsername.from(TEST_USERNAME),
           password: AccountHashedPassword.from('password123'),
@@ -46,7 +45,7 @@ describe('JsonWebTokenService', () => {
 
     it('JwtService.sign()에 올바른 payload를 전달한다', () => {
       const account = Account.from({
-        id: AccountId.from(TEST_UUID),
+        id: TEST_UUID,
         props: {
           username: AccountUsername.from(TEST_USERNAME),
           password: AccountHashedPassword.from('password123'),

@@ -1,23 +1,8 @@
 import { AggregateRoot } from '@libs/ddd';
 import { DomainEvent, DomainEventProps } from '@libs/ddd';
 import { CreateEntityParams } from '@libs/ddd';
-import { Identifier } from '@libs/ddd';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { LoggerPort } from '../../log/logger.port';
-
-class TestId extends Identifier {
-  private constructor(value: string) {
-    super(value);
-  }
-
-  static create(): TestId {
-    return new TestId(Identifier.generateUuid());
-  }
-
-  static from(value: string): TestId {
-    return new TestId(value);
-  }
-}
 
 interface TestProps {
   name: string;
@@ -58,7 +43,7 @@ class TestAggregateRoot extends AggregateRoot<TestProps> {
 }
 
 describe('AggregateRoot', () => {
-  const testId = TestId.from('01930c8e-7d8a-7890-8b5e-3d9c8f6a5b4c');
+  const testId = '01930c8e-7d8a-7890-8b5e-3d9c8f6a5b4c';
   const testProps: TestProps = {
     name: 'Test Aggregate',
     value: 42,
@@ -96,12 +81,12 @@ describe('AggregateRoot', () => {
       });
 
       const event1 = new TestDomainEvent({
-        aggregateId: testId.value,
+        aggregateId: testId,
         message: 'Test Event 1',
       });
 
       const event2 = new TestDomainEvent({
-        aggregateId: testId.value,
+        aggregateId: testId,
         message: 'Test Event 2',
       });
 
@@ -131,7 +116,7 @@ describe('AggregateRoot', () => {
       });
 
       const event = new TestDomainEvent({
-        aggregateId: testId.value,
+        aggregateId: testId,
         message: 'Test Event',
       });
 
@@ -144,7 +129,7 @@ describe('AggregateRoot', () => {
         // eslint-disable-next-line @typescript-eslint/no-unsafe-call
         events.push(
           new TestDomainEvent({
-            aggregateId: testId.value,
+            aggregateId: testId,
             message: 'Another Event',
           }),
         );
@@ -173,7 +158,7 @@ describe('AggregateRoot', () => {
       });
 
       const event = new TestDomainEvent({
-        aggregateId: testId.value,
+        aggregateId: testId,
         message: 'Test Event',
       });
 
@@ -190,17 +175,17 @@ describe('AggregateRoot', () => {
       });
 
       const event1 = new TestDomainEvent({
-        aggregateId: testId.value,
+        aggregateId: testId,
         message: 'First Event',
       });
 
       const event2 = new TestDomainEvent({
-        aggregateId: testId.value,
+        aggregateId: testId,
         message: 'Second Event',
       });
 
       const event3 = new TestDomainEvent({
-        aggregateId: testId.value,
+        aggregateId: testId,
         message: 'Third Event',
       });
 
@@ -223,12 +208,12 @@ describe('AggregateRoot', () => {
       });
 
       const event1 = new TestDomainEvent({
-        aggregateId: testId.value,
+        aggregateId: testId,
         message: 'Test Event 1',
       });
 
       const event2 = new TestDomainEvent({
-        aggregateId: testId.value,
+        aggregateId: testId,
         message: 'Test Event 2',
       });
 
@@ -281,12 +266,12 @@ describe('AggregateRoot', () => {
       });
 
       const event1 = new TestDomainEvent({
-        aggregateId: testId.value,
+        aggregateId: testId,
         message: 'Test Event 1',
       });
 
       const event2 = new TestDomainEvent({
-        aggregateId: testId.value,
+        aggregateId: testId,
         message: 'Test Event 2',
       });
 
@@ -307,7 +292,7 @@ describe('AggregateRoot', () => {
       });
 
       const event = new TestDomainEvent({
-        aggregateId: testId.value,
+        aggregateId: testId,
         message: 'Test Event',
       });
 
@@ -318,7 +303,7 @@ describe('AggregateRoot', () => {
       expect(mockLogger.debug).toHaveBeenCalledTimes(1);
       expect(mockLogger.debug).toHaveBeenCalledWith(expect.stringContaining('TestDomainEvent'));
       expect(mockLogger.debug).toHaveBeenCalledWith(expect.stringContaining('TestAggregateRoot'));
-      expect(mockLogger.debug).toHaveBeenCalledWith(expect.stringContaining(testId.value));
+      expect(mockLogger.debug).toHaveBeenCalledWith(expect.stringContaining(testId));
     });
 
     it('이벤트 발행 후 이벤트 목록을 초기화해야 한다', async () => {
@@ -328,12 +313,12 @@ describe('AggregateRoot', () => {
       });
 
       const event1 = new TestDomainEvent({
-        aggregateId: testId.value,
+        aggregateId: testId,
         message: 'Test Event 1',
       });
 
       const event2 = new TestDomainEvent({
-        aggregateId: testId.value,
+        aggregateId: testId,
         message: 'Test Event 2',
       });
 
@@ -367,12 +352,12 @@ describe('AggregateRoot', () => {
       });
 
       const event1 = new TestDomainEvent({
-        aggregateId: testId.value,
+        aggregateId: testId,
         message: 'Test Event 1',
       });
 
       const event2 = new TestDomainEvent({
-        aggregateId: testId.value,
+        aggregateId: testId,
         message: 'Test Event 2',
       });
 

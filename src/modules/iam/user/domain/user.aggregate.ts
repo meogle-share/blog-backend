@@ -1,27 +1,25 @@
-import { AggregateRoot } from '@libs/ddd';
-import { UserId } from '@modules/iam/user/domain/value-objects/user-id.vo';
+import { AggregateRoot, generateId } from '@libs/ddd';
 import { UserNickName } from '@modules/iam/user/domain/value-objects/user-nickname.vo';
-import { AccountId } from '@modules/iam/auth/domain/value-objects/account-id.vo';
 
 interface CreateUserParams {
-  accountId: AccountId;
+  accountId: string;
   nickname: UserNickName;
 }
 
 interface UserProps {
-  accountId: AccountId;
+  accountId: string;
   nickname: UserNickName;
 }
 
 export class User extends AggregateRoot<UserProps> {
   static create(params: CreateUserParams): User {
     return new User({
-      id: UserId.generate(),
+      id: generateId(),
       props: params,
     });
   }
 
-  static from(data: { id: UserId; props: UserProps }): User {
+  static from(data: { id: string; props: UserProps }): User {
     return new User({
       id: data.id,
       props: data.props,

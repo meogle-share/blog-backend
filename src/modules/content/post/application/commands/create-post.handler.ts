@@ -1,6 +1,5 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { CreatePostCommand } from './create-post.command';
-import { UserId } from '@modules/iam/user/domain/value-objects/user-id.vo';
 import { PostTitle } from '../../domain/value-objects/post-title.vo';
 import { PostContent } from '../../domain/value-objects/post-content.vo';
 import { Post } from '../../domain/post.aggregate';
@@ -17,7 +16,7 @@ export class CreatePostHandler implements ICommandHandler<CreatePostCommand> {
 
   async execute(command: CreatePostCommand) {
     const post = Post.create({
-      authorId: UserId.from(command.authorId),
+      authorId: command.authorId,
       title: PostTitle.from(command.title),
       content: PostContent.from(command.content),
     });

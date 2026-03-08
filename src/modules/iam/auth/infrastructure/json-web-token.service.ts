@@ -14,7 +14,7 @@ export class JsonWebTokenService implements ITokenService {
 
   generate(account: Account): string {
     return this.jwtService.sign<JwtAccessTokenInput>({
-      sub: account.id.value,
+      sub: account.id,
       username: account.getProps().username.value,
     });
   }

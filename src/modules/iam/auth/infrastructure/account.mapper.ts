@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { Mapper } from '@libs/ddd';
 import { Account } from '@modules/iam/auth/domain/account.aggregate';
 import { AccountModel } from '@modules/iam/auth/infrastructure/account.model';
-import { AccountId } from '@modules/iam/auth/domain/value-objects/account-id.vo';
 import { AccountUsername } from '@modules/iam/auth/domain/value-objects/account-username.vo';
 import { AccountHashedPassword } from '@modules/iam/auth/domain/value-objects/account-hashed-password.vo';
 
@@ -10,7 +9,7 @@ import { AccountHashedPassword } from '@modules/iam/auth/domain/value-objects/ac
 export class AccountMapper implements Mapper<Account, AccountModel> {
   toDomain(model: AccountModel): Account {
     return Account.from({
-      id: AccountId.from(model.id),
+      id: model.id,
       props: {
         username: AccountUsername.from(model.username),
         password: AccountHashedPassword.from(model.password),
@@ -21,7 +20,7 @@ export class AccountMapper implements Mapper<Account, AccountModel> {
   toModel(domain: Account): AccountModel {
     const props = domain.getProps();
     return AccountModel.from({
-      id: props.id.value,
+      id: props.id,
       username: props.username.value,
       password: props.password.value,
       createdAt: props.createdAt,
