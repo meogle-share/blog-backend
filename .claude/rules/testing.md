@@ -23,10 +23,10 @@ src/modules/content/post/
 ## 실행 명령
 
 ```bash
-npm run test:unit      # 단위 테스트
-npm run test:unit:cov  # 단위 테스트 + 커버리지 측정
-npm run test:int       # 통합 테스트 (Docker PostgreSQL 자동 기동)
-npm run test:e2e       # E2E 테스트
+pnpm test:unit      # 단위 테스트
+pnpm test:unit:cov  # 단위 테스트 + 커버리지 측정
+pnpm test:int       # 통합 테스트 (Docker PostgreSQL 자동 기동)
+pnpm test:e2e       # E2E 테스트
 ```
 
 ## 레이어별 테스트 패턴
