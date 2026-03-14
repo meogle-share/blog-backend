@@ -18,23 +18,22 @@
 
 ## 제목 형식
 
-`type(scope): 설명 [CER-xxx]`
+`type(scope): 설명`
 
-- scope: 모듈명 (`certificate`, `migration`, `encryption` 등). 전체 범위면 생략
+- scope: 모듈명 (`iam`, `content`, `database` 등). 전체 범위면 생략
 - 설명: "무엇을 했는가"를 한글로 간결하게
-- `[CER-xxx]`: 이슈 트래커 참조 (있을 때만)
 - **제목 전체 72자 이내** — `git log --oneline`에서 잘리지 않는 한계
 
 ### type 선택 기준
 
 | type | 기준 | 예 |
 |------|------|----|
-| `feat` | 사용자에게 새 기능이나 동작 변경을 제공 | 초기화 기능 추가, 프로토콜 필드 변경 |
-| `fix` | 기존 기능의 버그 수정 | PEM 인코딩 오류 수정 |
-| `refactor` | 동작 변경 없이 코드 구조 개선·제거 | 미사용 코드 제거, if문 스타일 변환 |
+| `feat` | 사용자에게 새 기능이나 동작 변경을 제공 | 로그인 기능 추가, 게시글 조회 API 변경 |
+| `fix` | 기존 기능의 버그 수정 | 비밀번호 해싱 오류 수정 |
+| `refactor` | 동작 변경 없이 코드 구조 개선·제거 | 미사용 코드 제거, 도메인 모델 구조 정리 |
 | `chore` | 빌드·설정·의존성 등 비즈니스 로직 외 변경 | 패키지 업데이트, CI 설정 |
 | `test` | 프로덕션 코드 변경 없이 테스트만 추가·수정 | 누락된 에러 케이스 추가 |
-| `docs` | 문서만 변경 | README 수정 |
+| `docs` | 문서만 변경 | README 수정, 마이그레이션 가이드 추가 |
 
 > **판단 팁**: "이 커밋을 되돌리면 사용자가 눈치채는가?" → Yes면 `feat`/`fix`, No면 `refactor`/`chore`/`test`
 
@@ -47,25 +46,27 @@
 
 ```
 # 좋은 예
-feat(certificate): 교체 대기 인증서 초기화 기능 추가 [CER-197]
-fix(certificate): 자체서명 인증서 체인 PEM 인코딩 오류 수정
-refactor: single-statement if를 block statement로 변환
+feat(iam): 비밀번호 해싱 기능 추가
+fix(content): 게시글 조회 시 삭제된 글 노출되는 오류 수정
+docs(database): 마이그레이션 가이드 추가
+chore: 패키지 매니저를 npm에서 pnpm으로 전환
 refactor: 미사용 SSE 기능 제거
 
 # 본문이 필요한 경우
-feat(certificate): discard-rollback 의존성 제거
+feat(iam): JWT 토큰 갱신 방식 변경
 
-discard가 rollback 완료를 선행 조건으로 요구하던 제약을 제거한다.
-두 작업이 서로 다른 파일 상태(CertChangeReady / RollbackTarget)만
-조작하므로 독립 실행해도 안전하다.
+기존에는 access token 만료 시 재로그인을 요구했으나,
+refresh token으로 자동 갱신하도록 변경한다.
+세션 유지 UX 개선과 보안 사이의 균형을 위해
+refresh token 유효기간은 7일로 제한한다.
 
 # 나쁜 예 → 개선
-feat(certificate): 개인키 등록 로직 추가 및 pipeline 인터페이스 개선 - 인증서, 개인키로 구분
-→ feat(certificate): 개인키 등록 로직 추가  (pipeline 개선은 별도 커밋)
+feat(iam): 로그인 로직 추가 및 인증 미들웨어 개선
+→ feat(iam): 로그인 기능 추가  (미들웨어 개선은 별도 커밋)
 
-feat: 사용하지 않는 인증서 fixture 제거
-→ refactor: 미사용 인증서 fixture 제거  (feat 아님, 기능 추가가 아니라 정리)
+feat: 사용하지 않는 fixture 제거
+→ refactor: 미사용 fixture 제거  (feat 아님, 기능 추가가 아니라 정리)
 
-feat(certificate): 누락된 에러 테스트 케이스 추가
-→ test(certificate): 누락된 에러 테스트 케이스 추가  (프로덕션 코드 변경 없음)
+feat(content): 누락된 에러 테스트 케이스 추가
+→ test(content): 누락된 에러 테스트 케이스 추가  (프로덕션 코드 변경 없음)
 ```
