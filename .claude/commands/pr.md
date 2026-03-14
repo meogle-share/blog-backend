@@ -4,8 +4,8 @@
 
 ## 절차
 
-1. 현재 브랜치가 `master`(또는 `main`)이면, 아래 브랜치 네이밍 규칙에 따라 feature 브랜치를 생성하고 전환한다
-2. `git log`와 `git diff master...HEAD`로 브랜치의 전체 변경사항 파악
+1. 현재 브랜치가 `main`이면, 아래 브랜치 네이밍 규칙에 따라 feature 브랜치를 생성하고 전환한다
+2. `git log`와 `git diff main...HEAD`로 브랜치의 전체 변경사항 파악
 3. 아래 컨벤션에 따라 PR 제목과 본문 작성
 4. 원격에 push 후 `gh pr create`로 PR 생성
 
@@ -17,7 +17,7 @@
 
 ## 제목 형식
 
-`type(scope): 설명 [CER-xxx]`
+`type(scope): 설명`
 
 - 커밋 컨벤션의 type/scope 규칙을 동일하게 적용
 - PR에 여러 커밋이 있으면 **가장 대표적인 변경**을 기준으로 type 결정
@@ -58,11 +58,11 @@
 
 ## 브랜치 네이밍
 
-`type/간결한-설명` 또는 `type/CER-xxx-간결한-설명`
+`type/간결한-설명`
 
 ```
-feat/session-management
-fix/CER-203-pem-encoding
+feat/password-hashing
+fix/deleted-post-visible
 refactor/remove-unused-sse
 chore/upgrade-nestjs-11
 ```
@@ -80,41 +80,36 @@ chore/upgrade-nestjs-11
 
 ```markdown
 # 제목
-feat(session): 세션 관리 API 추가 [CER-210]
+feat(iam): 비밀번호 해싱 기능 추가
 
 # 본문
 ## Why
-프롬프트 전송 시 Claude CLI 프로세스를 세션 단위로 관리할 방법이 없다.
-동시 요청이 들어오면 프로세스가 충돌하고, 어떤 요청이 어떤 프로세스를
-사용 중인지 추적할 수 없다.
+사용자 비밀번호가 평문으로 저장되고 있어 보안 취약점이 존재한다.
+DB 유출 시 모든 사용자 계정이 즉시 탈취될 수 있다.
 
 ## What
-세션 CRUD API를 도입하여 각 요청을 세션 단위로 격리한다.
-세션은 인메모리 Map으로 관리하며, SessionService가 CLI 프로세스의
-생성·조회·삭제 lifecycle을 담당한다.
-
-DB 대신 인메모리를 선택한 이유는 현재 단일 인스턴스 운영 환경에서
-불필요한 복잡도를 피하기 위함이다.
+회원가입·비밀번호 변경 시 argon2로 해싱하여 저장하도록 변경한다.
+bcrypt 대신 argon2를 선택한 이유는 GPU 기반 공격에 대한 저항성이
+더 높고, OWASP에서도 권장하는 알고리즘이기 때문이다.
 
 ## Note
-서버 재시작 시 세션이 유실된다. 멀티 인스턴스 전환 시
-Redis 기반 영속화가 필요하며, 이는 후속 PR로 분리한다.
+기존 사용자의 비밀번호는 다음 로그인 시 자동으로 재해싱된다.
+마이그레이션이 별도로 필요하지 않다.
 ```
 
 ### 버그 수정
 
 ```markdown
 # 제목
-fix(certificate): 자체서명 인증서 체인 PEM 인코딩 오류 수정 [CER-203]
+fix(content): 게시글 조회 시 삭제된 글이 노출되는 오류 수정
 
 # 본문
 ## Why
-자체서명 인증서 체인 생성 시 PEM 블록 사이에 개행이 누락되어,
-일부 TLS 라이브러리(특히 OpenSSL 3.x)에서 체인 파싱에 실패한다.
+게시글 목록 조회 API에서 soft-delete된 게시글이 필터링되지 않아
+사용자에게 삭제된 콘텐츠가 그대로 노출된다.
 
 ## What
-`CertificateEncoder.chainToPem()`에서 PEM 블록을 결합할 때
-`\n` 구분자를 삽입하도록 수정했다. RFC 7468 §2에 따르면
-블록 간 공백은 필수는 아니지만, 실질적으로 대부분의 구현체가
-이를 기대하고 있어 호환성을 위해 삽입한다.
+PostRepository의 조회 쿼리에 `deletedAt IS NULL` 조건을 추가했다.
+TypeORM의 `@DeleteDateColumn` 글로벌 필터 대신 명시적 조건을 사용한
+이유는 관리자 API에서는 삭제된 글도 조회할 수 있어야 하기 때문이다.
 ```
