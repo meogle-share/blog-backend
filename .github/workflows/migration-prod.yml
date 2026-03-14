@@ -38,7 +38,7 @@ jobs:
           MEOGLE_PG_PASSWORD: ${{ secrets.MEOGLE_PROD_PG_PASSWORD }}
           MEOGLE_JWT_SECRET: ${{ secrets.MEOGLE_JWT_SECRET }}
         run: |
-          docker compose -p meogle -f docker-compose.yml -f docker-compose.prod.yml run --rm was npm run migration:run:prod
+          docker compose -p meogle -f docker-compose.yml -f docker-compose.prod.yml run --rm was pnpm migration:run:prod
 
       - name: Revert Migration
         if: ${{ inputs.action == 'revert' }}
@@ -49,4 +49,4 @@ jobs:
           MEOGLE_PG_PASSWORD: ${{ secrets.MEOGLE_PROD_PG_PASSWORD }}
           MEOGLE_JWT_SECRET: ${{ secrets.MEOGLE_JWT_SECRET }}
         run: |
-          docker compose -p meogle -f docker-compose.yml -f docker-compose.prod.yml run --rm was npm run migration:revert:prod
+          docker compose -p meogle -f docker-compose.yml -f docker-compose.prod.yml run --rm was pnpm migration:revert:prod

@@ -29,7 +29,7 @@ docker run --name meogle.pg.test.load \
 부하테스트용 환경 파일(`test/load/.env.load`)을 사용하여 마이그레이션 실행:
 
 ```bash
-set -a && source test/load/.env.test.load && set +a && npm run migration:run
+set -a && source test/load/.env.test.load && set +a && pnpm migration:run
 ```
 
 ### 3. 시드 데이터 삽입
@@ -39,13 +39,13 @@ Factory를 활용하여 타입 안전하게 시드 데이터를 생성합니다.
 
 ```bash
 # 기본 옵션 (사용자 10명, 게시글 100개)
-npm run seed:load-test
+pnpm seed:load-test
 
 # 커스텀 옵션
-npm run seed:load-test -- --users=50 --posts=500
+pnpm seed:load-test -- --users=50 --posts=500
 
 # 기존 데이터 삭제 후 생성
-npm run seed:load-test -- --clean
+pnpm seed:load-test -- --clean
 ```
 
 **CLI 옵션:**
@@ -67,7 +67,7 @@ npm run seed:load-test -- --clean
 부하테스트용 환경 파일을 사용하여 서버 실행:
 
 ```bash
-set -a && source test/load/.env.test.load && set +a && npm run start:dev
+set -a && source test/load/.env.test.load && set +a && pnpm start:dev
 ```
 
 ### 5. 부하테스트 실행

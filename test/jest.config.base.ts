@@ -17,7 +17,7 @@ const config: Config = {
     '^@test$': '<rootDir>/test',
     '^@test/(.*)$': '<rootDir>/test/$1',
   },
-  transformIgnorePatterns: ['node_modules/(?!uuid)'],
+  transformIgnorePatterns: ['node_modules/(?!.pnpm|uuid)'],
 };
 
 export default config;
