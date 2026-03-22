@@ -7,6 +7,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { getDataSourceOptionsForNest } from '@configs/database.config';
 import { appEnv } from '@configs/env';
 import { HealthModule } from '@common/health/health.module';
+import { LoggerModule } from '@libs/log/logger.module';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { HealthModule } from '@common/health/health.module';
       inject: [ConfigService],
       useFactory: getDataSourceOptionsForNest,
     }),
+    LoggerModule,
 
     // Modules
     HealthModule,
