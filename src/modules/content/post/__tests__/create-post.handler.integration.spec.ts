@@ -6,7 +6,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { CqrsModule } from '@nestjs/cqrs';
 import { CreatePostHandler } from '../application/commands/create-post.handler';
 import { CreatePostCommand } from '../application/commands/create-post.command';
-import { PostRepositoryImpl } from '../infrastructure/post.repository.impl';
+import { PostRepository } from '../infrastructure/post.repository';
 import { PostModel } from '../infrastructure/post.model';
 import { PostMapper } from '../infrastructure/post.mapper';
 import { POST_REPOSITORY } from '../post.tokens';
@@ -17,15 +17,12 @@ import { getDataSourceOptionsForNest } from '@configs/database.config';
 import { UserModel } from '@modules/iam/user/infrastructure/user.model';
 import { truncate } from '@test/support/database.helper';
 import { UserModelFactory } from '@libs/typeorm/factories/user.model.factory';
-import { AccountModel } from '@modules/iam/auth/infrastructure/account.model';
-import { AccountModelFactory } from '@libs/typeorm/factories/account.model.factory';
 import { generateId } from '@libs/ddd';
 
 describe('CreatePostHandler', () => {
   let handler: CreatePostHandler;
   let postModelRepo: Repository<PostModel>;
   let userModelRepo: Repository<UserModel>;
-  let accountModelRepo: Repository<AccountModel>;
   let module: TestingModule;
   let testUser: UserModel;
 
@@ -40,13 +37,13 @@ describe('CreatePostHandler', () => {
           inject: [ConfigService],
           useFactory: (configService: ConfigService) => getDataSourceOptionsForNest(configService),
         }),
-        TypeOrmModule.forFeature([AccountModel, PostModel, UserModel]),
+        TypeOrmModule.forFeature([PostModel, UserModel]),
         CqrsModule,
       ],
       providers: [
         {
           provide: POST_REPOSITORY,
-          useClass: PostRepositoryImpl,
+          useClass: PostRepository,
         },
         CreatePostHandler,
         PostMapper,
@@ -56,19 +53,17 @@ describe('CreatePostHandler', () => {
     handler = module.get<CreatePostHandler>(CreatePostHandler);
     postModelRepo = module.get<Repository<PostModel>>(getRepositoryToken(PostModel));
     userModelRepo = module.get<Repository<UserModel>>(getRepositoryToken(UserModel));
-    accountModelRepo = module.get<Repository<AccountModel>>(getRepositoryToken(AccountModel));
   });
 
   beforeEach(async () => {
-    await truncate([postModelRepo, userModelRepo, accountModelRepo]);
-    const testAccount = AccountModelFactory.create(1)[0];
-    await accountModelRepo.save(testAccount);
-    testUser = UserModelFactory.create(1, { accountId: testAccount.id })[0];
+    await truncate([postModelRepo, userModelRepo]);
+    UserModelFactory.reset();
+    testUser = UserModelFactory.create(1)[0];
     await userModelRepo.save(testUser);
   });
 
   afterAll(async () => {
-    await truncate([postModelRepo, userModelRepo, accountModelRepo]);
+    await truncate([postModelRepo, userModelRepo]);
     await module.close();
   });
 

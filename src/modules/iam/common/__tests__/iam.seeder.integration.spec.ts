@@ -4,7 +4,7 @@ import { Repository } from 'typeorm';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { IamSeeder } from '../iam.seeder';
-import { AccountModel } from '@modules/iam/auth/infrastructure/account.model';
+import { PasswordCredentialModel } from '@modules/iam/auth/infrastructure/password-credential.model';
 import { UserModel } from '@modules/iam/user/infrastructure/user.model';
 import { getDataSourceOptionsForNest } from '@configs/database.config';
 import { truncate } from '@test/support/database.helper';
@@ -12,12 +12,12 @@ import { PASSWORD_HASHER } from '@modules/iam/auth/auth.tokens';
 import { PasswordHasherArgon2 } from '@modules/iam/auth/infrastructure/password-hasher.argon2';
 import * as argon2 from 'argon2';
 
-const ADMIN_USERNAME = 'admin@admin.com';
+const ADMIN_EMAIL = 'admin@admin.com';
 const ADMIN_PASSWORD = 'admin12345';
 
 describe('IamSeeder', () => {
   let iamSeeder: IamSeeder;
-  let accountRepo: Repository<AccountModel>;
+  let credentialRepo: Repository<PasswordCredentialModel>;
   let userRepo: Repository<UserModel>;
   let module: TestingModule;
 
@@ -32,7 +32,7 @@ describe('IamSeeder', () => {
           inject: [ConfigService],
           useFactory: (configService: ConfigService) => getDataSourceOptionsForNest(configService),
         }),
-        TypeOrmModule.forFeature([AccountModel, UserModel]),
+        TypeOrmModule.forFeature([PasswordCredentialModel, UserModel]),
       ],
       providers: [IamSeeder, { provide: PASSWORD_HASHER, useClass: PasswordHasherArgon2 }],
     }).compile();
@@ -40,27 +40,29 @@ describe('IamSeeder', () => {
     await module.init();
 
     iamSeeder = module.get<IamSeeder>(IamSeeder);
-    accountRepo = module.get<Repository<AccountModel>>(getRepositoryToken(AccountModel));
+    credentialRepo = module.get<Repository<PasswordCredentialModel>>(
+      getRepositoryToken(PasswordCredentialModel),
+    );
     userRepo = module.get<Repository<UserModel>>(getRepositoryToken(UserModel));
   });
 
   afterEach(async () => {
-    await truncate([userRepo, accountRepo]);
+    await truncate([credentialRepo, userRepo]);
     await module.close();
   });
 
   describe('onModuleInit', () => {
-    it('모듈 초기화 시 admin 계정이 자동으로 생성되어야 한다', async () => {
-      const foundAccount = await accountRepo.findOne({
-        where: { username: ADMIN_USERNAME },
+    it('모듈 초기화 시 admin 자격증명이 자동으로 생성되어야 한다', async () => {
+      const foundCredential = await credentialRepo.findOne({
+        where: { email: ADMIN_EMAIL },
       });
 
-      expect(foundAccount).toBeDefined();
-      expect(foundAccount!.id).toBeDefined();
-      expect(foundAccount!.username).toBe(ADMIN_USERNAME);
-      expect(await argon2.verify(foundAccount!.password, ADMIN_PASSWORD)).toBe(true);
-      expect(foundAccount!.createdAt).toBeInstanceOf(Date);
-      expect(foundAccount!.updatedAt).toBeInstanceOf(Date);
+      expect(foundCredential).toBeDefined();
+      expect(foundCredential!.id).toBeDefined();
+      expect(foundCredential!.email).toBe(ADMIN_EMAIL);
+      expect(await argon2.verify(foundCredential!.hashedPassword, ADMIN_PASSWORD)).toBe(true);
+      expect(foundCredential!.createdAt).toBeInstanceOf(Date);
+      expect(foundCredential!.updatedAt).toBeInstanceOf(Date);
     });
 
     it('모듈 초기화 시 admin 사용자가 자동으로 생성되어야 한다', async () => {
@@ -71,70 +73,69 @@ describe('IamSeeder', () => {
       expect(foundUser).toBeDefined();
       expect(foundUser!.id).toBeDefined();
       expect(foundUser!.nickname).toBe('admin');
-      expect(foundUser!.accountId).toBeDefined();
+      expect(foundUser!.email).toBe(ADMIN_EMAIL);
       expect(foundUser!.createdAt).toBeInstanceOf(Date);
       expect(foundUser!.updatedAt).toBeInstanceOf(Date);
     });
 
-    it('생성된 User의 accountId가 Account의 id와 일치해야 한다', async () => {
-      const foundAccount = await accountRepo.findOne({
-        where: { username: ADMIN_USERNAME },
+    it('생성된 PasswordCredential의 userId가 User의 id와 일치해야 한다', async () => {
+      const foundCredential = await credentialRepo.findOne({
+        where: { email: ADMIN_EMAIL },
       });
       const foundUser = await userRepo.findOne({
         where: { nickname: 'admin' },
       });
 
-      expect(foundAccount).toBeDefined();
+      expect(foundCredential).toBeDefined();
       expect(foundUser).toBeDefined();
-      expect(foundUser!.accountId).toBe(foundAccount!.id);
+      expect(foundCredential!.userId).toBe(foundUser!.id);
     });
   });
 
   describe('seedAdminUser (private method via onModuleInit)', () => {
-    it('Account와 User를 동시에 생성해야 한다', async () => {
-      await truncate([userRepo, accountRepo]);
+    it('User와 PasswordCredential을 동시에 생성해야 한다', async () => {
+      await truncate([credentialRepo, userRepo]);
 
-      // onModuleInit을 통해 seedAdminUser 호출
       await iamSeeder.onModuleInit();
 
-      const accountCount = await accountRepo.count();
+      const credentialCount = await credentialRepo.count();
       const userCount = await userRepo.count();
 
-      expect(accountCount).toBe(1);
+      expect(credentialCount).toBe(1);
       expect(userCount).toBe(1);
     });
 
-    it('동일한 username으로 여러 번 호출 시 Account가 upsert되어야 한다', async () => {
-      await truncate([userRepo, accountRepo]);
+    it('동일한 email로 여러 번 호출 시 중복 생성되지 않아야 한다', async () => {
+      await truncate([credentialRepo, userRepo]);
 
       await iamSeeder.onModuleInit();
-      const count1 = await accountRepo.count();
+      const count1 = await credentialRepo.count();
       expect(count1).toBe(1);
 
       await iamSeeder.onModuleInit();
-      const count2 = await accountRepo.count();
+      const count2 = await credentialRepo.count();
       expect(count2).toBe(1);
     });
 
-    it('저장된 Account의 모든 필드가 올바르게 설정되어야 한다', async () => {
-      await truncate([userRepo, accountRepo]);
+    it('저장된 PasswordCredential의 모든 필드가 올바르게 설정되어야 한다', async () => {
+      await truncate([credentialRepo, userRepo]);
       await iamSeeder.onModuleInit();
 
-      const foundAccount = await accountRepo.findOne({
-        where: { username: ADMIN_USERNAME },
+      const foundCredential = await credentialRepo.findOne({
+        where: { email: ADMIN_EMAIL },
       });
 
-      expect(foundAccount).toBeDefined();
-      expect(foundAccount!.username).toBe(ADMIN_USERNAME);
-      expect(await argon2.verify(foundAccount!.password, ADMIN_PASSWORD)).toBe(true);
-      expect(foundAccount!.id).toBeDefined();
-      expect(typeof foundAccount!.id).toBe('string');
-      expect(foundAccount!.createdAt).toBeInstanceOf(Date);
-      expect(foundAccount!.updatedAt).toBeInstanceOf(Date);
+      expect(foundCredential).toBeDefined();
+      expect(foundCredential!.email).toBe(ADMIN_EMAIL);
+      expect(await argon2.verify(foundCredential!.hashedPassword, ADMIN_PASSWORD)).toBe(true);
+      expect(foundCredential!.id).toBeDefined();
+      expect(typeof foundCredential!.id).toBe('string');
+      expect(foundCredential!.createdAt).toBeInstanceOf(Date);
+      expect(foundCredential!.updatedAt).toBeInstanceOf(Date);
     });
 
     it('저장된 User의 모든 필드가 올바르게 설정되어야 한다', async () => {
-      await truncate([userRepo, accountRepo]);
+      await truncate([credentialRepo, userRepo]);
       await iamSeeder.onModuleInit();
 
       const foundUser = await userRepo.findOne({
@@ -143,27 +144,26 @@ describe('IamSeeder', () => {
 
       expect(foundUser).toBeDefined();
       expect(foundUser!.nickname).toBe('admin');
-      expect(foundUser!.accountId).toBeDefined();
-      expect(typeof foundUser!.accountId).toBe('string');
+      expect(foundUser!.email).toBe(ADMIN_EMAIL);
       expect(foundUser!.id).toBeDefined();
       expect(typeof foundUser!.id).toBe('string');
       expect(foundUser!.createdAt).toBeInstanceOf(Date);
       expect(foundUser!.updatedAt).toBeInstanceOf(Date);
     });
 
-    it('User와 Account 간의 외래 키 관계가 올바르게 설정되어야 한다', async () => {
-      await truncate([userRepo, accountRepo]);
+    it('PasswordCredential과 User 간의 외래 키 관계가 올바르게 설정되어야 한다', async () => {
+      await truncate([credentialRepo, userRepo]);
       await iamSeeder.onModuleInit();
 
-      const foundUser = await userRepo.findOne({
-        where: { nickname: 'admin' },
-        relations: ['account'],
+      const foundCredential = await credentialRepo.findOne({
+        where: { email: ADMIN_EMAIL },
+        relations: ['user'],
       });
 
-      expect(foundUser).toBeDefined();
-      expect(foundUser!.account).toBeDefined();
-      expect(foundUser!.account!.username).toBe(ADMIN_USERNAME);
-      expect(foundUser!.account!.id).toBe(foundUser!.accountId);
+      expect(foundCredential).toBeDefined();
+      expect(foundCredential!.user).toBeDefined();
+      expect(foundCredential!.user!.nickname).toBe('admin');
+      expect(foundCredential!.userId).toBe(foundCredential!.user!.id);
     });
   });
 });

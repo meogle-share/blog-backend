@@ -7,16 +7,16 @@ import { BaseModel } from '@libs/typeorm';
 @Entity('posts')
 export class PostModel extends BaseModel {
   @PrimaryColumn('uuid')
-  id: string;
+  id!: string;
 
   @Column()
-  title: string;
+  title!: string;
 
   @Column()
-  content: string;
+  content!: string;
 
   @Column('uuid')
-  authorId: string;
+  authorId!: string;
 
   @ManyToOne(() => UserModel)
   @JoinColumn({ name: 'authorId' })

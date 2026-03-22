@@ -6,10 +6,10 @@ type ModelData<T> = {
 
 export abstract class BaseModel {
   @Column()
-  createdAt: Date;
+  createdAt!: Date;
 
   @Column()
-  updatedAt: Date;
+  updatedAt!: Date;
 
   static from<T extends BaseModel>(this: new () => T, data: ModelData<T>): T {
     return Object.assign(new this(), data);

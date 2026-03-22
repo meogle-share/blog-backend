@@ -1,7 +1,7 @@
 import { UserModel } from '@modules/iam/user/infrastructure/user.model';
 import { v7 as uuidv7 } from 'uuid';
-import { AccountModel } from '@modules/iam/auth/infrastructure/account.model';
-import { AccountModelFactory } from '@libs/typeorm/factories/account.model.factory';
+import { PasswordCredentialModel } from '@modules/iam/auth/infrastructure/password-credential.model';
+import { PasswordCredentialModelFactory } from '@libs/typeorm/factories/password-credential.model.factory';
 
 export class UserModelFactory {
   private static sequence = 0;
@@ -11,27 +11,28 @@ export class UserModelFactory {
     return Array.from({ length: count }, () => this.createOne(override));
   }
 
-  static createWithAccount(
+  static createWithCredential(
     count: number,
     override?: {
-      account?: Partial<AccountModel>;
+      credential?: Partial<PasswordCredentialModel>;
       user?: Partial<UserModel>;
     },
-  ): { accounts: AccountModel[]; users: UserModel[] } {
-    const accounts: AccountModel[] = [];
+  ): { credentials: PasswordCredentialModel[]; users: UserModel[] } {
+    const credentials: PasswordCredentialModel[] = [];
     const users: UserModel[] = [];
 
     for (let i = 0; i < count; i++) {
-      const account = AccountModelFactory.create(1, override?.account)[0];
-      const user = this.createOne({
-        accountId: account.id,
-        ...override?.user,
-      });
-      accounts.push(account);
+      const user = this.createOne(override?.user);
+      const credential = PasswordCredentialModelFactory.create(1, {
+        userId: user.id,
+        email: user.email ?? undefined,
+        ...override?.credential,
+      })[0];
       users.push(user);
+      credentials.push(credential);
     }
 
-    return { accounts, users };
+    return { credentials, users };
   }
 
   static reset(): void {
@@ -43,8 +44,8 @@ export class UserModelFactory {
     const user = new UserModel();
     Object.assign(user, {
       id: uuidv7(),
-      accountId: uuidv7(),
       nickname: `테스트유저${this.sequence}`,
+      email: `testuser${this.sequence}@example.com`,
       createdAt: this.BASE_DATE,
       updatedAt: this.BASE_DATE,
       ...override,

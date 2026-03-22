@@ -4,10 +4,8 @@ import request from 'supertest';
 import { AppModule } from '@modules/../app.module';
 import { DataSource, Repository } from 'typeorm';
 import { UserModel } from '@modules/iam/user/infrastructure/user.model';
-import { AccountModel } from '@modules/iam/auth/infrastructure/account.model';
 import { PostModel } from '../infrastructure/post.model';
 import { UserModelFactory } from '@libs/typeorm/factories/user.model.factory';
-import { AccountModelFactory } from '@libs/typeorm/factories/account.model.factory';
 import { truncate } from '@test/support/database.helper';
 import { Application } from 'express';
 import { setupApp } from '../../../../app.setup';
@@ -17,10 +15,8 @@ import { v7 as uuidv7 } from 'uuid';
 describe('PostHttpController', () => {
   let app: INestApplication<Application>;
   let dataSource: DataSource;
-  let accountRepository: Repository<AccountModel>;
   let userRepository: Repository<UserModel>;
   let postRepository: Repository<PostModel>;
-  let testAccount: AccountModel;
   let testUser: UserModel;
 
   beforeAll(async () => {
@@ -33,18 +29,14 @@ describe('PostHttpController', () => {
     await app.init();
 
     dataSource = moduleFixture.get<DataSource>(DataSource);
-    accountRepository = dataSource.getRepository(AccountModel);
     userRepository = dataSource.getRepository(UserModel);
     postRepository = dataSource.getRepository(PostModel);
   });
 
   beforeEach(async () => {
-    await truncate([postRepository, userRepository, accountRepository]);
-    AccountModelFactory.reset();
+    await truncate([postRepository, userRepository]);
     UserModelFactory.reset();
-    testAccount = AccountModelFactory.create(1)[0];
-    await accountRepository.save(testAccount);
-    testUser = UserModelFactory.create(1, { accountId: testAccount.id })[0];
+    testUser = UserModelFactory.create(1)[0];
     await userRepository.save(testUser);
   });
 
@@ -288,9 +280,7 @@ describe('PostHttpController', () => {
     });
 
     it('다른 사용자의 게시글도 조회할 수 있다', async () => {
-      const anotherAccount = AccountModelFactory.create(1)[0];
-      await accountRepository.save(anotherAccount);
-      const anotherUser = UserModelFactory.create(1, { accountId: anotherAccount.id })[0];
+      const anotherUser = UserModelFactory.create(1)[0];
       await userRepository.save(anotherUser);
 
       const anotherPost = PostModel.from({

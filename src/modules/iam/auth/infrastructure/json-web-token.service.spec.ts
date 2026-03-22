@@ -1,20 +1,20 @@
 import { TokenProviderJwt } from './token-provider.jwt';
 import { JwtService } from '@nestjs/jwt';
-import { UserAccount } from '../domain/models/user-account.aggregate';
-import { AccountUsername } from '../domain/models/account-username.vo';
+import { User } from '@modules/iam/user/domain/models/user.aggregate';
+import { UserNickName } from '@modules/iam/user/domain/models/user-nickname.vo';
+import { UserEmail } from '@modules/iam/user/domain/models/user-email.vo';
 import { JwtAccessTokenPayload } from './types/json-web-token.interface';
-import { AccountHashedPassword } from '../domain/models/account-hashed-password.vo';
 
 describe('TokenProviderJwt', () => {
   let service: TokenProviderJwt;
   let jwtService: jest.Mocked<JwtService>;
 
   const TEST_UUID = '01912345-6789-7abc-8def-0123456789ab';
-  const TEST_USERNAME = 'test@example.com';
+  const TEST_EMAIL = 'test@example.com';
   const TEST_TOKEN = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.test';
   const TEST_PAYLOAD: JwtAccessTokenPayload = {
     sub: TEST_UUID,
-    username: TEST_USERNAME,
+    email: TEST_EMAIL,
     accountType: 'user',
     exp: 1733520000,
     iat: 1733519700,
@@ -30,34 +30,52 @@ describe('TokenProviderJwt', () => {
   });
 
   describe('generate', () => {
-    it('UserAccount 정보를 기반으로 JWT 토큰을 생성한다', () => {
-      const account = UserAccount.from({
+    it('User 정보를 기반으로 JWT 토큰을 생성한다', () => {
+      const user = User.from({
         id: TEST_UUID,
         props: {
-          username: AccountUsername.from(TEST_USERNAME),
-          password: AccountHashedPassword.from('password123'),
+          nickname: UserNickName.from('테스트유저'),
+          email: UserEmail.from(TEST_EMAIL),
         },
       });
 
-      const token = service.generate(account);
+      const token = service.generate(user);
 
       expect(token).toBe(TEST_TOKEN);
     });
 
     it('JwtService.sign()에 올바른 payload를 전달한다', () => {
-      const account = UserAccount.from({
+      const user = User.from({
         id: TEST_UUID,
         props: {
-          username: AccountUsername.from(TEST_USERNAME),
-          password: AccountHashedPassword.from('password123'),
+          nickname: UserNickName.from('테스트유저'),
+          email: UserEmail.from(TEST_EMAIL),
         },
       });
 
-      service.generate(account);
+      service.generate(user);
 
       expect(jwtService.sign).toHaveBeenCalledWith({
         sub: TEST_UUID,
-        username: TEST_USERNAME,
+        email: TEST_EMAIL,
+        accountType: 'user',
+      });
+    });
+
+    it('email이 null인 User의 토큰을 생성한다', () => {
+      const user = User.from({
+        id: TEST_UUID,
+        props: {
+          nickname: UserNickName.from('테스트유저'),
+          email: null,
+        },
+      });
+
+      service.generate(user);
+
+      expect(jwtService.sign).toHaveBeenCalledWith({
+        sub: TEST_UUID,
+        email: null,
         accountType: 'user',
       });
     });
@@ -68,7 +86,7 @@ describe('TokenProviderJwt', () => {
       const result = service.verify(TEST_TOKEN);
 
       expect(result).toEqual({
-        username: TEST_USERNAME,
+        email: TEST_EMAIL,
         accountType: 'user',
         expiresAt: new Date(TEST_PAYLOAD.exp * 1000),
       });

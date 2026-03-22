@@ -1,17 +1,24 @@
 import { ApiProperty } from '@nestjs/swagger';
 
-class AccountResponseDto {
+class UserResponseDto {
   @ApiProperty({
-    description: '계정 고유 식별자',
+    description: '유저 고유 식별자',
     example: '550e8400-e29b-41d4-a716-446655440000',
   })
-  id: string;
+  id!: string;
 
   @ApiProperty({
-    description: '사용자명',
+    description: '닉네임',
     example: '김진명',
   })
-  username: string;
+  nickname!: string;
+
+  @ApiProperty({
+    description: '이메일',
+    example: 'user@example.com',
+    nullable: true,
+  })
+  email!: string | null;
 }
 
 export class LoginResponseDto {
@@ -19,11 +26,11 @@ export class LoginResponseDto {
     description: '인증에 사용되는 JWT 액세스 토큰',
     example: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...',
   })
-  accessToken: string;
+  accessToken!: string;
 
   @ApiProperty({
-    description: '로그인한 계정 정보',
-    type: AccountResponseDto,
+    description: '로그인한 유저 정보',
+    type: UserResponseDto,
   })
-  account: AccountResponseDto;
+  user!: UserResponseDto;
 }

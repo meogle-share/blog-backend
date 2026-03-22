@@ -3,6 +3,7 @@ import { User } from '@modules/iam/user/domain/models/user.aggregate';
 import { UserModel } from '@modules/iam/user/infrastructure/user.model';
 import { Injectable } from '@nestjs/common';
 import { UserNickName } from '@modules/iam/user/domain/models/user-nickname.vo';
+import { UserEmail } from '@modules/iam/user/domain/models/user-email.vo';
 
 @Injectable()
 export class UserMapper implements Mapper<User, UserModel> {
@@ -10,8 +11,8 @@ export class UserMapper implements Mapper<User, UserModel> {
     return User.from({
       id: model.id,
       props: {
-        accountId: model.accountId,
         nickname: UserNickName.from(model.nickname),
+        email: model.email ? UserEmail.from(model.email) : null,
       },
     });
   }
@@ -20,8 +21,8 @@ export class UserMapper implements Mapper<User, UserModel> {
     const props = user.getProps();
     return UserModel.from({
       id: props.id,
-      accountId: props.accountId,
       nickname: props.nickname.value,
+      email: props.email?.value ?? null,
       createdAt: props.createdAt,
       updatedAt: props.updatedAt,
     });

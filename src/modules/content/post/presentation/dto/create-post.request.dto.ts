@@ -10,7 +10,7 @@ export class CreatePostRequestDto {
   })
   @IsUUID(7)
   @IsNotEmpty()
-  authorId: string;
+  authorId!: string;
 
   @ApiProperty({
     description: '게시글 제목',
@@ -19,7 +19,7 @@ export class CreatePostRequestDto {
   @IsString()
   @IsNotEmpty()
   @Length(PostTitle.MIN_LENGTH, PostTitle.MAX_LENGTH)
-  title: string;
+  title!: string;
 
   @ApiProperty({
     description: '게시글 내용',
@@ -28,5 +28,5 @@ export class CreatePostRequestDto {
   @IsString()
   @IsNotEmpty()
   @Length(PostContent.MIN_LENGTH, PostContent.MAX_LENGTH)
-  content: string;
+  content!: string;
 }

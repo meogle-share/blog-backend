@@ -3,13 +3,15 @@ import { INestApplication } from '@nestjs/common';
 import request from 'supertest';
 import { AppModule } from '@modules/../app.module';
 import { DataSource, Repository } from 'typeorm';
-import { AccountModel } from '../infrastructure/account.model';
+import { PasswordCredentialModel } from '../infrastructure/password-credential.model';
+import { UserModel } from '@modules/iam/user/infrastructure/user.model';
 import { truncate } from '@test/support/database.helper';
 import { Application } from 'express';
 import { setupApp } from '../../../../app.setup';
 import { decode } from 'jsonwebtoken';
 import { JwtAccessTokenPayload } from '../infrastructure/types/json-web-token.interface';
-import { AccountModelFactory } from '@libs/typeorm/factories/account.model.factory';
+import { UserModelFactory } from '@libs/typeorm/factories/user.model.factory';
+import { PasswordCredentialModelFactory } from '@libs/typeorm/factories/password-credential.model.factory';
 import * as argon2 from 'argon2';
 
 const hashPassword = (password: string) =>
@@ -18,7 +20,8 @@ const hashPassword = (password: string) =>
 describe('AuthHttpController', () => {
   let app: INestApplication<Application>;
   let dataSource: DataSource;
-  let accountRepository: Repository<AccountModel>;
+  let credentialRepository: Repository<PasswordCredentialModel>;
+  let userRepository: Repository<UserModel>;
 
   beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
@@ -30,53 +33,62 @@ describe('AuthHttpController', () => {
     await app.init();
 
     dataSource = moduleFixture.get<DataSource>(DataSource);
-    accountRepository = dataSource.getRepository(AccountModel);
+    credentialRepository = dataSource.getRepository(PasswordCredentialModel);
+    userRepository = dataSource.getRepository(UserModel);
   });
 
   beforeEach(async () => {
-    await truncate([accountRepository]);
-    AccountModelFactory.reset();
+    await truncate([credentialRepository, userRepository]);
+    UserModelFactory.reset();
+    PasswordCredentialModelFactory.reset();
   });
 
   afterAll(async () => {
     await app.close();
   });
 
+  const createUserWithCredential = async (email: string, password: string) => {
+    const user = UserModelFactory.create(1, { email })[0];
+    await userRepository.save(user);
+
+    const credential = PasswordCredentialModelFactory.create(1, {
+      userId: user.id,
+      email,
+      hashedPassword: await hashPassword(password),
+    })[0];
+    await credentialRepository.save(credential);
+
+    return { user, credential };
+  };
+
   describe('POST /v1/auth/login - 로그인', () => {
     it('유효한 자격증명으로 로그인에 성공한다', async () => {
       const password = 'validPassword123';
-      const testAccount = AccountModelFactory.create(1, {
-        username: 'test@example.com',
-        password: await hashPassword(password),
-      })[0];
-      await accountRepository.save(testAccount);
+      const { user } = await createUserWithCredential('test@example.com', password);
 
       const response = await request(app.getHttpServer())
         .post('/v1/auth/login')
         .send({
-          username: 'test@example.com',
+          email: 'test@example.com',
           password: password,
         })
         .expect(200);
 
       expect(response.body).toHaveProperty('accessToken');
-      expect(response.body).toHaveProperty('account');
-      expect(response.body.account).toHaveProperty('id', testAccount.id);
-      expect(response.body.account).toHaveProperty('username', 'test@example.com');
+      expect(response.body).toHaveProperty('user');
+      expect(response.body.user).toHaveProperty('id', user.id);
+      expect(response.body.user).toHaveProperty('nickname', user.nickname);
+      expect(response.body.user).toHaveProperty('email', 'test@example.com');
     });
 
     it('발급된 토큰에 올바른 페이로드가 포함되어 있다', async () => {
       const password = 'validPassword123';
-      const testAccount = AccountModelFactory.create(1, {
-        username: 'token-test@example.com',
-        password: await hashPassword(password),
-      })[0];
-      await accountRepository.save(testAccount);
+      const { user } = await createUserWithCredential('token-test@example.com', password);
 
       const response = await request(app.getHttpServer())
         .post('/v1/auth/login')
         .send({
-          username: 'token-test@example.com',
+          email: 'token-test@example.com',
           password: password,
         })
         .expect(200);
@@ -85,8 +97,8 @@ describe('AuthHttpController', () => {
       const decoded = decode(accessToken) as JwtAccessTokenPayload;
 
       expect(decoded).not.toBeNull();
-      expect(decoded.sub).toBe(testAccount.id);
-      expect(decoded.username).toBe('token-test@example.com');
+      expect(decoded.sub).toBe(user.id);
+      expect(decoded.email).toBe('token-test@example.com');
       expect(decoded.accountType).toBe('user');
       expect(decoded.iss).toBe('meogle-test');
       expect(decoded.iat).toBeDefined();
@@ -96,16 +108,12 @@ describe('AuthHttpController', () => {
 
     it('발급된 accessToken의 유효시간이 5분(300초)이다', async () => {
       const password = 'validPassword123';
-      const testAccount = AccountModelFactory.create(1, {
-        username: 'expiry-test@example.com',
-        password: await hashPassword(password),
-      })[0];
-      await accountRepository.save(testAccount);
+      await createUserWithCredential('expiry-test@example.com', password);
 
       const response = await request(app.getHttpServer())
         .post('/v1/auth/login')
         .send({
-          username: 'expiry-test@example.com',
+          email: 'expiry-test@example.com',
           password: password,
         })
         .expect(200);
@@ -122,23 +130,19 @@ describe('AuthHttpController', () => {
         await request(app.getHttpServer())
           .post('/v1/auth/login')
           .send({
-            username: 'nonexistent@example.com',
+            email: 'nonexistent@example.com',
             password: 'anyPassword123',
           })
           .expect(401);
       });
 
       it('잘못된 비밀번호로 로그인하면 401 에러를 반환한다', async () => {
-        const testAccount = AccountModelFactory.create(1, {
-          username: 'test@example.com',
-          password: await hashPassword('correctPassword123'),
-        })[0];
-        await accountRepository.save(testAccount);
+        await createUserWithCredential('test@example.com', 'correctPassword123');
 
         await request(app.getHttpServer())
           .post('/v1/auth/login')
           .send({
-            username: 'test@example.com',
+            email: 'test@example.com',
             password: 'wrongPassword123',
           })
           .expect(401);
@@ -146,7 +150,7 @@ describe('AuthHttpController', () => {
     });
 
     describe('DTO 검증 - 필수 필드 (AuthGuard가 먼저 실행되어 401 반환)', () => {
-      it('username이 없으면 401 에러를 반환한다', async () => {
+      it('email이 없으면 401 에러를 반환한다', async () => {
         await request(app.getHttpServer())
           .post('/v1/auth/login')
           .send({
@@ -159,7 +163,7 @@ describe('AuthHttpController', () => {
         await request(app.getHttpServer())
           .post('/v1/auth/login')
           .send({
-            username: 'test@example.com',
+            email: 'test@example.com',
           })
           .expect(401);
       });
@@ -170,7 +174,7 @@ describe('AuthHttpController', () => {
         await request(app.getHttpServer())
           .post('/v1/auth/login')
           .send({
-            username: 'invalid-email',
+            email: 'invalid-email',
             password: 'anyPassword123',
           })
           .expect(401);
@@ -182,7 +186,7 @@ describe('AuthHttpController', () => {
         await request(app.getHttpServer())
           .post('/v1/auth/login')
           .send({
-            username: 'test@example.com',
+            email: 'test@example.com',
             password: 'short',
           })
           .expect(401);

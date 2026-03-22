@@ -1,5 +1,5 @@
 import { TokenProvider, TokenInfo } from '../domain/ports/token-provider.port';
-import { UserAccount } from '../domain/models/user-account.aggregate';
+import { User } from '@modules/iam/user/domain/models/user.aggregate';
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { JwtAccessTokenInput, JwtAccessTokenPayload } from './types/json-web-token.interface';
@@ -8,10 +8,10 @@ import { JwtAccessTokenInput, JwtAccessTokenPayload } from './types/json-web-tok
 export class TokenProviderJwt implements TokenProvider {
   constructor(private readonly jwtService: JwtService) {}
 
-  generate(account: UserAccount): string {
+  generate(user: User): string {
     return this.jwtService.sign<JwtAccessTokenInput>({
-      sub: account.id,
-      username: account.getProps().username.value,
+      sub: user.id,
+      email: user.getProps().email?.value ?? null,
       accountType: 'user',
     });
   }
@@ -20,7 +20,7 @@ export class TokenProviderJwt implements TokenProvider {
     try {
       const validateToken = this.jwtService.verify<JwtAccessTokenPayload>(token);
       return {
-        username: validateToken.username,
+        email: validateToken.email,
         accountType: validateToken.accountType ?? 'user',
         expiresAt: new Date(validateToken.exp * 1000),
       };
