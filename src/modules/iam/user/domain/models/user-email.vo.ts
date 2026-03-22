@@ -1,5 +1,6 @@
 import { DomainPrimitive, ValueObject } from '@libs/ddd';
 import { Guard } from '@libs/guard';
+import { InvalidUserException } from '../exceptions/invalid-user.exception';
 
 export class UserEmail extends ValueObject<string> {
   static readonly MIN_LENGTH = 5;
@@ -21,17 +22,17 @@ export class UserEmail extends ValueObject<string> {
 
   protected validate(props: DomainPrimitive<string>) {
     if (Guard.isEmpty(props.value)) {
-      throw new Error('이메일은 필수입니다');
+      throw new InvalidUserException('Email is required');
     }
 
     if (!Guard.lengthIsBetween(props.value, UserEmail.MIN_LENGTH, UserEmail.MAX_LENGTH)) {
-      throw new Error(
-        `이메일은 ${UserEmail.MIN_LENGTH}자 이상 ${UserEmail.MAX_LENGTH}자 이하여야 합니다`,
+      throw new InvalidUserException(
+        `Email must be between ${UserEmail.MIN_LENGTH} and ${UserEmail.MAX_LENGTH} characters`,
       );
     }
 
     if (!UserEmail.EMAIL_REGEX.test(props.value)) {
-      throw new Error('올바른 이메일 형식이 아닙니다');
+      throw new InvalidUserException('Invalid email format');
     }
   }
 }

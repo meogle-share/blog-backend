@@ -272,7 +272,7 @@ describe('PostHttpController', () => {
         .get(`/v1/posts/${nonExistentId}`)
         .expect(404);
 
-      expect(response.body.message).toContain('게시글을 찾을 수 없습니다');
+      expect(response.body.message).toContain('Post not found');
     });
 
     it('유효하지 않은 UUID 형식으로 조회 시 400 에러를 반환한다', async () => {

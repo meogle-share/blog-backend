@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { APP_FILTER } from '@nestjs/core';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { validate } from '@configs/env.validator';
 import { ContentModule } from '@modules/content/content.module';
@@ -8,6 +9,7 @@ import { getDataSourceOptionsForNest } from '@configs/database.config';
 import { appEnv } from '@configs/env';
 import { HealthModule } from '@common/health/health.module';
 import { LoggerModule } from '@libs/log/logger.module';
+import { ExceptionResolver, HttpExceptionFilter } from '@libs/exceptions';
 
 @Module({
   imports: [
@@ -28,5 +30,6 @@ import { LoggerModule } from '@libs/log/logger.module';
     ContentModule,
     IamModule,
   ],
+  providers: [ExceptionResolver, { provide: APP_FILTER, useClass: HttpExceptionFilter }],
 })
 export class AppModule {}

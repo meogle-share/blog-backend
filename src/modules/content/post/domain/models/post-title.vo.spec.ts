@@ -1,3 +1,4 @@
+import { InvalidPostException } from '../exceptions/invalid-post.exception';
 import { PostTitle } from './post-title.vo';
 
 describe('PostTitle', () => {
@@ -30,15 +31,13 @@ describe('PostTitle', () => {
     it('빈 문자열 제목은 오류를 발생시켜야 한다', () => {
       const emptyTitle = '';
 
-      expect(() => PostTitle.from(emptyTitle)).toThrow();
+      expect(() => PostTitle.from(emptyTitle)).toThrow(InvalidPostException);
     });
 
     it('최대 길이를 초과하는 제목은 오류를 발생시켜야 한다', () => {
       const tooLongTitle = 'A'.repeat(PostTitle.MAX_LENGTH + 1);
 
-      expect(() => PostTitle.from(tooLongTitle)).toThrow(
-        `Content must be between ${PostTitle.MIN_LENGTH} and ${PostTitle.MAX_LENGTH} characters`,
-      );
+      expect(() => PostTitle.from(tooLongTitle)).toThrow(InvalidPostException);
     });
   });
 

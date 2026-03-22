@@ -1,3 +1,4 @@
+import { InvalidAccountException } from '../exceptions/invalid-account.exception';
 import { ProviderId } from './provider-id.vo';
 
 describe('ProviderId', () => {
@@ -8,6 +9,6 @@ describe('ProviderId', () => {
   });
 
   it('빈 문자열이면 예외를 던진다', () => {
-    expect(() => ProviderId.from('')).toThrow('Provider ID는 필수입니다');
+    expect(() => ProviderId.from('')).toThrow(InvalidAccountException);
   });
 });

@@ -4,7 +4,7 @@ import { GetPostQuery } from './get-post.query';
 import { PostModel } from '../../infrastructure/post.model';
 import { Repository } from 'typeorm';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { NotFoundException } from '@nestjs/common';
+import { PostNotFoundException } from '../exceptions/post-not-found.exception';
 import { PostResponseDto } from '../../presentation/dto/post.response.dto';
 
 describe('GetPostHandler', () => {
@@ -53,14 +53,13 @@ describe('GetPostHandler', () => {
       expect(result).toBeInstanceOf(PostResponseDto);
     });
 
-    it('게시글을 찾지 못하면 NotFoundException을 발생시켜야 한다', async () => {
+    it('게시글을 찾지 못하면 PostNotFoundException을 발생시켜야 한다', async () => {
       const postId = 'non-existent-id';
       repository.findOne.mockResolvedValue(null);
 
       const query = new GetPostQuery(postId);
 
-      await expect(handler.execute(query)).rejects.toThrow(NotFoundException);
-      await expect(handler.execute(query)).rejects.toThrow(`게시글을 찾을 수 없습니다`);
+      await expect(handler.execute(query)).rejects.toThrow(PostNotFoundException);
     });
   });
 });

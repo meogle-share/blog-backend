@@ -1,5 +1,6 @@
 import { Guard } from '@libs/guard';
 import { DomainPrimitive, ValueObject } from '@libs/ddd';
+import { InvalidAccountException } from '../exceptions/invalid-account.exception';
 
 export class AccountHashedPassword extends ValueObject<string> {
   private constructor(content: string) {
@@ -12,7 +13,7 @@ export class AccountHashedPassword extends ValueObject<string> {
 
   protected validate(props: DomainPrimitive<string>) {
     if (Guard.isEmpty(props.value)) {
-      throw new Error('비밀번호는 필수입니다');
+      throw new InvalidAccountException('Hashed password is required');
     }
   }
 }

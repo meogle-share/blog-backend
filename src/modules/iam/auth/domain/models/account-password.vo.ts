@@ -1,5 +1,6 @@
 import { DomainPrimitive, ValueObject } from '@libs/ddd';
 import { Guard } from '@libs/guard';
+import { InvalidAccountException } from '../exceptions/invalid-account.exception';
 
 export class AccountPassword extends ValueObject<string> {
   /**
@@ -19,18 +20,18 @@ export class AccountPassword extends ValueObject<string> {
 
   protected validate(props: DomainPrimitive<string>) {
     if (Guard.isEmpty(props.value)) {
-      throw new Error('비밀번호는 필수입니다');
+      throw new InvalidAccountException('Password is required');
     }
 
     if (AccountPassword.ONLY_WHITESPACE.test(props.value)) {
-      throw new Error('비밀번호는 공백만으로 구성될 수 없습니다');
+      throw new InvalidAccountException('Password must not consist of only whitespace');
     }
 
     if (
       !Guard.lengthIsBetween(props.value, AccountPassword.MIN_LENGTH, AccountPassword.MAX_LENGTH)
     ) {
-      throw new Error(
-        `비밀번호는 ${AccountPassword.MIN_LENGTH}자 이상 ${AccountPassword.MAX_LENGTH}자 이하여야 합니다`,
+      throw new InvalidAccountException(
+        `Password must be between ${AccountPassword.MIN_LENGTH} and ${AccountPassword.MAX_LENGTH} characters`,
       );
     }
   }

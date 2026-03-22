@@ -1,3 +1,4 @@
+import { InvalidUserException } from '../exceptions/invalid-user.exception';
 import { UserNickName } from './user-nickname.vo';
 
 describe('UserNickName', () => {
@@ -35,27 +36,23 @@ describe('UserNickName', () => {
     });
 
     it('빈 문자열이면 에러를 던져야 한다', () => {
-      expect(() => UserNickName.from('')).toThrow('닉네임은 필수입니다');
+      expect(() => UserNickName.from('')).toThrow(InvalidUserException);
     });
 
     it('공백만 있으면 에러를 던져야 한다', () => {
-      expect(() => UserNickName.from('   ')).toThrow('닉네임은 필수입니다');
+      expect(() => UserNickName.from('   ')).toThrow(InvalidUserException);
     });
 
     it('최소 길이보다 짧으면 에러를 던져야 한다', () => {
       const shortNickname = '가';
 
-      expect(() => UserNickName.from(shortNickname)).toThrow(
-        `닉네임은 ${UserNickName.MIN_LENGTH}자 이상 ${UserNickName.MAX_LENGTH}자 이하여야 합니다`,
-      );
+      expect(() => UserNickName.from(shortNickname)).toThrow(InvalidUserException);
     });
 
     it('최대 길이보다 길면 에러를 던져야 한다', () => {
       const longNickname = '가'.repeat(16);
 
-      expect(() => UserNickName.from(longNickname)).toThrow(
-        `닉네임은 ${UserNickName.MIN_LENGTH}자 이상 ${UserNickName.MAX_LENGTH}자 이하여야 합니다`,
-      );
+      expect(() => UserNickName.from(longNickname)).toThrow(InvalidUserException);
     });
 
     it('특수문자가 포함되면 에러를 던져야 한다', () => {
@@ -70,9 +67,7 @@ describe('UserNickName', () => {
       ];
 
       invalidNicknames.forEach((nickname) => {
-        expect(() => UserNickName.from(nickname)).toThrow(
-          '닉네임은 한글, 영문, 숫자와 단어 사이 1개의 공백만 사용할 수 있습니다',
-        );
+        expect(() => UserNickName.from(nickname)).toThrow(InvalidUserException);
       });
     });
 
@@ -84,9 +79,7 @@ describe('UserNickName', () => {
       ];
 
       invalidNicknames.forEach((nickname) => {
-        expect(() => UserNickName.from(nickname)).toThrow(
-          '닉네임은 한글, 영문, 숫자와 단어 사이 1개의 공백만 사용할 수 있습니다',
-        );
+        expect(() => UserNickName.from(nickname)).toThrow(InvalidUserException);
       });
     });
 
@@ -99,15 +92,13 @@ describe('UserNickName', () => {
     });
 
     it('앞뒤 공백 제거 후 빈 문자열이면 에러를 던져야 한다', () => {
-      expect(() => UserNickName.from('   ')).toThrow('닉네임은 필수입니다');
+      expect(() => UserNickName.from('   ')).toThrow(InvalidUserException);
     });
 
     it('앞뒤 공백 제거 후 길이가 최소 길이보다 짧으면 에러를 던져야 한다', () => {
       const nickname = '  가  '; // trim 후 1자
 
-      expect(() => UserNickName.from(nickname)).toThrow(
-        `닉네임은 ${UserNickName.MIN_LENGTH}자 이상 ${UserNickName.MAX_LENGTH}자 이하여야 합니다`,
-      );
+      expect(() => UserNickName.from(nickname)).toThrow(InvalidUserException);
     });
   });
 });
