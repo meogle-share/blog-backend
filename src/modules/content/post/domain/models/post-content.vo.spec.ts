@@ -1,3 +1,4 @@
+import { InvalidPostException } from '../exceptions/invalid-post.exception';
 import { PostContent } from './post-content.vo';
 
 describe('PostContent', () => {
@@ -30,15 +31,13 @@ describe('PostContent', () => {
     it('빈 문자열 내용은 오류를 발생시켜야 한다', () => {
       const emptyContent = '';
 
-      expect(() => PostContent.from(emptyContent)).toThrow();
+      expect(() => PostContent.from(emptyContent)).toThrow(InvalidPostException);
     });
 
     it('최대 길이를 초과하는 내용은 오류를 발생시켜야 한다', () => {
       const tooLongContent = 'A'.repeat(PostContent.MAX_LENGTH + 1);
 
-      expect(() => PostContent.from(tooLongContent)).toThrow(
-        `Content must be between ${PostContent.MIN_LENGTH} and ${PostContent.MAX_LENGTH} characters`,
-      );
+      expect(() => PostContent.from(tooLongContent)).toThrow(InvalidPostException);
     });
   });
 

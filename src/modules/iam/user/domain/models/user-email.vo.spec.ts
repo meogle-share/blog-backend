@@ -1,3 +1,4 @@
+import { InvalidUserException } from '../exceptions/invalid-user.exception';
 import { UserEmail } from './user-email.vo';
 
 describe('UserEmail', () => {
@@ -14,19 +15,19 @@ describe('UserEmail', () => {
   });
 
   it('빈 문자열이면 예외를 던진다', () => {
-    expect(() => UserEmail.from('')).toThrow('이메일은 필수입니다');
+    expect(() => UserEmail.from('')).toThrow(InvalidUserException);
   });
 
   it('이메일 형식이 아니면 예외를 던진다', () => {
-    expect(() => UserEmail.from('not-an-email')).toThrow('올바른 이메일 형식이 아닙니다');
+    expect(() => UserEmail.from('not-an-email')).toThrow(InvalidUserException);
   });
 
   it('최소 길이 미만이면 예외를 던진다', () => {
-    expect(() => UserEmail.from('a@b')).toThrow();
+    expect(() => UserEmail.from('a@b')).toThrow(InvalidUserException);
   });
 
   it('최대 길이를 초과하면 예외를 던진다', () => {
     const longLocal = 'a'.repeat(250);
-    expect(() => UserEmail.from(`${longLocal}@example.com`)).toThrow();
+    expect(() => UserEmail.from(`${longLocal}@example.com`)).toThrow(InvalidUserException);
   });
 });

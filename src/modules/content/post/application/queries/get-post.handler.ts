@@ -4,7 +4,7 @@ import { PostResponseDto } from '../../presentation/dto/post.response.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { PostModel } from '../../infrastructure/post.model';
 import { Repository } from 'typeorm';
-import { NotFoundException } from '@nestjs/common';
+import { PostNotFoundException } from '../exceptions/post-not-found.exception';
 
 @QueryHandler(GetPostQuery)
 export class GetPostHandler implements IQueryHandler<GetPostQuery, PostResponseDto> {
@@ -19,7 +19,7 @@ export class GetPostHandler implements IQueryHandler<GetPostQuery, PostResponseD
     });
 
     if (!model) {
-      throw new NotFoundException(`게시글을 찾을 수 없습니다`);
+      throw new PostNotFoundException(query.postId);
     }
 
     return PostResponseDto.fromModel(model);

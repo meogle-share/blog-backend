@@ -1,5 +1,6 @@
 import { DomainPrimitive, ValueObject } from '@libs/ddd';
 import { Guard } from '@libs/guard';
+import { InvalidAccountException } from '../exceptions/invalid-account.exception';
 
 export class SystemUsername extends ValueObject<string> {
   static readonly MIN_LENGTH = 1;
@@ -16,12 +17,12 @@ export class SystemUsername extends ValueObject<string> {
 
   protected validate(props: DomainPrimitive<string>) {
     if (Guard.isEmpty(props.value)) {
-      throw new Error('시스템 사용자명은 필수입니다');
+      throw new InvalidAccountException('System username is required');
     }
 
     if (!Guard.lengthIsBetween(props.value, SystemUsername.MIN_LENGTH, SystemUsername.MAX_LENGTH)) {
-      throw new Error(
-        `시스템 사용자명은 ${SystemUsername.MIN_LENGTH}자 이상 ${SystemUsername.MAX_LENGTH}자 이하여야 합니다`,
+      throw new InvalidAccountException(
+        `System username must be between ${SystemUsername.MIN_LENGTH} and ${SystemUsername.MAX_LENGTH} characters`,
       );
     }
   }

@@ -1,5 +1,6 @@
 import { DomainPrimitive, ValueObject } from '@libs/ddd';
 import { Guard } from '@libs/guard';
+import { InvalidAccountException } from '../exceptions/invalid-account.exception';
 
 export class ProviderId extends ValueObject<string> {
   private constructor(content: string) {
@@ -12,7 +13,7 @@ export class ProviderId extends ValueObject<string> {
 
   protected validate(props: DomainPrimitive<string>) {
     if (Guard.isEmpty(props.value)) {
-      throw new Error('Provider ID는 필수입니다');
+      throw new InvalidAccountException('Provider ID is required');
     }
   }
 }

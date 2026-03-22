@@ -1,3 +1,4 @@
+import { InvalidAccountException } from '../exceptions/invalid-account.exception';
 import { AccountPassword } from './account-password.vo';
 
 describe('AccountPassword', () => {
@@ -29,27 +30,23 @@ describe('AccountPassword', () => {
     });
 
     it('빈 문자열이면 에러를 던져야 한다', () => {
-      expect(() => AccountPassword.from('')).toThrow('비밀번호는 필수입니다');
+      expect(() => AccountPassword.from('')).toThrow(InvalidAccountException);
     });
 
     it('공백만 있으면 에러를 던져야 한다', () => {
-      expect(() => AccountPassword.from('   ')).toThrow('비밀번호는 공백만으로 구성될 수 없습니다');
+      expect(() => AccountPassword.from('   ')).toThrow(InvalidAccountException);
     });
 
     it('최소 길이보다 짧으면 에러를 던져야 한다', () => {
       const shortPassword = 'short12'; // 7자
 
-      expect(() => AccountPassword.from(shortPassword)).toThrow(
-        `비밀번호는 ${AccountPassword.MIN_LENGTH}자 이상 ${AccountPassword.MAX_LENGTH}자 이하여야 합니다`,
-      );
+      expect(() => AccountPassword.from(shortPassword)).toThrow(InvalidAccountException);
     });
 
     it('최대 길이보다 길면 에러를 던져야 한다', () => {
       const longPassword = 'a'.repeat(65); // 65자
 
-      expect(() => AccountPassword.from(longPassword)).toThrow(
-        `비밀번호는 ${AccountPassword.MIN_LENGTH}자 이상 ${AccountPassword.MAX_LENGTH}자 이하여야 합니다`,
-      );
+      expect(() => AccountPassword.from(longPassword)).toThrow(InvalidAccountException);
     });
 
     it('앞뒤 공백을 포함한 비밀번호를 그대로 저장해야 한다', () => {

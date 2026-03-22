@@ -1,5 +1,6 @@
 import { DomainPrimitive, ValueObject } from '@libs/ddd';
 import { Guard } from '@libs/guard';
+import { InvalidUserException } from '../exceptions/invalid-user.exception';
 
 export class UserNickName extends ValueObject<string> {
   static readonly MIN_LENGTH = 2;
@@ -17,17 +18,19 @@ export class UserNickName extends ValueObject<string> {
 
   protected validate(props: DomainPrimitive<string>) {
     if (Guard.isEmpty(props.value)) {
-      throw new Error('닉네임은 필수입니다');
+      throw new InvalidUserException('Nickname is required');
     }
 
     if (!Guard.lengthIsBetween(props.value, UserNickName.MIN_LENGTH, UserNickName.MAX_LENGTH)) {
-      throw new Error(
-        `닉네임은 ${UserNickName.MIN_LENGTH}자 이상 ${UserNickName.MAX_LENGTH}자 이하여야 합니다`,
+      throw new InvalidUserException(
+        `Nickname must be between ${UserNickName.MIN_LENGTH} and ${UserNickName.MAX_LENGTH} characters`,
       );
     }
 
     if (!UserNickName.NICKNAME_REGEX.test(props.value)) {
-      throw new Error('닉네임은 한글, 영문, 숫자와 단어 사이 1개의 공백만 사용할 수 있습니다');
+      throw new InvalidUserException(
+        'Nickname may only contain Korean, English, numbers, and single spaces between words',
+      );
     }
   }
 }

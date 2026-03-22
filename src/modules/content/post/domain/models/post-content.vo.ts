@@ -1,5 +1,6 @@
 import { DomainPrimitive, ValueObject } from '@libs/ddd';
 import { Guard } from '@libs/guard';
+import { InvalidPostException } from '../exceptions/invalid-post.exception';
 
 export class PostContent extends ValueObject<string> {
   static readonly MIN_LENGTH = 1;
@@ -14,8 +15,12 @@ export class PostContent extends ValueObject<string> {
   }
 
   protected validate(props: DomainPrimitive<string>): void {
+    if (Guard.isEmpty(props.value)) {
+      throw new InvalidPostException('Content is required');
+    }
+
     if (!Guard.lengthIsBetween(props.value, PostContent.MIN_LENGTH, PostContent.MAX_LENGTH)) {
-      throw new Error(
+      throw new InvalidPostException(
         `Content must be between ${PostContent.MIN_LENGTH} and ${PostContent.MAX_LENGTH} characters`,
       );
     }

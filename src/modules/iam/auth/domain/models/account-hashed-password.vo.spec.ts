@@ -1,3 +1,4 @@
+import { InvalidAccountException } from '../exceptions/invalid-account.exception';
 import { AccountHashedPassword } from './account-hashed-password.vo';
 
 describe('AccountHashedPassword', () => {
@@ -25,7 +26,7 @@ describe('AccountHashedPassword', () => {
     });
 
     it('빈 문자열이면 에러를 던져야 한다', () => {
-      expect(() => AccountHashedPassword.from('')).toThrow('비밀번호는 필수입니다');
+      expect(() => AccountHashedPassword.from('')).toThrow(InvalidAccountException);
     });
   });
 });

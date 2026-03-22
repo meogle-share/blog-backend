@@ -3,7 +3,6 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { NotFoundException } from '@nestjs/common';
 import { GetPostHandler } from '../application/queries/get-post.handler';
 import { GetPostQuery } from '../application/queries/get-post.query';
 import { PostModel } from '../infrastructure/post.model';
@@ -13,6 +12,7 @@ import { UserModel } from '@modules/iam/user/infrastructure/user.model';
 import { truncate } from '@test/support/database.helper';
 import { UserModelFactory } from '@libs/typeorm/factories/user.model.factory';
 import { v7 as uuidv7 } from 'uuid';
+import { PostNotFoundException } from '../application/exceptions/post-not-found.exception';
 
 describe('GetPostHandler', () => {
   let handler: GetPostHandler;
@@ -104,15 +104,14 @@ describe('GetPostHandler', () => {
     });
 
     describe('예외 처리', () => {
-      it('존재하지 않는 게시글 ID로 조회 시 NotFoundException을 던져야 한다', async () => {
+      it('존재하지 않는 게시글 ID로 조회 시 PostNotFoundException을 던져야 한다', async () => {
         const nonExistentPostId = uuidv7();
         const query = new GetPostQuery(nonExistentPostId);
 
-        await expect(handler.execute(query)).rejects.toThrow(NotFoundException);
-        await expect(handler.execute(query)).rejects.toThrow('게시글을 찾을 수 없습니다');
+        await expect(handler.execute(query)).rejects.toThrow(PostNotFoundException);
       });
 
-      it('삭제된 게시글 조회 시 NotFoundException을 던져야 한다', async () => {
+      it('삭제된 게시글 조회 시 PostNotFoundException을 던져야 한다', async () => {
         const testPost = PostModel.from({
           id: uuidv7(),
           title: 'To Be Deleted',
@@ -126,7 +125,7 @@ describe('GetPostHandler', () => {
 
         const query = new GetPostQuery(testPost.id);
 
-        await expect(handler.execute(query)).rejects.toThrow(NotFoundException);
+        await expect(handler.execute(query)).rejects.toThrow(PostNotFoundException);
       });
     });
 

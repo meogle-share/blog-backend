@@ -1,4 +1,5 @@
 import { DomainPrimitive, ValueObject } from '@libs/ddd';
+import { InvalidAccountException } from '../exceptions/invalid-account.exception';
 
 export enum Provider {
   GITHUB = 'github',
@@ -15,8 +16,8 @@ export class AccountProvider extends ValueObject<string> {
 
   protected validate(props: DomainPrimitive<string>) {
     if (!Object.values(Provider).includes(props.value as Provider)) {
-      throw new Error(
-        `유효하지 않은 인증 제공자입니다: ${props.value}. 허용값: ${Object.values(Provider).join(', ')}`,
+      throw new InvalidAccountException(
+        `Invalid auth provider: ${props.value}. Allowed: ${Object.values(Provider).join(', ')}`,
       );
     }
   }

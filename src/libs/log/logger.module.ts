@@ -13,23 +13,16 @@ import { WinstonLogger } from './logger.winston';
       imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => {
-        const isProduction = configService.get('NODE_ENV') === NodeEnvironment.PRODUCTION;
+        const nodeEnv = configService.get('NODE_ENV');
+        const level = nodeEnv === NodeEnvironment.PRODUCTION ? 'info' : 'debug';
+        const silent = nodeEnv === NodeEnvironment.TEST;
 
         return {
-          level: isProduction ? 'info' : 'debug',
+          level,
+          silent,
           transports: [
             new winston.transports.Console({
-              format: isProduction
-                ? winston.format.combine(winston.format.timestamp(), winston.format.json())
-                : winston.format.combine(
-                    winston.format.colorize(),
-                    winston.format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
-                    winston.format.printf(({ timestamp, level, message, context, ...meta }) => {
-                      const ctx = context ? `[${context}]` : '';
-                      const metaStr = Object.keys(meta).length ? ` ${JSON.stringify(meta)}` : '';
-                      return `${timestamp} ${level} ${ctx} ${message}${metaStr}`;
-                    }),
-                  ),
+              format: winston.format.combine(winston.format.timestamp(), winston.format.json()),
             }),
           ],
         };
