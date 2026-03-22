@@ -28,13 +28,13 @@ export class SignInUseCase implements UseCase<SignInCommand, User> {
       throw new UnauthorizedException('Invalid credentials');
     }
 
-    const { hashedPassword } = credential.getProps();
+    const { userId, hashedPassword } = credential.getProps();
     const isMatched = await this.passwordService.verifyPassword(command.password, hashedPassword);
     if (!isMatched) {
       throw new UnauthorizedException('Invalid credentials');
     }
 
-    const user = await this.userRepository.findOneById(credential.getProps().userId);
+    const user = await this.userRepository.findOneById(userId);
     if (!user) {
       throw new UnauthorizedException('Invalid credentials');
     }

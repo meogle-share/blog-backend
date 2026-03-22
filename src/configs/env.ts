@@ -1,3 +1,4 @@
+import 'reflect-metadata';
 import * as dotenv from 'dotenv';
 import * as path from 'path';
 import { NodeEnvironment, validate } from '@configs/env.validator';
