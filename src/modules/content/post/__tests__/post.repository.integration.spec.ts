@@ -3,7 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { PostRepositoryImpl } from '../infrastructure/post.repository.impl';
+import { PostRepository } from '../infrastructure/post.repository';
 import { PostModel } from '../infrastructure/post.model';
 import { PostMapper } from '../infrastructure/post.mapper';
 import { Post } from '../domain/models/post.aggregate';
@@ -13,15 +13,12 @@ import { getDataSourceOptionsForNest } from '@configs/database.config';
 import { UserModel } from '@modules/iam/user/infrastructure/user.model';
 import { truncate } from '@test/support/database.helper';
 import { UserModelFactory } from '@libs/typeorm/factories/user.model.factory';
-import { AccountModel } from '@modules/iam/auth/infrastructure/account.model';
-import { AccountModelFactory } from '@libs/typeorm/factories/account.model.factory';
 import { generateId } from '@libs/ddd';
 
-describe('PostRepositoryImpl', () => {
-  let postRepository: PostRepositoryImpl;
+describe('PostRepository', () => {
+  let postRepository: PostRepository;
   let postModelRepo: Repository<PostModel>;
   let userModelRepo: Repository<UserModel>;
-  let accountModelRepo: Repository<AccountModel>;
   let module: TestingModule;
   let testUser: UserModel;
 
@@ -36,27 +33,25 @@ describe('PostRepositoryImpl', () => {
           inject: [ConfigService],
           useFactory: (configService: ConfigService) => getDataSourceOptionsForNest(configService),
         }),
-        TypeOrmModule.forFeature([AccountModel, PostModel, UserModel]),
+        TypeOrmModule.forFeature([PostModel, UserModel]),
       ],
-      providers: [PostRepositoryImpl, PostMapper],
+      providers: [PostRepository, PostMapper],
     }).compile();
 
-    postRepository = module.get<PostRepositoryImpl>(PostRepositoryImpl);
+    postRepository = module.get<PostRepository>(PostRepository);
     postModelRepo = module.get<Repository<PostModel>>(getRepositoryToken(PostModel));
     userModelRepo = module.get<Repository<UserModel>>(getRepositoryToken(UserModel));
-    accountModelRepo = module.get<Repository<AccountModel>>(getRepositoryToken(AccountModel));
   });
 
   beforeEach(async () => {
-    await truncate([postModelRepo, userModelRepo, accountModelRepo]);
-    const testAccount = AccountModelFactory.create(1)[0];
-    await accountModelRepo.save(testAccount);
-    testUser = UserModelFactory.create(1, { accountId: testAccount.id })[0];
+    await truncate([postModelRepo, userModelRepo]);
+    UserModelFactory.reset();
+    testUser = UserModelFactory.create(1)[0];
     await userModelRepo.save(testUser);
   });
 
   afterAll(async () => {
-    await truncate([postModelRepo, userModelRepo, accountModelRepo]);
+    await truncate([postModelRepo, userModelRepo]);
     await module.close();
   });
 

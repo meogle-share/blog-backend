@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { AccountModel } from '@modules/iam/auth/infrastructure/account.model';
+import { PasswordCredentialModel } from '@modules/iam/auth/infrastructure/password-credential.model';
 import { UserModel } from '@modules/iam/user/infrastructure/user.model';
 import { PostModel } from '@modules/content/post/infrastructure/post.model';
 import { UserModelFactory } from '@libs/typeorm/factories/user.model.factory';
@@ -20,8 +20,8 @@ export class SeedLoadTestService {
   private readonly logger = new Logger(SeedLoadTestService.name, { timestamp: true });
 
   constructor(
-    @InjectRepository(AccountModel)
-    private readonly accountRepo: Repository<AccountModel>,
+    @InjectRepository(PasswordCredentialModel)
+    private readonly credentialRepo: Repository<PasswordCredentialModel>,
     @InjectRepository(UserModel)
     private readonly userRepo: Repository<UserModel>,
     @InjectRepository(PostModel)
@@ -43,12 +43,12 @@ export class SeedLoadTestService {
         await this.clean();
       }
 
-      const { accounts, users } = await this.seedUsersWithAccounts(options.users);
+      const { credentials, users } = await this.seedUsersWithCredentials(options.users);
 
       await this.seedPosts(options.posts, users);
 
       this.logger.log('시드 데이터 생성 완료!');
-      this.logger.log(` - Accounts: ${accounts.length}개`);
+      this.logger.log(` - Credentials: ${credentials.length}개`);
       this.logger.log(` - Users: ${users.length}개`);
       this.logger.log(` - Posts: ${options.posts}개`);
     } catch (error) {
@@ -62,8 +62,8 @@ export class SeedLoadTestService {
       this.logger.log('기존 데이터 삭제 중...');
 
       await this.postRepo.query('TRUNCATE TABLE posts CASCADE');
+      await this.credentialRepo.query('TRUNCATE TABLE password_credentials CASCADE');
       await this.userRepo.query('TRUNCATE TABLE users CASCADE');
-      await this.accountRepo.query('TRUNCATE TABLE accounts CASCADE');
 
       this.logger.log('데이터 삭제 완료');
     } catch (error) {
@@ -74,26 +74,26 @@ export class SeedLoadTestService {
     }
   }
 
-  private async seedUsersWithAccounts(count: number): Promise<{
-    accounts: AccountModel[];
+  private async seedUsersWithCredentials(count: number): Promise<{
+    credentials: PasswordCredentialModel[];
     users: UserModel[];
   }> {
     try {
       this.logger.log(`${count}명의 사용자 생성 중...`);
 
       UserModelFactory.reset();
-      const { accounts, users } = UserModelFactory.createWithAccount(count);
+      const { credentials, users } = UserModelFactory.createWithCredential(count);
 
-      if (accounts.length === 0 || users.length === 0) {
+      if (credentials.length === 0 || users.length === 0) {
         throw new Error('Factory에서 사용자 데이터 생성 실패');
       }
 
-      const savedAccounts = await this.accountRepo.save(accounts);
       const savedUsers = await this.userRepo.save(users);
+      const savedCredentials = await this.credentialRepo.save(credentials);
 
       this.logger.log(`사용자 생성 완료 (${savedUsers.length}명)`);
 
-      return { accounts: savedAccounts, users: savedUsers };
+      return { credentials: savedCredentials, users: savedUsers };
     } catch (error) {
       this.logger.error('사용자 생성 실패');
       throw new Error(

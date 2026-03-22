@@ -65,7 +65,7 @@ const waitForHealthcheck = async (containerName: string, maxAttempts = 10): Prom
         console.log('✅ Container is healthy');
         return;
       }
-    } catch (error) {
+    } catch {
       // 컨테이너가 아직 없음 (정상)
     }
 

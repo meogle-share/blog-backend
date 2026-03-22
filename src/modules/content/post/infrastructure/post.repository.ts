@@ -7,7 +7,7 @@ import { PostMapper } from './post.mapper';
 import { Injectable } from '@nestjs/common';
 
 @Injectable()
-export class PostRepositoryImpl implements PostRepositoryPort {
+export class PostRepository implements PostRepositoryPort {
   constructor(
     @InjectRepository(PostModel)
     private readonly repository: Repository<PostModel>,

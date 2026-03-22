@@ -30,11 +30,11 @@ export type AccountType = 'user' | 'system';
  * JWT Access Token Payload (디코딩/검증 후)
  */
 export interface JwtAccessTokenPayload extends JwtStandardClaims {
-  username: string;
+  email: string | null;
   accountType: AccountType;
 }
 
 /**
  * JWT Access Token 서명 시 입력 (exp, iat는 JwtModule이 자동 추가)
  */
-export type JwtAccessTokenInput = Pick<JwtAccessTokenPayload, 'sub' | 'username' | 'accountType'>;
+export type JwtAccessTokenInput = Pick<JwtAccessTokenPayload, 'sub' | 'email' | 'accountType'>;

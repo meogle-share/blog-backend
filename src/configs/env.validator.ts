@@ -11,33 +11,49 @@ export enum NodeEnvironment {
 export class EnvironmentVariables {
   @IsNotEmpty()
   @IsEnum(NodeEnvironment)
-  NODE_ENV: NodeEnvironment;
+  NODE_ENV!: NodeEnvironment;
 
   @IsNotEmpty()
   @IsString()
-  DB_HOST: string;
+  DB_HOST!: string;
 
   @IsNotEmpty()
   @IsNumber()
   @Min(1)
   @Max(65535)
-  DB_PORT: number;
+  DB_PORT!: number;
 
   @IsNotEmpty()
   @IsString()
-  DB_USERNAME: string;
+  DB_USERNAME!: string;
 
   @IsNotEmpty()
   @IsString()
-  DB_PASSWORD: string;
+  DB_PASSWORD!: string;
 
   @IsNotEmpty()
   @IsString()
-  DB_DATABASE: string;
+  DB_DATABASE!: string;
 
   @IsNotEmpty()
   @IsString()
-  JWT_SECRET: string;
+  JWT_SECRET!: string;
+
+  @IsNotEmpty()
+  @IsString()
+  GITHUB_CLIENT_ID!: string;
+
+  @IsNotEmpty()
+  @IsString()
+  GITHUB_CLIENT_SECRET!: string;
+
+  @IsNotEmpty()
+  @IsString()
+  GITHUB_CALLBACK_URL!: string;
+
+  @IsNotEmpty()
+  @IsString()
+  GITHUB_FRONTEND_REDIRECT_URL!: string;
 }
 
 export function validate(config: Record<string, any>) {

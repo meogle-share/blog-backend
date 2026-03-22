@@ -1,7 +1,7 @@
 import { DomainPrimitive, ValueObject } from '@libs/ddd';
 import { Guard } from '@libs/guard';
 
-export class AccountUsername extends ValueObject<string> {
+export class UserEmail extends ValueObject<string> {
   static readonly MIN_LENGTH = 5;
   static readonly MAX_LENGTH = 254;
   /**
@@ -14,9 +14,9 @@ export class AccountUsername extends ValueObject<string> {
     super({ value: content });
   }
 
-  static from(value: string): AccountUsername {
+  static from(value: string): UserEmail {
     const normalized = value.trim();
-    return new AccountUsername(normalized);
+    return new UserEmail(normalized);
   }
 
   protected validate(props: DomainPrimitive<string>) {
@@ -24,15 +24,13 @@ export class AccountUsername extends ValueObject<string> {
       throw new Error('이메일은 필수입니다');
     }
 
-    if (
-      !Guard.lengthIsBetween(props.value, AccountUsername.MIN_LENGTH, AccountUsername.MAX_LENGTH)
-    ) {
+    if (!Guard.lengthIsBetween(props.value, UserEmail.MIN_LENGTH, UserEmail.MAX_LENGTH)) {
       throw new Error(
-        `아이디(이메일)는 ${AccountUsername.MIN_LENGTH}자 이상 ${AccountUsername.MAX_LENGTH}자 이하여야 합니다`,
+        `이메일은 ${UserEmail.MIN_LENGTH}자 이상 ${UserEmail.MAX_LENGTH}자 이하여야 합니다`,
       );
     }
 
-    if (!AccountUsername.EMAIL_REGEX.test(props.value)) {
+    if (!UserEmail.EMAIL_REGEX.test(props.value)) {
       throw new Error('올바른 이메일 형식이 아닙니다');
     }
   }

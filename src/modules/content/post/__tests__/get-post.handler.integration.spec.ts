@@ -10,17 +10,14 @@ import { PostModel } from '../infrastructure/post.model';
 import { PostResponseDto } from '../presentation/dto/post.response.dto';
 import { getDataSourceOptionsForNest } from '@configs/database.config';
 import { UserModel } from '@modules/iam/user/infrastructure/user.model';
-import { AccountModel } from '@modules/iam/auth/infrastructure/account.model';
 import { truncate } from '@test/support/database.helper';
 import { UserModelFactory } from '@libs/typeorm/factories/user.model.factory';
-import { AccountModelFactory } from '@libs/typeorm/factories/account.model.factory';
 import { v7 as uuidv7 } from 'uuid';
 
 describe('GetPostHandler', () => {
   let handler: GetPostHandler;
   let postModelRepo: Repository<PostModel>;
   let userModelRepo: Repository<UserModel>;
-  let accountModelRepo: Repository<AccountModel>;
   let module: TestingModule;
   let testUser: UserModel;
 
@@ -35,7 +32,7 @@ describe('GetPostHandler', () => {
           inject: [ConfigService],
           useFactory: (configService: ConfigService) => getDataSourceOptionsForNest(configService),
         }),
-        TypeOrmModule.forFeature([AccountModel, PostModel, UserModel]),
+        TypeOrmModule.forFeature([PostModel, UserModel]),
       ],
       providers: [GetPostHandler],
     }).compile();
@@ -43,19 +40,17 @@ describe('GetPostHandler', () => {
     handler = module.get<GetPostHandler>(GetPostHandler);
     postModelRepo = module.get<Repository<PostModel>>(getRepositoryToken(PostModel));
     userModelRepo = module.get<Repository<UserModel>>(getRepositoryToken(UserModel));
-    accountModelRepo = module.get<Repository<AccountModel>>(getRepositoryToken(AccountModel));
   });
 
   beforeEach(async () => {
-    await truncate([postModelRepo, userModelRepo, accountModelRepo]);
-    const testAccount = AccountModelFactory.create(1)[0];
-    await accountModelRepo.save(testAccount);
-    testUser = UserModelFactory.create(1, { accountId: testAccount.id })[0];
+    await truncate([postModelRepo, userModelRepo]);
+    UserModelFactory.reset();
+    testUser = UserModelFactory.create(1)[0];
     await userModelRepo.save(testUser);
   });
 
   afterAll(async () => {
-    await truncate([postModelRepo, userModelRepo, accountModelRepo]);
+    await truncate([postModelRepo, userModelRepo]);
     await module.close();
   });
 

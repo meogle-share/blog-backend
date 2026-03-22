@@ -4,7 +4,7 @@ import { PostModel } from './infrastructure/post.model';
 import { CqrsModule } from '@nestjs/cqrs';
 import { CreatePostHandler } from './application/commands/create-post.handler';
 import { POST_REPOSITORY } from './post.tokens';
-import { PostRepositoryImpl } from './infrastructure/post.repository.impl';
+import { PostRepository } from './infrastructure/post.repository';
 import { PostMapper } from './infrastructure/post.mapper';
 import { UserModel } from '../../iam/user/infrastructure/user.model';
 import { PostHttpController } from './presentation/post.http.controller';
@@ -16,7 +16,7 @@ import { GetPostHandler } from './application/queries/get-post.handler';
   providers: [
     {
       provide: POST_REPOSITORY,
-      useClass: PostRepositoryImpl,
+      useClass: PostRepository,
     },
     CreatePostHandler,
     GetPostHandler,

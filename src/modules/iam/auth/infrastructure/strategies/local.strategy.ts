@@ -7,12 +7,12 @@ import { SignInUseCase } from '../../application/sign-in.usecase';
 export class LocalStrategy extends PassportStrategy(Strategy, 'local') {
   constructor(private readonly loginUseCase: SignInUseCase) {
     super({
-      usernameField: 'username',
+      usernameField: 'email',
       passwordField: 'password',
     });
   }
 
-  async validate(username: string, password: string) {
-    return await this.loginUseCase.execute({ username, password });
+  async validate(email: string, password: string) {
+    return await this.loginUseCase.execute({ email, password });
   }
 }

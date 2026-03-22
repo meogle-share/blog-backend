@@ -1,23 +1,23 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { JwtModule, JwtService } from '@nestjs/jwt';
 import { TokenProviderJwt } from '../infrastructure/token-provider.jwt';
-import { UserAccount } from '../domain/models/user-account.aggregate';
-import { AccountUsername } from '../domain/models/account-username.vo';
-import { AccountHashedPassword } from '../domain/models/account-hashed-password.vo';
+import { User } from '@modules/iam/user/domain/models/user.aggregate';
+import { UserNickName } from '@modules/iam/user/domain/models/user-nickname.vo';
+import { UserEmail } from '@modules/iam/user/domain/models/user-email.vo';
 
 describe('TokenProviderJwt Integration', () => {
   let service: TokenProviderJwt;
 
   const TEST_SECRET = 'test-secret-key-for-integration-test';
   const TEST_UUID = '01912345-6789-7abc-8def-0123456789ab';
-  const TEST_USERNAME = 'testuser@example.com';
+  const TEST_EMAIL = 'testuser@example.com';
 
-  const createTestAccount = (): UserAccount => {
-    return UserAccount.from({
+  const createTestUser = (): User => {
+    return User.from({
       id: TEST_UUID,
       props: {
-        username: AccountUsername.from(TEST_USERNAME),
-        password: AccountHashedPassword.from('ValidPassword123!'),
+        nickname: UserNickName.from('테스트유저'),
+        email: UserEmail.from(TEST_EMAIL),
       },
     });
   };
@@ -38,29 +38,29 @@ describe('TokenProviderJwt Integration', () => {
     });
 
     it('생성된 토큰을 검증하면 올바른 TokenInfo를 반환한다', () => {
-      const account = createTestAccount();
+      const user = createTestUser();
 
-      const token = service.generate(account);
+      const token = service.generate(user);
       const result = service.verify(token);
 
       expect(result).not.toBeNull();
-      expect(result!.username).toBe(TEST_USERNAME);
+      expect(result!.email).toBe(TEST_EMAIL);
       expect(result!.accountType).toBe('user');
       expect(result!.expiresAt).toBeInstanceOf(Date);
       expect(result!.expiresAt.getTime()).toBeGreaterThan(Date.now());
     });
 
     it('생성된 토큰은 JWT 형식이다', () => {
-      const account = createTestAccount();
+      const user = createTestUser();
 
-      const token = service.generate(account);
+      const token = service.generate(user);
 
       expect(token.split('.')).toHaveLength(3);
     });
 
     it('다른 secret으로 서명된 토큰은 검증에 실패한다', async () => {
-      const account = createTestAccount();
-      const token = service.generate(account);
+      const user = createTestUser();
+      const token = service.generate(user);
 
       const otherModule: TestingModule = await Test.createTestingModule({
         imports: [
@@ -94,8 +94,8 @@ describe('TokenProviderJwt Integration', () => {
       const jwtService = module.get<JwtService>(JwtService);
       service = new TokenProviderJwt(jwtService);
 
-      const account = createTestAccount();
-      const token = service.generate(account);
+      const user = createTestUser();
+      const token = service.generate(user);
 
       await new Promise((resolve) => setTimeout(resolve, 10));
 
@@ -133,8 +133,8 @@ describe('TokenProviderJwt Integration', () => {
     });
 
     it('변조된 토큰은 null을 반환한다', () => {
-      const account = createTestAccount();
-      const token = service.generate(account);
+      const user = createTestUser();
+      const token = service.generate(user);
 
       const [header, payload, signature] = token.split('.');
       const tamperedToken = `${header}.${payload}x.${signature}`;

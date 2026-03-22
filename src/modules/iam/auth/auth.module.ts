@@ -1,18 +1,29 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { PassportModule } from '@nestjs/passport';
-import { AccountModel } from './infrastructure/account.model';
+import { PasswordCredentialModel } from './infrastructure/password-credential.model';
+import { OAuthAccountModel } from './infrastructure/oauth-account.model';
 import { AuthHttpController } from './presentation/auth.http.controller';
 import { SignInUseCase } from './application/sign-in.usecase';
+import { GitHubSignInUseCase } from './application/github-sign-in.usecase';
 import { LocalStrategy } from './infrastructure/strategies/local.strategy';
-import { AccountRepositoryImpl } from './infrastructure/account.repository.impl';
-import { AccountMapper } from './infrastructure/account.mapper';
-import { ACCOUNT_REPOSITORY, PASSWORD_HASHER, TOKEN_PROVIDER } from './auth.tokens';
+import { GithubStrategy } from './infrastructure/strategies/github.strategy';
+import { PasswordCredentialRepository } from './infrastructure/password-credential.repository';
+import { OAuthAccountRepository } from './infrastructure/oauth-account.repository';
+import { PasswordCredentialMapper } from './infrastructure/password-credential.mapper';
+import { OAuthAccountMapper } from './infrastructure/oauth-account.mapper';
+import {
+  OAUTH_ACCOUNT_REPOSITORY,
+  PASSWORD_CREDENTIAL_REPOSITORY,
+  PASSWORD_HASHER,
+  TOKEN_PROVIDER,
+} from './auth.tokens';
 import { TokenProviderJwt } from './infrastructure/token-provider.jwt';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { PasswordService } from './domain/services/password.service';
 import { PasswordHasherArgon2 } from './infrastructure/password-hasher.argon2';
+import { UserModule } from '@modules/iam/user/user.module';
 
 @Module({
   imports: [
@@ -29,18 +40,26 @@ import { PasswordHasherArgon2 } from './infrastructure/password-hasher.argon2';
         };
       },
     }),
-    TypeOrmModule.forFeature([AccountModel]),
+    TypeOrmModule.forFeature([PasswordCredentialModel, OAuthAccountModel]),
     PassportModule,
+    UserModule,
   ],
   controllers: [AuthHttpController],
   providers: [
     SignInUseCase,
+    GitHubSignInUseCase,
     PasswordService,
     LocalStrategy,
-    AccountMapper,
+    GithubStrategy,
+    PasswordCredentialMapper,
+    OAuthAccountMapper,
     {
-      provide: ACCOUNT_REPOSITORY,
-      useClass: AccountRepositoryImpl,
+      provide: PASSWORD_CREDENTIAL_REPOSITORY,
+      useClass: PasswordCredentialRepository,
+    },
+    {
+      provide: OAUTH_ACCOUNT_REPOSITORY,
+      useClass: OAuthAccountRepository,
     },
     {
       provide: TOKEN_PROVIDER,
