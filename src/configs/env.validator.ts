@@ -17,7 +17,10 @@ export enum NodeEnvironment {
   MIGRATION = 'migration',
 }
 
-const notMigration = (o: EnvironmentVariables) => o.NODE_ENV !== NodeEnvironment.MIGRATION;
+const excludeEnv =
+  (...envs: NodeEnvironment[]) =>
+  (o: EnvironmentVariables) =>
+    !envs.includes(o.NODE_ENV);
 
 export class EnvironmentVariables {
   @IsNotEmpty()
@@ -46,27 +49,27 @@ export class EnvironmentVariables {
   @IsString()
   DB_DATABASE!: string;
 
-  @ValidateIf(notMigration)
+  @ValidateIf(excludeEnv(NodeEnvironment.MIGRATION))
   @IsNotEmpty()
   @IsString()
   JWT_SECRET!: string;
 
-  @ValidateIf(notMigration)
+  @ValidateIf(excludeEnv(NodeEnvironment.MIGRATION))
   @IsNotEmpty()
   @IsString()
   GITHUB_CLIENT_ID!: string;
 
-  @ValidateIf(notMigration)
+  @ValidateIf(excludeEnv(NodeEnvironment.MIGRATION))
   @IsNotEmpty()
   @IsString()
   GITHUB_CLIENT_SECRET!: string;
 
-  @ValidateIf(notMigration)
+  @ValidateIf(excludeEnv(NodeEnvironment.MIGRATION))
   @IsNotEmpty()
   @IsString()
   GITHUB_CALLBACK_URL!: string;
 
-  @ValidateIf(notMigration)
+  @ValidateIf(excludeEnv(NodeEnvironment.MIGRATION))
   @IsNotEmpty()
   @IsString()
   GITHUB_FRONTEND_REDIRECT_URL!: string;
