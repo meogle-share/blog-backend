@@ -1,4 +1,13 @@
-import { IsEnum, IsNotEmpty, IsNumber, IsString, Max, Min, validateSync } from 'class-validator';
+import {
+  IsEnum,
+  IsNotEmpty,
+  IsNumber,
+  IsString,
+  Max,
+  Min,
+  ValidateIf,
+  validateSync,
+} from 'class-validator';
 import { plainToInstance } from 'class-transformer';
 export enum NodeEnvironment {
   PRODUCTION = 'prod',
@@ -7,6 +16,8 @@ export enum NodeEnvironment {
   LOAD_TEST = 'load-test',
   MIGRATION = 'migration',
 }
+
+const notMigration = (o: EnvironmentVariables) => o.NODE_ENV !== NodeEnvironment.MIGRATION;
 
 export class EnvironmentVariables {
   @IsNotEmpty()
@@ -35,22 +46,27 @@ export class EnvironmentVariables {
   @IsString()
   DB_DATABASE!: string;
 
+  @ValidateIf(notMigration)
   @IsNotEmpty()
   @IsString()
   JWT_SECRET!: string;
 
+  @ValidateIf(notMigration)
   @IsNotEmpty()
   @IsString()
   GITHUB_CLIENT_ID!: string;
 
+  @ValidateIf(notMigration)
   @IsNotEmpty()
   @IsString()
   GITHUB_CLIENT_SECRET!: string;
 
+  @ValidateIf(notMigration)
   @IsNotEmpty()
   @IsString()
   GITHUB_CALLBACK_URL!: string;
 
+  @ValidateIf(notMigration)
   @IsNotEmpty()
   @IsString()
   GITHUB_FRONTEND_REDIRECT_URL!: string;
