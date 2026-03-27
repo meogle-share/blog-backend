@@ -9,14 +9,17 @@
   metadata?: Record<string, unknown>
 
 DomainException (abstract, extends Error, implements ResolvableException)
-└── (도메인별 구체 예외 추가)
+├── InvalidPostException    — CONTENT.INVALID_POST
+├── InvalidUserException    — IAM.INVALID_USER
+└── InvalidAccountException — IAM.INVALID_ACCOUNT
 
 ApplicationException (abstract, extends Error, implements ResolvableException)
 ├── ValidationException     — COMMON.VALIDATION_ERROR, "Validation failed"
 ├── NotFoundException       — COMMON.NOT_FOUND, "Resource not found"
 ├── UnauthorizedException   — COMMON.UNAUTHORIZED, "Unauthorized" (코드 오버라이드 가능)
 ├── ConflictException       — COMMON.CONFLICT, "Resource already exists"
-└── ForbiddenException      — COMMON.FORBIDDEN, "Access denied"
+├── ForbiddenException      — COMMON.FORBIDDEN, "Access denied"
+└── InternalException       — COMMON.INTERNAL_ERROR, "Internal server error"
 ```
 
 - `DomainException`과 `ApplicationException`은 독립적인 계층이며, 공유하는 것은 `ResolvableException` 인터페이스뿐이다
@@ -42,7 +45,7 @@ ApplicationException (abstract, extends Error, implements ResolvableException)
 
 새 도메인 에러 추가 시:
 1. `ExceptionCode` enum에 코드 추가
-2. 필요하면 `BusinessException` 하위 클래스 생성
+2. 필요하면 `DomainException` 또는 `ApplicationException` 하위 클래스 생성
 3. `http/http-status.map.ts`에 HTTP status 매핑 추가
 
 ## 아키텍처 — 프로토콜 무관 설계
@@ -64,7 +67,7 @@ ExceptionResolver          ← 공통: 예외 → ResolvedError 추출
 모든 예외를 프로토콜 무관한 `ResolvedError`로 변환하는 공통 서비스.
 
 처리 순서:
-1. `BusinessException` → 해당 code, message, metadata 추출
+1. `ResolvableException` (`DomainException`, `ApplicationException`) → 해당 code, message, metadata 추출
 2. `HttpException` (NestJS 내장) → status→code 매핑, message 추출
 3. 알 수 없는 예외 → `INTERNAL_ERROR`
 

@@ -9,6 +9,7 @@ import { UserNickName } from '@modules/iam/user/domain/models/user-nickname.vo';
 import { OAuthAccount } from '../domain/models/oauth-account.entity';
 import { AccountProvider, Provider } from '../domain/models/account-provider.vo';
 import { ProviderId } from '../domain/models/provider-id.vo';
+import { InternalException } from '@libs/exceptions';
 
 interface GitHubSignInCommand {
   githubId: string;
@@ -25,16 +26,30 @@ export class GitHubSignInUseCase implements UseCase<GitHubSignInCommand, User> {
   ) {}
 
   async execute(command: GitHubSignInCommand): Promise<User> {
-    const existing = await this.oauthAccountRepository.findOneByProviderAndId(
+    const existingAccount = await this.oauthAccountRepository.findOneByProviderAndId(
       Provider.GITHUB,
       command.githubId,
     );
 
-    if (existing) {
-      const user = await this.userRepository.findOneById(existing.getProps().userId);
-      return user!;
+    if (existingAccount) {
+      return this.findExistingUser(existingAccount);
     }
 
+    return this.registerNewUser(command);
+  }
+
+  private async findExistingUser(account: OAuthAccount): Promise<User> {
+    const userId = account.getProps().userId;
+    const user = await this.userRepository.findOneById(userId);
+
+    if (!user) {
+      throw new InternalException(`User not found for OAuth account: ${userId}`);
+    }
+
+    return user;
+  }
+
+  private async registerNewUser(command: GitHubSignInCommand): Promise<User> {
     const nickname = UserNickName.from(command.login.replace(/-/g, ''));
     const user = User.create({ nickname, email: null });
     const savedUser = await this.userRepository.save(user);

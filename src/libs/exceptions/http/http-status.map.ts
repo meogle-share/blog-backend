@@ -16,6 +16,7 @@ const EXCEPTION_CODE_TO_HTTP_STATUS: Record<string, HttpStatus> = {
   [IamErrorCode.INVALID_USER]: HttpStatus.BAD_REQUEST,
   [ContentErrorCode.INVALID_POST]: HttpStatus.BAD_REQUEST,
   [ContentErrorCode.POST_NOT_FOUND]: HttpStatus.NOT_FOUND,
+  [CommonErrorCode.INTERNAL_ERROR]: HttpStatus.INTERNAL_SERVER_ERROR,
 };
 
 export function toHttpStatus(code: string): HttpStatus {

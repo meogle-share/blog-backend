@@ -10,3 +10,12 @@ export class ValidationException extends ApplicationException {
     });
   }
 }
+
+export class InternalException extends ApplicationException {
+  constructor(message?: string) {
+    super({
+      message: message ?? 'Internal server error',
+      code: CommonErrorCode.INTERNAL_ERROR,
+    });
+  }
+}
