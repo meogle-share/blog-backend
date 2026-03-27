@@ -9,13 +9,15 @@ import {
 import { Response } from 'express';
 import { LOGGER } from '@libs/log/log.tokens';
 import type { LoggerPort } from '@libs/log/logger.port';
-import { isResolvableException } from '../exception.base';
-import { ExceptionResolver } from '../exception-resolver';
-import { HttpErrorResponse } from './http-error-response.dto';
-import { toHttpStatus } from './http-status.map';
+import { isResolvableException } from '@libs/exceptions';
+import { ExceptionResolver } from '@libs/exceptions';
+import { HttpErrorResponse } from '@libs/exceptions';
+import { toHttpStatus } from '@libs/exceptions';
 
 @Catch()
 export class HttpExceptionFilter implements ExceptionFilter {
+  private static readonly MASKED_MESSAGE = 'Internal server error';
+
   constructor(
     @Inject(LOGGER) private readonly logger: LoggerPort,
     private readonly exceptionResolver: ExceptionResolver,
@@ -31,7 +33,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
     const errorResponse = new HttpErrorResponse({
       statusCode,
       code: resolved.code,
-      message: resolved.message,
+      message: statusCode >= 500 ? HttpExceptionFilter.MASKED_MESSAGE : resolved.message,
       metadata: resolved.metadata,
     });
 

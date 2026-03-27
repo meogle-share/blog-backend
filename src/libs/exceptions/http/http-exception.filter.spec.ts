@@ -4,7 +4,7 @@ import { ExceptionResolver } from '../exception-resolver';
 import { CommonErrorCode } from '../common-error-code';
 import { ContentErrorCode } from '@modules/content/error-codes';
 import { DomainException } from '../exception.base';
-import { ValidationException } from '../exceptions';
+import { InternalException, ValidationException } from '../exceptions';
 import type { LoggerPort } from '@libs/log/logger.port';
 
 class TestDomainException extends DomainException {
@@ -131,6 +131,22 @@ describe('HttpExceptionFilter', () => {
           message: 'Internal server error',
         }),
       );
+    });
+
+    it('InternalException의 상세 메시지를 클라이언트에 노출하지 않는다', () => {
+      const exception = new InternalException('User not found for OAuth account: abc-123');
+
+      filter.catch(exception, mockHost);
+
+      expect(mockResponse.status).toHaveBeenCalledWith(HttpStatus.INTERNAL_SERVER_ERROR);
+      expect(mockResponse.json).toHaveBeenCalledWith(
+        expect.objectContaining({
+          statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
+          code: CommonErrorCode.INTERNAL_ERROR,
+          message: 'Internal server error',
+        }),
+      );
+      expect(mockLogger.error).toHaveBeenCalled();
     });
 
     it('null/undefined 예외도 500으로 처리한다', () => {

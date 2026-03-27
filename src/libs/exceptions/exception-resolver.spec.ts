@@ -2,7 +2,7 @@ import { HttpException, HttpStatus } from '@nestjs/common';
 import { ExceptionResolver } from './exception-resolver';
 import { CommonErrorCode } from './common-error-code';
 import { ContentErrorCode } from '@modules/content/error-codes';
-import { ValidationException } from './exceptions';
+import { InternalException, ValidationException } from './exceptions';
 import { DomainException } from './exception.base';
 
 class TestDomainException extends DomainException {
@@ -31,6 +31,18 @@ describe('ExceptionResolver', () => {
         code: CommonErrorCode.VALIDATION_ERROR,
         message: 'invalid input',
         metadata: { field: 'title' },
+      });
+    });
+
+    it('InternalException의 code, message를 추출한다', () => {
+      const exception = new InternalException('User not found for OAuth account');
+
+      const result = resolver.resolve(exception);
+
+      expect(result).toEqual({
+        code: CommonErrorCode.INTERNAL_ERROR,
+        message: 'User not found for OAuth account',
+        metadata: undefined,
       });
     });
 
