@@ -50,8 +50,8 @@ export class GitHubSignInUseCase implements UseCase<GitHubSignInCommand, User> {
   }
 
   private async registerNewUser(command: GitHubSignInCommand): Promise<User> {
-    const nickname = UserNickName.from(command.login.replace(/-/g, ''));
-    const user = User.create({ nickname, email: null });
+    const normalizedNickname = UserNickName.from(command.login.replace(/-/g, ''));
+    const user = User.create({ nickname: normalizedNickname, email: null });
     const savedUser = await this.userRepository.save(user);
 
     const oauthAccount = OAuthAccount.create({
