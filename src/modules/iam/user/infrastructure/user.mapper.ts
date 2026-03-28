@@ -11,6 +11,7 @@ export class UserMapper implements Mapper<User, UserModel> {
     return User.from({
       id: model.id,
       props: {
+        accountId: model.accountId,
         nickname: UserNickName.from(model.nickname),
         email: model.email ? UserEmail.from(model.email) : null,
       },
@@ -21,6 +22,7 @@ export class UserMapper implements Mapper<User, UserModel> {
     const props = user.getProps();
     return UserModel.from({
       id: props.id,
+      accountId: props.accountId,
       nickname: props.nickname.value,
       email: props.email?.value ?? null,
       createdAt: props.createdAt,

@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
-import type { PasswordCredentialRepositoryPort } from '../domain/ports/password-credential.repository.port';
+import type { AccountRepositoryPort } from '../domain/ports/account.repository.port';
 import type { UserRepositoryPort } from '@modules/iam/user/domain/ports/user.repository.port';
-import { PASSWORD_CREDENTIAL_REPOSITORY } from '../auth.tokens';
+import { ACCOUNT_REPOSITORY } from '../auth.tokens';
 import { USER_REPOSITORY } from '@modules/iam/user/user.tokens';
 import { User } from '@modules/iam/user/domain/models/user.aggregate';
 import { PasswordService } from '../domain/services/password.service';
@@ -16,26 +16,31 @@ interface SignInCommand {
 @Injectable()
 export class SignInUseCase implements UseCase<SignInCommand, User> {
   constructor(
-    @Inject(PASSWORD_CREDENTIAL_REPOSITORY)
-    private readonly credentialRepository: PasswordCredentialRepositoryPort,
+    @Inject(ACCOUNT_REPOSITORY)
+    private readonly accountRepository: AccountRepositoryPort,
     @Inject(USER_REPOSITORY)
     private readonly userRepository: UserRepositoryPort,
     private readonly passwordService: PasswordService,
   ) {}
 
   async execute(command: SignInCommand): Promise<User> {
-    const credential = await this.credentialRepository.findOneByEmail(command.email);
+    const account = await this.accountRepository.findOneByEmail(command.email);
+    if (!account) {
+      throw new InvalidCredentialsException();
+    }
+
+    const credential = account.getProps().passwordCredential;
     if (!credential) {
       throw new InvalidCredentialsException();
     }
 
-    const { userId, hashedPassword } = credential.getProps();
+    const { hashedPassword } = credential.getProps();
     const isMatched = await this.passwordService.verifyPassword(command.password, hashedPassword);
     if (!isMatched) {
       throw new InvalidCredentialsException();
     }
 
-    const user = await this.userRepository.findOneById(userId);
+    const user = await this.userRepository.findOneByAccountId(account.id);
     if (!user) {
       throw new InvalidCredentialsException();
     }

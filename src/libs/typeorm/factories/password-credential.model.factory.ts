@@ -21,7 +21,7 @@ export class PasswordCredentialModelFactory {
     const model = new PasswordCredentialModel();
     Object.assign(model, {
       id: uuidv7(),
-      userId: uuidv7(),
+      accountId: uuidv7(),
       email: `testuser${this.sequence}@example.com`,
       hashedPassword: 'hashed_password_123',
       createdAt: this.BASE_DATE,

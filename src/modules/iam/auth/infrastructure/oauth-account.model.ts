@@ -8,7 +8,7 @@ import {
   type Relation,
 } from 'typeorm';
 import { BaseModel } from '@libs/typeorm';
-import { UserModel } from '@modules/iam/user/infrastructure/user.model';
+import { AccountModel } from './account.model';
 
 @Entity('oauth_accounts')
 @Unique('UQ_oauth_provider_account', ['provider', 'providerAccountId'])
@@ -17,7 +17,7 @@ export class OAuthAccountModel extends BaseModel {
   id!: string;
 
   @Column('uuid')
-  userId!: string;
+  accountId!: string;
 
   @Column()
   provider!: string;
@@ -28,7 +28,7 @@ export class OAuthAccountModel extends BaseModel {
   @Column()
   providerLogin!: string;
 
-  @ManyToOne(() => UserModel, { onDelete: 'CASCADE' })
-  @JoinColumn({ name: 'userId' })
-  user?: Relation<UserModel>;
+  @ManyToOne(() => AccountModel, (account) => account.oauthAccounts, { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'accountId' })
+  account?: Relation<AccountModel>;
 }

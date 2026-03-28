@@ -4,6 +4,7 @@ import request from 'supertest';
 import { AppModule } from '@modules/../app.module';
 import { DataSource, Repository } from 'typeorm';
 import { PasswordCredentialModel } from '../infrastructure/password-credential.model';
+import { AccountModel } from '../infrastructure/account.model';
 import { UserModel } from '@modules/iam/user/infrastructure/user.model';
 import { truncate } from '@test/support/database.helper';
 import { Application } from 'express';
@@ -21,6 +22,7 @@ describe('AuthHttpController', () => {
   let app: INestApplication<Application>;
   let dataSource: DataSource;
   let credentialRepository: Repository<PasswordCredentialModel>;
+  let accountRepository: Repository<AccountModel>;
   let userRepository: Repository<UserModel>;
 
   beforeAll(async () => {
@@ -34,11 +36,12 @@ describe('AuthHttpController', () => {
 
     dataSource = moduleFixture.get<DataSource>(DataSource);
     credentialRepository = dataSource.getRepository(PasswordCredentialModel);
+    accountRepository = dataSource.getRepository(AccountModel);
     userRepository = dataSource.getRepository(UserModel);
   });
 
   beforeEach(async () => {
-    await truncate([credentialRepository, userRepository]);
+    await truncate([credentialRepository, userRepository, accountRepository]);
     UserModelFactory.reset();
     PasswordCredentialModelFactory.reset();
   });
@@ -49,10 +52,16 @@ describe('AuthHttpController', () => {
 
   const createUserWithCredential = async (email: string, password: string) => {
     const user = UserModelFactory.create(1, { email })[0];
+
+    await accountRepository.save({
+      id: user.accountId,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    });
     await userRepository.save(user);
 
     const credential = PasswordCredentialModelFactory.create(1, {
-      userId: user.id,
+      accountId: user.accountId,
       email,
       hashedPassword: await hashPassword(password),
     })[0];

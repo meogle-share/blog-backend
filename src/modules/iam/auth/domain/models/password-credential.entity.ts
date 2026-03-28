@@ -3,13 +3,11 @@ import { AccountHashedPassword } from './account-hashed-password.vo';
 import { UserEmail } from '@modules/iam/user/domain/models/user-email.vo';
 
 interface PasswordCredentialProps {
-  userId: string;
   email: UserEmail;
   hashedPassword: AccountHashedPassword;
 }
 
 interface CreateParams {
-  userId: string;
   email: UserEmail;
   hashedPassword: AccountHashedPassword;
 }

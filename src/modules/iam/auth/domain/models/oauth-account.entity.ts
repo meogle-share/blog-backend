@@ -3,14 +3,12 @@ import { AccountProvider } from './account-provider.vo';
 import { ProviderId } from './provider-id.vo';
 
 interface OAuthAccountProps {
-  userId: string;
   provider: AccountProvider;
   providerAccountId: ProviderId;
   providerLogin: string;
 }
 
 interface CreateParams {
-  userId: string;
   provider: AccountProvider;
   providerAccountId: ProviderId;
   providerLogin: string;

@@ -34,6 +34,7 @@ describe('TokenProviderJwt', () => {
       const user = User.from({
         id: TEST_UUID,
         props: {
+          accountId: TEST_UUID,
           nickname: UserNickName.from('테스트유저'),
           email: UserEmail.from(TEST_EMAIL),
         },
@@ -48,6 +49,7 @@ describe('TokenProviderJwt', () => {
       const user = User.from({
         id: TEST_UUID,
         props: {
+          accountId: TEST_UUID,
           nickname: UserNickName.from('테스트유저'),
           email: UserEmail.from(TEST_EMAIL),
         },
@@ -66,6 +68,7 @@ describe('TokenProviderJwt', () => {
       const user = User.from({
         id: TEST_UUID,
         props: {
+          accountId: TEST_UUID,
           nickname: UserNickName.from('테스트유저'),
           email: null,
         },

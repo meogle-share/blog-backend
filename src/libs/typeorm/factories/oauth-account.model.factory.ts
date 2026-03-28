@@ -18,7 +18,7 @@ export class OAuthAccountModelFactory {
     const model = new OAuthAccountModel();
     Object.assign(model, {
       id: uuidv7(),
-      userId: uuidv7(),
+      accountId: uuidv7(),
       provider: 'github',
       providerAccountId: `github-id-${this.sequence}`,
       providerLogin: `githubuser${this.sequence}`,
