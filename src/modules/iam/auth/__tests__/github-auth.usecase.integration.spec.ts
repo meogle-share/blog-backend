@@ -3,7 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { GitHubSignInUseCase } from '../application/github-sign-in.usecase';
+import { GitHubAuthUseCase } from '../application/github-auth.usecase';
 import { AccountRepository } from '../infrastructure/account.repository';
 import { AccountMapper } from '../infrastructure/account.mapper';
 import { AccountModel } from '../infrastructure/account.model';
@@ -20,8 +20,8 @@ import { User } from '@modules/iam/user/domain/models/user.aggregate';
 import { Provider } from '../domain/models/account-provider.vo';
 import { InternalException } from '@libs/exceptions';
 
-describe('GitHubSignInUseCase', () => {
-  let useCase: GitHubSignInUseCase;
+describe('GitHubAuthUseCase', () => {
+  let useCase: GitHubAuthUseCase;
   let accountModelRepo: Repository<AccountModel>;
   let oauthModelRepo: Repository<OAuthAccountModel>;
   let userModelRepo: Repository<UserModel>;
@@ -56,11 +56,11 @@ describe('GitHubSignInUseCase', () => {
         },
         AccountMapper,
         UserMapper,
-        GitHubSignInUseCase,
+        GitHubAuthUseCase,
       ],
     }).compile();
 
-    useCase = module.get(GitHubSignInUseCase);
+    useCase = module.get(GitHubAuthUseCase);
     accountModelRepo = module.get(getRepositoryToken(AccountModel));
     oauthModelRepo = module.get(getRepositoryToken(OAuthAccountModel));
     userModelRepo = module.get(getRepositoryToken(UserModel));

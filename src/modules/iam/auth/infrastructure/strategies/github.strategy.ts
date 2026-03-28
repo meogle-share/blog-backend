@@ -2,13 +2,13 @@ import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { PassportStrategy } from '@nestjs/passport';
 import { Strategy } from 'passport-github2';
-import { GitHubSignInUseCase } from '../../application/github-sign-in.usecase';
+import { GitHubAuthUseCase } from '../../application/github-auth.usecase';
 
 @Injectable()
 export class GithubStrategy extends PassportStrategy(Strategy, 'github') {
   constructor(
     config: ConfigService,
-    private readonly githubSignInUseCase: GitHubSignInUseCase,
+    private readonly githubAuthUseCase: GitHubAuthUseCase,
   ) {
     super({
       clientID: config.getOrThrow<string>('GITHUB_CLIENT_ID'),
@@ -23,7 +23,7 @@ export class GithubStrategy extends PassportStrategy(Strategy, 'github') {
     _refreshToken: string,
     profile: { id: string; username: string },
   ) {
-    return await this.githubSignInUseCase.execute({
+    return await this.githubAuthUseCase.execute({
       githubId: profile.id,
       login: profile.username,
     });

@@ -1,5 +1,5 @@
 import { Test } from '@nestjs/testing';
-import { GitHubSignInUseCase } from './github-sign-in.usecase';
+import { GitHubAuthUseCase } from './github-auth.usecase';
 import { ACCOUNT_REPOSITORY } from '../auth.tokens';
 import { USER_REPOSITORY } from '@modules/iam/user/user.tokens';
 import { User } from '@modules/iam/user/domain/models/user.aggregate';
@@ -9,8 +9,8 @@ import { AccountProvider, Provider } from '../domain/models/account-provider.vo'
 import { ProviderId } from '../domain/models/provider-id.vo';
 import { OAuthAccount } from '../domain/models/oauth-account.entity';
 
-describe('GitHubSignInUseCase', () => {
-  let useCase: GitHubSignInUseCase;
+describe('GitHubAuthUseCase', () => {
+  let useCase: GitHubAuthUseCase;
   let accountRepository: {
     findOneByProviderAndProviderId: jest.Mock;
     save: jest.Mock;
@@ -29,13 +29,13 @@ describe('GitHubSignInUseCase', () => {
 
     const module = await Test.createTestingModule({
       providers: [
-        GitHubSignInUseCase,
+        GitHubAuthUseCase,
         { provide: ACCOUNT_REPOSITORY, useValue: accountRepository },
         { provide: USER_REPOSITORY, useValue: userRepository },
       ],
     }).compile();
 
-    useCase = module.get(GitHubSignInUseCase);
+    useCase = module.get(GitHubAuthUseCase);
   });
 
   it('기존 GitHub 계정이 있으면 해당 유저를 반환한다', async () => {

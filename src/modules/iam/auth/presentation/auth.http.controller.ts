@@ -1,30 +1,18 @@
-import {
-  Body,
-  Controller,
-  Get,
-  HttpCode,
-  HttpStatus,
-  Inject,
-  Post,
-  Res,
-  UseGuards,
-} from '@nestjs/common';
+import { Body, Controller, Get, HttpCode, HttpStatus, Post, Res, UseGuards } from '@nestjs/common';
 import { ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { LoginRequestDto } from './dto/login.request.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { LoginResponseDto } from './dto/login.response.dto';
 import { Request } from '@nestjs/common';
-import { TOKEN_PROVIDER } from '../auth.tokens';
-import type { TokenProvider } from '../domain/ports/token-provider.port';
 import type { Request as RequestType, Response } from 'express';
 import { ConfigService } from '@nestjs/config';
 import { User } from '@modules/iam/user/domain/models/user.aggregate';
+import { IssueTokenUseCase } from '../application/issue-token.usecase';
 
 @Controller({ path: 'auth', version: '1' })
 export class AuthHttpController {
   constructor(
-    @Inject(TOKEN_PROVIDER)
-    private readonly tokenService: TokenProvider,
+    private readonly issueTokenUseCase: IssueTokenUseCase,
     private readonly configService: ConfigService,
   ) {}
 
@@ -41,8 +29,9 @@ export class AuthHttpController {
     @Request() req: RequestType,
     @Res({ passthrough: true }) res: Response,
   ): LoginResponseDto {
-    const user = req.user as User;
-    const accessToken = this.tokenService.generate(user);
+    const { accessToken, user } = this.issueTokenUseCase.execute({
+      user: req.user as User,
+    });
 
     res.cookie('access_token', accessToken, {
       httpOnly: true,
@@ -71,8 +60,9 @@ export class AuthHttpController {
   @Get('github/callback')
   @UseGuards(AuthGuard('github'))
   githubCallback(@Request() req: RequestType, @Res() res: Response) {
-    const user = req.user as User;
-    const accessToken = this.tokenService.generate(user);
+    const { accessToken } = this.issueTokenUseCase.execute({
+      user: req.user as User,
+    });
 
     res.cookie('access_token', accessToken, {
       httpOnly: true,
@@ -80,7 +70,7 @@ export class AuthHttpController {
       sameSite: 'lax',
     });
 
-    const redirectUrl = this.configService.get<string>('GITHUB_FRONTEND_REDIRECT_URL');
-    res.redirect(redirectUrl!);
+    const redirectUrl = this.configService.getOrThrow<string>('GITHUB_FRONTEND_REDIRECT_URL');
+    res.redirect(redirectUrl);
   }
 }

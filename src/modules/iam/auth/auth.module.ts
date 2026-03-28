@@ -6,7 +6,8 @@ import { PasswordCredentialModel } from './infrastructure/password-credential.mo
 import { OAuthAccountModel } from './infrastructure/oauth-account.model';
 import { AuthHttpController } from './presentation/auth.http.controller';
 import { SignInUseCase } from './application/sign-in.usecase';
-import { GitHubSignInUseCase } from './application/github-sign-in.usecase';
+import { GitHubAuthUseCase } from './application/github-auth.usecase';
+import { IssueTokenUseCase } from './application/issue-token.usecase';
 import { LocalStrategy } from './infrastructure/strategies/local.strategy';
 import { GithubStrategy } from './infrastructure/strategies/github.strategy';
 import { AccountRepository } from './infrastructure/account.repository';
@@ -41,7 +42,8 @@ import { UserModule } from '@modules/iam/user/user.module';
   controllers: [AuthHttpController],
   providers: [
     SignInUseCase,
-    GitHubSignInUseCase,
+    GitHubAuthUseCase,
+    IssueTokenUseCase,
     PasswordService,
     LocalStrategy,
     GithubStrategy,
