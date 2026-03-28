@@ -5,6 +5,7 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { IamSeeder } from '../iam.seeder';
 import { PasswordCredentialModel } from '@modules/iam/auth/infrastructure/password-credential.model';
+import { AccountModel } from '@modules/iam/auth/infrastructure/account.model';
 import { UserModel } from '@modules/iam/user/infrastructure/user.model';
 import { getDataSourceOptionsForNest } from '@configs/database.config';
 import { truncate } from '@test/support/database.helper';
@@ -18,6 +19,7 @@ const ADMIN_PASSWORD = 'admin12345';
 describe('IamSeeder', () => {
   let iamSeeder: IamSeeder;
   let credentialRepo: Repository<PasswordCredentialModel>;
+  let accountRepo: Repository<AccountModel>;
   let userRepo: Repository<UserModel>;
   let module: TestingModule;
 
@@ -32,7 +34,7 @@ describe('IamSeeder', () => {
           inject: [ConfigService],
           useFactory: (configService: ConfigService) => getDataSourceOptionsForNest(configService),
         }),
-        TypeOrmModule.forFeature([PasswordCredentialModel, UserModel]),
+        TypeOrmModule.forFeature([AccountModel, PasswordCredentialModel, UserModel]),
       ],
       providers: [IamSeeder, { provide: PASSWORD_HASHER, useClass: PasswordHasherArgon2 }],
     }).compile();
@@ -43,11 +45,12 @@ describe('IamSeeder', () => {
     credentialRepo = module.get<Repository<PasswordCredentialModel>>(
       getRepositoryToken(PasswordCredentialModel),
     );
+    accountRepo = module.get<Repository<AccountModel>>(getRepositoryToken(AccountModel));
     userRepo = module.get<Repository<UserModel>>(getRepositoryToken(UserModel));
   });
 
   afterEach(async () => {
-    await truncate([credentialRepo, userRepo]);
+    await truncate([credentialRepo, userRepo, accountRepo]);
     await module.close();
   });
 
@@ -78,7 +81,7 @@ describe('IamSeeder', () => {
       expect(foundUser!.updatedAt).toBeInstanceOf(Date);
     });
 
-    it('생성된 PasswordCredential의 userId가 User의 id와 일치해야 한다', async () => {
+    it('생성된 PasswordCredential의 accountId가 User의 accountId와 일치해야 한다', async () => {
       const foundCredential = await credentialRepo.findOne({
         where: { email: ADMIN_EMAIL },
       });
@@ -88,13 +91,13 @@ describe('IamSeeder', () => {
 
       expect(foundCredential).toBeDefined();
       expect(foundUser).toBeDefined();
-      expect(foundCredential!.userId).toBe(foundUser!.id);
+      expect(foundCredential!.accountId).toBe(foundUser!.accountId);
     });
   });
 
   describe('seedAdminUser (private method via onModuleInit)', () => {
     it('User와 PasswordCredential을 동시에 생성해야 한다', async () => {
-      await truncate([credentialRepo, userRepo]);
+      await truncate([credentialRepo, userRepo, accountRepo]);
 
       await iamSeeder.onModuleInit();
 
@@ -106,7 +109,7 @@ describe('IamSeeder', () => {
     });
 
     it('동일한 email로 여러 번 호출 시 중복 생성되지 않아야 한다', async () => {
-      await truncate([credentialRepo, userRepo]);
+      await truncate([credentialRepo, userRepo, accountRepo]);
 
       await iamSeeder.onModuleInit();
       const count1 = await credentialRepo.count();
@@ -118,7 +121,7 @@ describe('IamSeeder', () => {
     });
 
     it('저장된 PasswordCredential의 모든 필드가 올바르게 설정되어야 한다', async () => {
-      await truncate([credentialRepo, userRepo]);
+      await truncate([credentialRepo, userRepo, accountRepo]);
       await iamSeeder.onModuleInit();
 
       const foundCredential = await credentialRepo.findOne({
@@ -135,7 +138,7 @@ describe('IamSeeder', () => {
     });
 
     it('저장된 User의 모든 필드가 올바르게 설정되어야 한다', async () => {
-      await truncate([credentialRepo, userRepo]);
+      await truncate([credentialRepo, userRepo, accountRepo]);
       await iamSeeder.onModuleInit();
 
       const foundUser = await userRepo.findOne({
@@ -151,19 +154,18 @@ describe('IamSeeder', () => {
       expect(foundUser!.updatedAt).toBeInstanceOf(Date);
     });
 
-    it('PasswordCredential과 User 간의 외래 키 관계가 올바르게 설정되어야 한다', async () => {
-      await truncate([credentialRepo, userRepo]);
+    it('PasswordCredential과 Account 간의 외래 키 관계가 올바르게 설정되어야 한다', async () => {
+      await truncate([credentialRepo, userRepo, accountRepo]);
       await iamSeeder.onModuleInit();
 
       const foundCredential = await credentialRepo.findOne({
         where: { email: ADMIN_EMAIL },
-        relations: ['user'],
+        relations: ['account'],
       });
 
       expect(foundCredential).toBeDefined();
-      expect(foundCredential!.user).toBeDefined();
-      expect(foundCredential!.user!.nickname).toBe('admin');
-      expect(foundCredential!.userId).toBe(foundCredential!.user!.id);
+      expect(foundCredential!.account).toBeDefined();
+      expect(foundCredential!.accountId).toBe(foundCredential!.account!.id);
     });
   });
 });

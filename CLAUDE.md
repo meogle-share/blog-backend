@@ -8,3 +8,4 @@
 - `env.md` — 환경변수 로딩 구조, 접근 기준, 진입점 규칙
 - `testing.md` — 테스트 가이드 (파일 구조, 패턴, 커버리지 정책)
 - `exception.md` — 예외 처리 정책 (프로토콜 무관 예외 계층, ExceptionResolver, 프로토콜별 필터)
+- `bounded-context.md` — Bounded Context 및 Aggregate 경계 원칙 (IAM BC 구조)

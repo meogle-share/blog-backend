@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { PassportModule } from '@nestjs/passport';
+import { AccountModel } from './infrastructure/account.model';
 import { PasswordCredentialModel } from './infrastructure/password-credential.model';
 import { OAuthAccountModel } from './infrastructure/oauth-account.model';
 import { AuthHttpController } from './presentation/auth.http.controller';
@@ -8,16 +9,9 @@ import { SignInUseCase } from './application/sign-in.usecase';
 import { GitHubSignInUseCase } from './application/github-sign-in.usecase';
 import { LocalStrategy } from './infrastructure/strategies/local.strategy';
 import { GithubStrategy } from './infrastructure/strategies/github.strategy';
-import { PasswordCredentialRepository } from './infrastructure/password-credential.repository';
-import { OAuthAccountRepository } from './infrastructure/oauth-account.repository';
-import { PasswordCredentialMapper } from './infrastructure/password-credential.mapper';
-import { OAuthAccountMapper } from './infrastructure/oauth-account.mapper';
-import {
-  OAUTH_ACCOUNT_REPOSITORY,
-  PASSWORD_CREDENTIAL_REPOSITORY,
-  PASSWORD_HASHER,
-  TOKEN_PROVIDER,
-} from './auth.tokens';
+import { AccountRepository } from './infrastructure/account.repository';
+import { AccountMapper } from './infrastructure/account.mapper';
+import { ACCOUNT_REPOSITORY, PASSWORD_HASHER, TOKEN_PROVIDER } from './auth.tokens';
 import { TokenProviderJwt } from './infrastructure/token-provider.jwt';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule, ConfigService } from '@nestjs/config';
@@ -40,7 +34,7 @@ import { UserModule } from '@modules/iam/user/user.module';
         };
       },
     }),
-    TypeOrmModule.forFeature([PasswordCredentialModel, OAuthAccountModel]),
+    TypeOrmModule.forFeature([AccountModel, OAuthAccountModel, PasswordCredentialModel]),
     PassportModule,
     UserModule,
   ],
@@ -51,15 +45,10 @@ import { UserModule } from '@modules/iam/user/user.module';
     PasswordService,
     LocalStrategy,
     GithubStrategy,
-    PasswordCredentialMapper,
-    OAuthAccountMapper,
+    AccountMapper,
     {
-      provide: PASSWORD_CREDENTIAL_REPOSITORY,
-      useClass: PasswordCredentialRepository,
-    },
-    {
-      provide: OAUTH_ACCOUNT_REPOSITORY,
-      useClass: OAuthAccountRepository,
+      provide: ACCOUNT_REPOSITORY,
+      useClass: AccountRepository,
     },
     {
       provide: TOKEN_PROVIDER,

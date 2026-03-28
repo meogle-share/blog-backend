@@ -1,6 +1,6 @@
 import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn, type Relation } from 'typeorm';
 import { BaseModel } from '@libs/typeorm';
-import { UserModel } from '@modules/iam/user/infrastructure/user.model';
+import { AccountModel } from './account.model';
 
 @Entity('password_credentials')
 export class PasswordCredentialModel extends BaseModel {
@@ -8,7 +8,7 @@ export class PasswordCredentialModel extends BaseModel {
   id!: string;
 
   @Column('uuid')
-  userId!: string;
+  accountId!: string;
 
   @Column({ unique: true })
   email!: string;
@@ -16,7 +16,7 @@ export class PasswordCredentialModel extends BaseModel {
   @Column()
   hashedPassword!: string;
 
-  @ManyToOne(() => UserModel, { onDelete: 'CASCADE' })
-  @JoinColumn({ name: 'userId' })
-  user?: Relation<UserModel>;
+  @ManyToOne(() => AccountModel, (account) => account.passwordCredentials, { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'accountId' })
+  account?: Relation<AccountModel>;
 }

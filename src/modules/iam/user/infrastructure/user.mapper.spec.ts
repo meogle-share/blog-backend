@@ -15,6 +15,7 @@ describe('UserMapper', () => {
     it('UserModel을 User 도메인 객체로 변환해야 한다', () => {
       const userModel: UserModel = {
         id: '01912345-6789-7abc-8000-123456789abc',
+        accountId: '01912345-6789-7abc-8def-0123456789ab',
         nickname: 'TestUser',
         email: 'test@example.com',
         createdAt: new Date('2024-01-01'),
@@ -34,6 +35,7 @@ describe('UserMapper', () => {
     it('email이 null인 UserModel을 변환해야 한다', () => {
       const userModel: UserModel = {
         id: '01912345-6789-7abc-8000-123456789abc',
+        accountId: '01912345-6789-7abc-8def-0123456789ab',
         nickname: 'TestUser',
         email: null,
         createdAt: new Date('2024-01-01'),
@@ -51,6 +53,7 @@ describe('UserMapper', () => {
       const user = User.from({
         id: '01912345-6789-7abc-8222-123456789abc',
         props: {
+          accountId: '01912345-6789-7abc-8def-0123456789ab',
           nickname: UserNickName.from('TestUser'),
           email: UserEmail.from('test@example.com'),
         },
@@ -67,6 +70,7 @@ describe('UserMapper', () => {
       const user = User.from({
         id: '01912345-6789-7abc-8222-123456789abc',
         props: {
+          accountId: '01912345-6789-7abc-8def-0123456789ab',
           nickname: UserNickName.from('TestUser'),
           email: null,
         },
@@ -81,6 +85,7 @@ describe('UserMapper', () => {
   describe('양방향 변환', () => {
     it('toModel 후 toDomain으로 변환하면 동일한 데이터를 가져야 한다', () => {
       const originalUser = User.create({
+        accountId: '01912345-6789-7abc-8def-0123456789ab',
         nickname: UserNickName.from('RoundTripUser'),
         email: UserEmail.from('roundtrip@example.com'),
       });

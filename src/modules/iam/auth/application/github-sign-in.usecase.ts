@@ -1,12 +1,12 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { UseCase } from '@libs/ddd';
-import type { OAuthAccountRepositoryPort } from '../domain/ports/oauth-account.repository.port';
+import type { AccountRepositoryPort } from '../domain/ports/account.repository.port';
 import type { UserRepositoryPort } from '@modules/iam/user/domain/ports/user.repository.port';
-import { OAUTH_ACCOUNT_REPOSITORY } from '../auth.tokens';
+import { ACCOUNT_REPOSITORY } from '../auth.tokens';
 import { USER_REPOSITORY } from '@modules/iam/user/user.tokens';
 import { User } from '@modules/iam/user/domain/models/user.aggregate';
 import { UserNickName } from '@modules/iam/user/domain/models/user-nickname.vo';
-import { OAuthAccount } from '../domain/models/oauth-account.entity';
+import { Account } from '../domain/models/account.aggregate';
 import { AccountProvider, Provider } from '../domain/models/account-provider.vo';
 import { ProviderId } from '../domain/models/provider-id.vo';
 import { InternalException } from '@libs/exceptions';
@@ -19,14 +19,14 @@ interface GitHubSignInCommand {
 @Injectable()
 export class GitHubSignInUseCase implements UseCase<GitHubSignInCommand, User> {
   constructor(
-    @Inject(OAUTH_ACCOUNT_REPOSITORY)
-    private readonly oauthAccountRepository: OAuthAccountRepositoryPort,
+    @Inject(ACCOUNT_REPOSITORY)
+    private readonly accountRepository: AccountRepositoryPort,
     @Inject(USER_REPOSITORY)
     private readonly userRepository: UserRepositoryPort,
   ) {}
 
   async execute(command: GitHubSignInCommand): Promise<User> {
-    const existingAccount = await this.oauthAccountRepository.findOneByProviderAndId(
+    const existingAccount = await this.accountRepository.findOneByProviderAndProviderId(
       Provider.GITHUB,
       command.githubId,
     );
@@ -38,30 +38,26 @@ export class GitHubSignInUseCase implements UseCase<GitHubSignInCommand, User> {
     return this.registerNewUser(command);
   }
 
-  private async findExistingUser(account: OAuthAccount): Promise<User> {
-    const userId = account.getProps().userId;
-    const user = await this.userRepository.findOneById(userId);
+  private async findExistingUser(account: Account): Promise<User> {
+    const user = await this.userRepository.findOneByAccountId(account.id);
 
     if (!user) {
-      throw new InternalException(`User not found for OAuth account: ${userId}`);
+      throw new InternalException(`User not found for account: ${account.id}`);
     }
 
     return user;
   }
 
   private async registerNewUser(command: GitHubSignInCommand): Promise<User> {
-    const normalizedNickname = UserNickName.from(command.login.replace(/-/g, ''));
-    const user = User.create({ nickname: normalizedNickname, email: null });
-    const savedUser = await this.userRepository.save(user);
-
-    const oauthAccount = OAuthAccount.create({
-      userId: savedUser.id,
+    const account = Account.createWithOAuth({
       provider: AccountProvider.from(Provider.GITHUB),
       providerAccountId: ProviderId.from(command.githubId),
       providerLogin: command.login,
     });
-    await this.oauthAccountRepository.save(oauthAccount);
+    const savedAccount = await this.accountRepository.save(account);
 
-    return savedUser;
+    const nickname = UserNickName.from(command.login.replace(/-/g, ''));
+    const user = User.create({ accountId: savedAccount.id, nickname, email: null });
+    return this.userRepository.save(user);
   }
 }

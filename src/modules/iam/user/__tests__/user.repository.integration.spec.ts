@@ -70,6 +70,7 @@ describe('UserRepository', () => {
   describe('save', () => {
     it('새로운 User를 DB에 저장해야 한다', async () => {
       const user = User.create({
+        accountId: generateId(),
         nickname: UserNickName.from('테스터'),
         email: UserEmail.from('test@example.com'),
       });
@@ -88,6 +89,7 @@ describe('UserRepository', () => {
 
     it('저장된 User는 createdAt과 updatedAt이 설정되어야 한다', async () => {
       const user = User.create({
+        accountId: generateId(),
         nickname: UserNickName.from('유저'),
         email: null,
       });
@@ -99,11 +101,13 @@ describe('UserRepository', () => {
 
     it('여러 개의 User를 저장할 수 있어야 한다', async () => {
       const user1 = User.create({
+        accountId: generateId(),
         nickname: UserNickName.from('유저1'),
         email: UserEmail.from('user1@example.com'),
       });
 
       const user2 = User.create({
+        accountId: generateId(),
         nickname: UserNickName.from('유저2'),
         email: UserEmail.from('user2@example.com'),
       });
@@ -117,9 +121,11 @@ describe('UserRepository', () => {
 
     it('동일한 ID로 저장하면 업데이트되어야 한다', async () => {
       const userId = generateId();
+      const accountId = generateId();
       const user1 = User.from({
         id: userId,
         props: {
+          accountId,
           nickname: UserNickName.from('오리지널'),
           email: UserEmail.from('original@example.com'),
         },
@@ -130,6 +136,7 @@ describe('UserRepository', () => {
       const user2 = User.from({
         id: userId,
         props: {
+          accountId,
           nickname: UserNickName.from('업데이트'),
           email: UserEmail.from('original@example.com'),
         },

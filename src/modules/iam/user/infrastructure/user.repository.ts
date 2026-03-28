@@ -19,6 +19,11 @@ export class UserRepository implements UserRepositoryPort {
     return model ? this.mapper.toDomain(model) : null;
   }
 
+  async findOneByAccountId(accountId: string): Promise<User | null> {
+    const model = await this.repository.findOneBy({ accountId });
+    return model ? this.mapper.toDomain(model) : null;
+  }
+
   async save(user: User): Promise<User> {
     const model = await this.repository.save(this.mapper.toModel(user));
     return this.mapper.toDomain(model);

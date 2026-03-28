@@ -24,7 +24,7 @@ export class UserModelFactory {
     for (let i = 0; i < count; i++) {
       const user = this.createOne(override?.user);
       const credential = PasswordCredentialModelFactory.create(1, {
-        userId: user.id,
+        accountId: user.accountId,
         email: user.email ?? undefined,
         ...override?.credential,
       })[0];
@@ -44,6 +44,7 @@ export class UserModelFactory {
     const user = new UserModel();
     Object.assign(user, {
       id: uuidv7(),
+      accountId: uuidv7(),
       nickname: `테스트유저${this.sequence}`,
       email: `testuser${this.sequence}@example.com`,
       createdAt: this.BASE_DATE,

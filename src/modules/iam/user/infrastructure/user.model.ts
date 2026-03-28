@@ -6,6 +6,9 @@ export class UserModel extends BaseModel {
   @PrimaryColumn('uuid')
   id!: string;
 
+  @Column('uuid', { unique: true })
+  accountId!: string;
+
   @Column({ unique: true })
   nickname!: string;
 
