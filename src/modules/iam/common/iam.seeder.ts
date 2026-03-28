@@ -7,6 +7,8 @@ import { PasswordCredentialModel } from '@modules/iam/auth/infrastructure/passwo
 import { UserModel } from '@modules/iam/user/infrastructure/user.model';
 import { PASSWORD_HASHER } from '@modules/iam/auth/auth.tokens';
 import type { PasswordHasher } from '@modules/iam/auth/domain/ports/password-hasher.port';
+import { LOGGER } from '@libs/log/log.tokens';
+import type { LoggerPort } from '@libs/log/logger.port';
 
 @Injectable()
 export class IamSeeder implements OnModuleInit {
@@ -17,6 +19,7 @@ export class IamSeeder implements OnModuleInit {
     private readonly credentialRepo: Repository<PasswordCredentialModel>,
     @InjectRepository(UserModel) private readonly userRepo: Repository<UserModel>,
     @Inject(PASSWORD_HASHER) private readonly passwordHashService: PasswordHasher,
+    @Inject(LOGGER) private readonly logger: LoggerPort,
   ) {}
 
   async onModuleInit() {
@@ -24,40 +27,47 @@ export class IamSeeder implements OnModuleInit {
   }
 
   private async seedAdminUser() {
-    const existingCredential = await this.credentialRepo.findOne({
-      where: { email: 'admin@admin.com' },
-    });
+    try {
+      const existingCredential = await this.credentialRepo.findOne({
+        where: { email: 'admin@admin.com' },
+      });
 
-    if (existingCredential) {
-      return;
+      if (existingCredential) {
+        this.logger.debug('[IamSeeder] Admin account already exists, skipping seed');
+        return;
+      }
+
+      const accountId = uuidv7();
+      const hashedPassword = await this.passwordHashService.hash('admin12345');
+      const now = new Date();
+
+      await this.accountRepo.save({
+        id: accountId,
+        createdAt: now,
+        updatedAt: now,
+      });
+
+      await this.credentialRepo.save({
+        id: uuidv7(),
+        accountId,
+        email: 'admin@admin.com',
+        hashedPassword,
+        createdAt: now,
+        updatedAt: now,
+      });
+
+      await this.userRepo.save({
+        id: uuidv7(),
+        accountId,
+        nickname: 'admin',
+        email: 'admin@admin.com',
+        createdAt: now,
+        updatedAt: now,
+      });
+
+      this.logger.log('[IamSeeder] Admin account created successfully');
+    } catch (error) {
+      this.logger.error('[IamSeeder] Failed to seed admin account', error);
     }
-
-    const accountId = uuidv7();
-    const hashedPassword = await this.passwordHashService.hash('admin12345');
-    const now = new Date();
-
-    await this.accountRepo.save({
-      id: accountId,
-      createdAt: now,
-      updatedAt: now,
-    });
-
-    await this.credentialRepo.save({
-      id: uuidv7(),
-      accountId,
-      email: 'admin@admin.com',
-      hashedPassword,
-      createdAt: now,
-      updatedAt: now,
-    });
-
-    await this.userRepo.save({
-      id: uuidv7(),
-      accountId,
-      nickname: 'admin',
-      email: 'admin@admin.com',
-      createdAt: now,
-      updatedAt: now,
-    });
   }
 }

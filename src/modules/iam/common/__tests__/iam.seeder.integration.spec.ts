@@ -6,11 +6,13 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { IamSeeder } from '../iam.seeder';
 import { PasswordCredentialModel } from '@modules/iam/auth/infrastructure/password-credential.model';
 import { AccountModel } from '@modules/iam/auth/infrastructure/account.model';
+import { OAuthAccountModel } from '@modules/iam/auth/infrastructure/oauth-account.model';
 import { UserModel } from '@modules/iam/user/infrastructure/user.model';
 import { getDataSourceOptionsForNest } from '@configs/database.config';
 import { truncate } from '@test/support/database.helper';
 import { PASSWORD_HASHER } from '@modules/iam/auth/auth.tokens';
 import { PasswordHasherArgon2 } from '@modules/iam/auth/infrastructure/password-hasher.argon2';
+import { LOGGER } from '@libs/log/log.tokens';
 import * as argon2 from 'argon2';
 
 const ADMIN_EMAIL = 'admin@admin.com';
@@ -34,9 +36,21 @@ describe('IamSeeder', () => {
           inject: [ConfigService],
           useFactory: (configService: ConfigService) => getDataSourceOptionsForNest(configService),
         }),
-        TypeOrmModule.forFeature([AccountModel, PasswordCredentialModel, UserModel]),
+        TypeOrmModule.forFeature([
+          AccountModel,
+          OAuthAccountModel,
+          PasswordCredentialModel,
+          UserModel,
+        ]),
       ],
-      providers: [IamSeeder, { provide: PASSWORD_HASHER, useClass: PasswordHasherArgon2 }],
+      providers: [
+        IamSeeder,
+        { provide: PASSWORD_HASHER, useClass: PasswordHasherArgon2 },
+        {
+          provide: LOGGER,
+          useValue: { log: jest.fn(), error: jest.fn(), warn: jest.fn(), debug: jest.fn() },
+        },
+      ],
     }).compile();
 
     await module.init();
