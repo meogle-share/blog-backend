@@ -8,8 +8,10 @@ import { AuthHttpController } from './presentation/auth.http.controller';
 import { SignInUseCase } from './application/sign-in.usecase';
 import { GitHubAuthUseCase } from './application/github-auth.usecase';
 import { IssueTokenUseCase } from './application/issue-token.usecase';
+import { ResolveTokenUserUseCase } from './application/resolve-token-user.usecase';
 import { LocalStrategy } from './infrastructure/strategies/local.strategy';
 import { GithubStrategy } from './infrastructure/strategies/github.strategy';
+import { JwtStrategy } from './infrastructure/strategies/jwt.strategy';
 import { AccountRepository } from './infrastructure/account.repository';
 import { AccountMapper } from './infrastructure/account.mapper';
 import { ACCOUNT_REPOSITORY, PASSWORD_HASHER, TOKEN_PROVIDER } from './auth.tokens';
@@ -19,6 +21,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { PasswordService } from './domain/services/password.service';
 import { PasswordHasherArgon2 } from './infrastructure/password-hasher.argon2';
 import { UserModule } from '@modules/iam/user/user.module';
+import { createJwtConfig } from './infrastructure/jwt.config';
 
 @Module({
   imports: [
@@ -26,11 +29,11 @@ import { UserModule } from '@modules/iam/user/user.module';
       imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: (config: ConfigService) => {
-        const issuer = `meogle-${config.get<string>('NODE_ENV')}`;
+        const { secret, issuer, expiresIn } = createJwtConfig(config);
 
         return {
-          secret: config.get<string>('JWT_SECRET'),
-          signOptions: { expiresIn: 300, issuer },
+          secret,
+          signOptions: { expiresIn, issuer },
           verifyOptions: { issuer },
         };
       },
@@ -44,9 +47,11 @@ import { UserModule } from '@modules/iam/user/user.module';
     SignInUseCase,
     GitHubAuthUseCase,
     IssueTokenUseCase,
+    ResolveTokenUserUseCase,
     PasswordService,
     LocalStrategy,
     GithubStrategy,
+    JwtStrategy,
     AccountMapper,
     {
       provide: ACCOUNT_REPOSITORY,

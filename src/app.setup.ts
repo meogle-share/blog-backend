@@ -1,8 +1,11 @@
 import { INestApplication, ValidationPipe, VersioningType } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { parseValidationErrors, ValidationException } from '@libs/exceptions';
+import cookieParser from 'cookie-parser';
 
 export function setupApp(app: INestApplication) {
+  app.use(cookieParser());
+
   app.enableVersioning({
     type: VersioningType.URI,
   });

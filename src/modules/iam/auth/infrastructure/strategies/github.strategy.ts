@@ -8,7 +8,7 @@ import { GitHubAuthUseCase } from '../../application/github-auth.usecase';
 export class GithubStrategy extends PassportStrategy(Strategy, 'github') {
   constructor(
     config: ConfigService,
-    private readonly githubAuthUseCase: GitHubAuthUseCase,
+    private readonly githubAuth: GitHubAuthUseCase,
   ) {
     super({
       clientID: config.getOrThrow<string>('GITHUB_CLIENT_ID'),
@@ -23,7 +23,7 @@ export class GithubStrategy extends PassportStrategy(Strategy, 'github') {
     _refreshToken: string,
     profile: { id: string; username: string },
   ) {
-    return await this.githubAuthUseCase.execute({
+    return await this.githubAuth.execute({
       githubId: profile.id,
       login: profile.username,
     });

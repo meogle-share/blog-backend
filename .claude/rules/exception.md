@@ -15,18 +15,23 @@ DomainException (abstract, extends Error, implements ResolvableException)
 
 ApplicationException (abstract, extends Error, implements ResolvableException)
 ├── ValidationException     — COMMON.VALIDATION_ERROR, "Validation failed"
-├── NotFoundException       — COMMON.NOT_FOUND, "Resource not found"
-├── UnauthorizedException   — COMMON.UNAUTHORIZED, "Unauthorized" (코드 오버라이드 가능)
-├── ConflictException       — COMMON.CONFLICT, "Resource already exists"
-├── ForbiddenException      — COMMON.FORBIDDEN, "Access denied"
-└── InternalException       — COMMON.INTERNAL_ERROR, "Internal server error"
+├── InternalException       — COMMON.INTERNAL_ERROR, "Internal server error"
+└── InvalidCredentialsException — IAM.INVALID_CREDENTIALS, "Invalid credentials"
 ```
 
 - `DomainException`과 `ApplicationException`은 독립적인 계층이며, 공유하는 것은 `ResolvableException` 인터페이스뿐이다
 - 예외 클래스는 프로토콜에 종속되지 않는다 (`HttpException`을 상속하지 않음)
 - 도메인 레이어에서는 `DomainException`, 애플리케이션 레이어에서는 `ApplicationException` 하위 클래스를 던진다
-- NestJS 내장 예외(`HttpException` 등)를 직접 던지지 않는다
 - 각 예외는 영어 기본 메시지를 가진다. 상황에 맞는 구체적 메시지가 있으면 오버라이드한다
+
+### ApplicationException 클래스 생성 기준
+
+`ApplicationException` 하위 클래스는 **애플리케이션 코드에서 직접 `new`로 던져야 하는 경우**에만 생성한다.
+
+- `ValidationException` — `ValidationPipe`의 `exceptionFactory`에서 직접 생성
+- `InternalException` — UseCase 내부에서 "있어서는 안 되는 상태" 표현
+
+NestJS 인프라(Passport Guard 등)가 던지는 NestJS 내장 예외(`UnauthorizedException`, `ForbiddenException` 등)는 `ExceptionResolver`가 status→code 매핑으로 자동 변환하므로, 별도 클래스를 만들지 않는다.
 
 ## message와 code의 역할
 
