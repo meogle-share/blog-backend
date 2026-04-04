@@ -202,4 +202,31 @@ describe('AuthHttpController', () => {
       });
     });
   });
+
+  describe('POST /v1/auth/logout - 로그아웃', () => {
+    it('로그아웃하면 access_token 쿠키가 제거된다', async () => {
+      const password = 'validPassword123';
+      await createUserWithCredential('logout-test@example.com', password);
+
+      const loginResponse = await request(app.getHttpServer())
+        .post('/v1/auth/login')
+        .send({ email: 'logout-test@example.com', password })
+        .expect(200);
+
+      const cookies = loginResponse.headers['set-cookie'];
+
+      const logoutResponse = await request(app.getHttpServer())
+        .post('/v1/auth/logout')
+        .set('Cookie', cookies)
+        .expect(204);
+
+      const setCookieHeader = logoutResponse.headers['set-cookie'];
+      expect(setCookieHeader).toBeDefined();
+      expect(setCookieHeader[0]).toMatch(/access_token=;/);
+    });
+
+    it('인증 없이 로그아웃해도 204를 반환한다', async () => {
+      await request(app.getHttpServer()).post('/v1/auth/logout').expect(204);
+    });
+  });
 });

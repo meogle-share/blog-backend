@@ -4,13 +4,20 @@ import { LoginRequestDto } from './dto/login.request.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { LoginResponseDto } from './dto/login.response.dto';
 import { Request } from '@nestjs/common';
-import type { Request as RequestType, Response } from 'express';
+import type { CookieOptions, Request as RequestType, Response } from 'express';
 import { ConfigService } from '@nestjs/config';
 import { User } from '@modules/iam/user/domain/models/user.aggregate';
 import { IssueTokenUseCase } from '../application/issue-token.usecase';
 
 @Controller({ path: 'auth', version: '1' })
 export class AuthHttpController {
+  private static readonly COOKIE_NAME = 'access_token';
+  private static readonly COOKIE_OPTIONS: CookieOptions = {
+    httpOnly: true,
+    secure: true,
+    sameSite: 'lax',
+  };
+
   constructor(
     private readonly issueTokenUseCase: IssueTokenUseCase,
     private readonly configService: ConfigService,
@@ -33,11 +40,7 @@ export class AuthHttpController {
       user: req.user as User,
     });
 
-    res.cookie('access_token', accessToken, {
-      httpOnly: true,
-      secure: true,
-      sameSite: 'lax',
-    });
+    res.cookie(AuthHttpController.COOKIE_NAME, accessToken, AuthHttpController.COOKIE_OPTIONS);
 
     return {
       accessToken,
@@ -64,13 +67,17 @@ export class AuthHttpController {
       user: req.user as User,
     });
 
-    res.cookie('access_token', accessToken, {
-      httpOnly: true,
-      secure: true,
-      sameSite: 'lax',
-    });
+    res.cookie(AuthHttpController.COOKIE_NAME, accessToken, AuthHttpController.COOKIE_OPTIONS);
 
     const redirectUrl = this.configService.getOrThrow<string>('GITHUB_FRONTEND_REDIRECT_URL');
     res.redirect(redirectUrl);
+  }
+
+  @ApiOperation({ summary: '로그아웃' })
+  @ApiResponse({ status: HttpStatus.NO_CONTENT })
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @Post('logout')
+  logout(@Res({ passthrough: true }) res: Response): void {
+    res.clearCookie(AuthHttpController.COOKIE_NAME, AuthHttpController.COOKIE_OPTIONS);
   }
 }
