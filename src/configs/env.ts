@@ -9,6 +9,8 @@ const getEnvFile = (): string => {
   switch (env) {
     case NodeEnvironment.DEVELOPMENT:
       return '.env.dev';
+    case NodeEnvironment.LOCAL:
+      return '.env.local';
     case NodeEnvironment.TEST:
       return '.env.test';
     case NodeEnvironment.LOAD_TEST:

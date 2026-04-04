@@ -12,6 +12,7 @@ import { plainToInstance } from 'class-transformer';
 export enum NodeEnvironment {
   PRODUCTION = 'prod',
   DEVELOPMENT = 'dev',
+  LOCAL = 'local',
   TEST = 'test',
   LOAD_TEST = 'load-test',
   MIGRATION = 'migration',

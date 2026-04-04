@@ -3,6 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import { TypeOrmModuleOptions } from '@nestjs/typeorm';
 import * as path from 'node:path';
 import { appEnv } from '@configs/env';
+import { NodeEnvironment } from '@configs/env.validator';
 
 /**
  * NestJS TypeOrmModule용 설정
@@ -15,7 +16,7 @@ export const getDataSourceOptionsForNest = (configService: ConfigService): TypeO
     username: configService.get<string>('DB_USERNAME') || appEnv.DB_USERNAME,
     password: configService.get<string>('DB_PASSWORD') || appEnv.DB_PASSWORD,
     database: configService.get<string>('DB_DATABASE') || appEnv.DB_DATABASE,
-    synchronize: false,
+    synchronize: appEnv.NODE_ENV === NodeEnvironment.LOCAL,
     logging: false,
     autoLoadEntities: true,
     migrations: [path.resolve(__dirname, '../common/database/migrations/**/*.{ts,js}')],
@@ -35,7 +36,7 @@ export const getDataSourceOptions = (): DataSourceOptions => {
     database: appEnv.DB_DATABASE,
     entities: [path.resolve(__dirname, '../modules/**/*.model.{ts,js}')],
     migrations: [path.resolve(__dirname, '../common/database/migrations/**/*.{ts,js}')],
-    synchronize: false,
+    synchronize: appEnv.NODE_ENV === NodeEnvironment.LOCAL,
     logging: false,
   };
 };

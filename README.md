@@ -60,7 +60,7 @@ $ pnpm test:cov
 ## Database
 ### 도커 로컬 DB 실행 명령어 예시
 ```bash
-docker run -p 5555:5432 --name meogle.pg \
+docker run -p 5558:5432 --name meogle.pg.local \
   -e POSTGRES_USER=meogler \
   -e POSTGRES_PASSWORD=@meoglepwd \
   -e POSTGRES_DB=meogle \
