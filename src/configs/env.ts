@@ -22,6 +22,7 @@ const getEnvFile = (): string => {
 
 dotenv.config({
   path: path.resolve(process.cwd(), getEnvFile()),
+  quiet: true,
 });
 const appEnv = validate(process.env);
 
